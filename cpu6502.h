@@ -33,10 +33,16 @@ class cpu6502 {
     //pokazivac na implementaciju instrukcije
     Operation *operation = nullptr;
 
+    void setFlag(FLAGS flag, bool value);
+    uint8_t getFlag(FLAGS flag);
+
 public:
+    //maske za postavljanje bita u statusnom registru
+    //redom CARRY, ZERO, INTERRUPT, DECIMAL, BREAK, UNUSED, OVERFLOW, NEGATIVE
+    enum FLAGS = {C = (1 << 0), Z = (1 << 1), I = (1 << 2), D = (1 << 3), B = (1 << 4), U = (1 << 5), V = (1 << 6), N = (1 << 7)};
+
     void setAddressingMode(AddressingMode * mode);
     void setOperation(Operation *operation);
-
 };
 
 
