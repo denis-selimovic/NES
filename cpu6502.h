@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include "Instruction.h"
+#include "AddressingMode.h"
 
 class cpu6502 {
 
@@ -22,8 +23,13 @@ class cpu6502 {
     //pokazivac na trenutni instrukciju
     Instruction *instruction = nullptr;
 
-public:
+    //pokazivac na mod adresiranja
+    AddressingMode *addr_mode = nullptr;
 
+
+
+public:
+    void setAddressingMode(AddressingMode * mode);
 
 
 };

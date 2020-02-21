@@ -3,3 +3,7 @@
 //
 
 #include "cpu6502.h"
+
+void cpu6502::setAddressingMode(AddressingMode *mode) {
+    this->addr_mode = mode;
+}
