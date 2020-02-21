@@ -4,6 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/denis/CLionProjects/NES/cpu6502.cpp" "/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/NES.dir/cpu6502.cpp.o"
   "/home/denis/CLionProjects/NES/main.cpp" "/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/NES.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/NES.dir/cpu6502.cpp.o"
   "CMakeFiles/NES.dir/main.cpp.o"
   "NES"
   "NES.pdb"
