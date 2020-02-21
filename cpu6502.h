@@ -8,6 +8,7 @@
 #include <cstdint>
 #include "Instruction.h"
 #include "AddressingMode.h"
+#include "Operation.h"
 
 class cpu6502 {
 
@@ -20,17 +21,18 @@ class cpu6502 {
     uint16_t program_counter;
 
 
-    //pokazivac na trenutni instrukciju
+    //pokazivac na trenutnu instrukciju
     Instruction *instruction = nullptr;
 
     //pokazivac na mod adresiranja
     AddressingMode *addr_mode = nullptr;
 
-
+    //pokazivac na implementaciju instrukcije
+    Operation *operation = nullptr;
 
 public:
     void setAddressingMode(AddressingMode * mode);
-
+    void setOperation(Operation *operation);
 
 };
 
