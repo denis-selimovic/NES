@@ -10,22 +10,20 @@
 
 class AddressingMode {
     //klasa koja prikazuje sve moguće načine adresiranja
-    cpu6502 *cpu;
 
 public:
-    AddressingMode(cpu6502 *cpu = nullptr);
-    uint8_t imp();
-    uint8_t imm();
-    uint8_t zp0();
-    uint8_t zpx();
-    uint8_t zpy();
-    uint8_t rel();
-    uint8_t abs();
-    uint8_t abx();
-    uint8_t aby();
-    uint8_t ind();
-    uint8_t izx();
-    uint8_t izy();
+    uint8_t imp(cpu6502 *cpu);
+    uint8_t imm(cpu6502 *cpu);
+    uint8_t zp0(cpu6502 *cpu);
+    uint8_t zpx(cpu6502 *cpu);
+    uint8_t zpy(cpu6502 *cpu);
+    uint8_t rel(cpu6502 *cpu);
+    uint8_t abs(cpu6502 *cpu);
+    uint8_t abx(cpu6502 *cpu);
+    uint8_t aby(cpu6502 *cpu);
+    uint8_t ind(cpu6502 *cpu);
+    uint8_t izx(cpu6502 *cpu);
+    uint8_t izy(cpu6502 *cpu);
 };
 
 
