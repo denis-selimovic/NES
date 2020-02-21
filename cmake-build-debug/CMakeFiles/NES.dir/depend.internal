@@ -14,8 +14,11 @@ CMakeFiles/NES.dir/Instruction.cpp.o
  /home/denis/CLionProjects/NES/Operation.h
  /home/denis/CLionProjects/NES/cpu6502.h
 CMakeFiles/NES.dir/Operation.cpp.o
+ /home/denis/CLionProjects/NES/AddressingMode.h
+ /home/denis/CLionProjects/NES/Instruction.h
  /home/denis/CLionProjects/NES/Operation.cpp
  /home/denis/CLionProjects/NES/Operation.h
+ /home/denis/CLionProjects/NES/cpu6502.h
 CMakeFiles/NES.dir/cpu6502.cpp.o
  /home/denis/CLionProjects/NES/AddressingMode.h
  /home/denis/CLionProjects/NES/Instruction.h

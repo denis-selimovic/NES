@@ -13,8 +13,11 @@ CMakeFiles/NES.dir/Instruction.cpp.o: ../Instruction.h
 CMakeFiles/NES.dir/Instruction.cpp.o: ../Operation.h
 CMakeFiles/NES.dir/Instruction.cpp.o: ../cpu6502.h
 
+CMakeFiles/NES.dir/Operation.cpp.o: ../AddressingMode.h
+CMakeFiles/NES.dir/Operation.cpp.o: ../Instruction.h
 CMakeFiles/NES.dir/Operation.cpp.o: ../Operation.cpp
 CMakeFiles/NES.dir/Operation.cpp.o: ../Operation.h
+CMakeFiles/NES.dir/Operation.cpp.o: ../cpu6502.h
 
 CMakeFiles/NES.dir/cpu6502.cpp.o: ../AddressingMode.h
 CMakeFiles/NES.dir/cpu6502.cpp.o: ../Instruction.h

@@ -12,9 +12,16 @@
 
 class Instruction;
 class AddressingMode;
+class Operation;
 
 class cpu6502 {
 
+public:
+    //maske za postavljanje bita u statusnom registru
+    //redom CARRY, ZERO, INTERRUPT, DECIMAL, BREAK, UNUSED, OVERFLOW, NEGATIVE
+    enum FLAGS {C = (1 << 0), Z = (1 << 1), I = (1 << 2), D = (1 << 3), B = (1 << 4), U = (1 << 5), V = (1 << 6), N = (1 << 7)};
+
+private:
     //cpu ima 6 registara opce namjene
     uint8_t accumulator;
     uint8_t x_register;
@@ -37,9 +44,6 @@ class cpu6502 {
     uint8_t getFlag(FLAGS flag);
 
 public:
-    //maske za postavljanje bita u statusnom registru
-    //redom CARRY, ZERO, INTERRUPT, DECIMAL, BREAK, UNUSED, OVERFLOW, NEGATIVE
-    enum FLAGS = {C = (1 << 0), Z = (1 << 1), I = (1 << 2), D = (1 << 3), B = (1 << 4), U = (1 << 5), V = (1 << 6), N = (1 << 7)};
 
     void setAddressingMode(AddressingMode * mode);
     void setOperation(Operation *operation);
