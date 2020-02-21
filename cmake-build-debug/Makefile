@@ -123,6 +123,33 @@ NES/fast:
 	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/build
 .PHONY : NES/fast
 
+AddressingMode.o: AddressingMode.cpp.o
+
+.PHONY : AddressingMode.o
+
+# target to build an object file
+AddressingMode.cpp.o:
+	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/AddressingMode.cpp.o
+.PHONY : AddressingMode.cpp.o
+
+AddressingMode.i: AddressingMode.cpp.i
+
+.PHONY : AddressingMode.i
+
+# target to preprocess a source file
+AddressingMode.cpp.i:
+	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/AddressingMode.cpp.i
+.PHONY : AddressingMode.cpp.i
+
+AddressingMode.s: AddressingMode.cpp.s
+
+.PHONY : AddressingMode.s
+
+# target to generate assembly for a file
+AddressingMode.cpp.s:
+	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/AddressingMode.cpp.s
+.PHONY : AddressingMode.cpp.s
+
 Instruction.o: Instruction.cpp.o
 
 .PHONY : Instruction.o
@@ -213,6 +240,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... NES"
 	@echo "... edit_cache"
+	@echo "... AddressingMode.o"
+	@echo "... AddressingMode.i"
+	@echo "... AddressingMode.s"
 	@echo "... Instruction.o"
 	@echo "... Instruction.i"
 	@echo "... Instruction.s"

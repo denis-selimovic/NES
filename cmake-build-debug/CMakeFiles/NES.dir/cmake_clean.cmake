@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/NES.dir/AddressingMode.cpp.o"
   "CMakeFiles/NES.dir/Instruction.cpp.o"
   "CMakeFiles/NES.dir/cpu6502.cpp.o"
   "CMakeFiles/NES.dir/main.cpp.o"

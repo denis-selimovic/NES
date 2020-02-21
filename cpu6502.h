@@ -6,6 +6,7 @@
 #define NES_CPU6502_H
 
 #include <cstdint>
+#include "Instruction.h"
 
 class cpu6502 {
 
@@ -17,6 +18,9 @@ class cpu6502 {
     uint8_t status_register;
     uint16_t program_counter;
 
+
+    //pokazivac na trenutni instrukciju
+    Instruction *instruction = nullptr;
 
 };
 
