@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/NES.dir/main.cpp.o  -o NES 
