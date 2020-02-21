@@ -6,27 +6,15 @@
 
 #IncludeRegexTransform: 
 
-/home/denis/CLionProjects/NES/AddressingMode.cpp
-AddressingMode.h
-/home/denis/CLionProjects/NES/AddressingMode.h
-
 /home/denis/CLionProjects/NES/AddressingMode.h
 cpu6502.h
 /home/denis/CLionProjects/NES/cpu6502.h
-
-/home/denis/CLionProjects/NES/Instruction.cpp
-Instruction.h
-/home/denis/CLionProjects/NES/Instruction.h
 
 /home/denis/CLionProjects/NES/Instruction.h
 string
 -
 cpu6502.h
 /home/denis/CLionProjects/NES/cpu6502.h
-
-/home/denis/CLionProjects/NES/Operation.cpp
-Operation.h
-/home/denis/CLionProjects/NES/Operation.h
 
 /home/denis/CLionProjects/NES/Operation.h
 cstdint
