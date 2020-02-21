@@ -8,6 +8,8 @@
 
 #include "cpu6502.h"
 
+class cpu6502;
+
 class AddressingMode {
     //klasa koja prikazuje sve moguće načine adresiranja
 

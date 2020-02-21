@@ -10,6 +10,9 @@
 #include "AddressingMode.h"
 #include "Operation.h"
 
+class Instruction;
+class AddressingMode;
+
 class cpu6502 {
 
     //cpu ima 6 registara opce namjene

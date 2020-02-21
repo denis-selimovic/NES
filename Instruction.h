@@ -8,6 +8,8 @@
 #include <string>
 #include "cpu6502.h"
 
+class cpu6502;
+
 class Instruction {
 public:
     std::string name;
