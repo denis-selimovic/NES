@@ -11,9 +11,9 @@ class Instruction {
 public:
     std::string name;
     uint8_t total_cycles;
-    uint8_t (*operation) () = nullptr;
-    uint8_t (*addressing_mode) () = nullptr;
-    Instruction(std::string name, uint8_t cycles, uint8_t (*opp) (), uint8_t (*addrmode) ());
+    uint8_t (*operation) ();
+    uint8_t (*addressing_mode) ();
+    Instruction(std::string name, uint8_t cycles = 0, uint8_t (*opp) () = nullptr, uint8_t (*addrmode) () = nullptr);
 };
 
 
