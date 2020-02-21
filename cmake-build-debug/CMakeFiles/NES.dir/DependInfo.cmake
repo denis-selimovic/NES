@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/denis/CLionProjects/NES/AddressingMode.cpp" "/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/NES.dir/AddressingMode.cpp.o"
   "/home/denis/CLionProjects/NES/Instruction.cpp" "/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/NES.dir/Instruction.cpp.o"
+  "/home/denis/CLionProjects/NES/Operation.cpp" "/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/NES.dir/Operation.cpp.o"
   "/home/denis/CLionProjects/NES/cpu6502.cpp" "/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/NES.dir/cpu6502.cpp.o"
   "/home/denis/CLionProjects/NES/main.cpp" "/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/NES.dir/main.cpp.o"
   )

@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/NES.dir/main.cpp.o CMakeFiles/NES.dir/cpu6502.cpp.o CMakeFiles/NES.dir/Instruction.cpp.o CMakeFiles/NES.dir/AddressingMode.cpp.o  -o NES 
+/usr/bin/c++  -g   CMakeFiles/NES.dir/main.cpp.o CMakeFiles/NES.dir/cpu6502.cpp.o CMakeFiles/NES.dir/Instruction.cpp.o CMakeFiles/NES.dir/AddressingMode.cpp.o CMakeFiles/NES.dir/Operation.cpp.o  -o NES 

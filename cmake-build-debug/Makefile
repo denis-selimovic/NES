@@ -177,6 +177,33 @@ Instruction.cpp.s:
 	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/Instruction.cpp.s
 .PHONY : Instruction.cpp.s
 
+Operation.o: Operation.cpp.o
+
+.PHONY : Operation.o
+
+# target to build an object file
+Operation.cpp.o:
+	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/Operation.cpp.o
+.PHONY : Operation.cpp.o
+
+Operation.i: Operation.cpp.i
+
+.PHONY : Operation.i
+
+# target to preprocess a source file
+Operation.cpp.i:
+	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/Operation.cpp.i
+.PHONY : Operation.cpp.i
+
+Operation.s: Operation.cpp.s
+
+.PHONY : Operation.s
+
+# target to generate assembly for a file
+Operation.cpp.s:
+	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/Operation.cpp.s
+.PHONY : Operation.cpp.s
+
 cpu6502.o: cpu6502.cpp.o
 
 .PHONY : cpu6502.o
@@ -246,6 +273,9 @@ help:
 	@echo "... Instruction.o"
 	@echo "... Instruction.i"
 	@echo "... Instruction.s"
+	@echo "... Operation.o"
+	@echo "... Operation.i"
+	@echo "... Operation.s"
 	@echo "... cpu6502.o"
 	@echo "... cpu6502.i"
 	@echo "... cpu6502.s"

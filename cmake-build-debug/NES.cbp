@@ -96,6 +96,12 @@
 		<Unit filename="/home/denis/CLionProjects/NES/Instruction.h">
 			<Option target="NES"/>
 		</Unit>
+		<Unit filename="/home/denis/CLionProjects/NES/Operation.cpp">
+			<Option target="NES"/>
+		</Unit>
+		<Unit filename="/home/denis/CLionProjects/NES/Operation.h">
+			<Option target="NES"/>
+		</Unit>
 		<Unit filename="/home/denis/CLionProjects/NES/cpu6502.cpp">
 			<Option target="NES"/>
 		</Unit>
