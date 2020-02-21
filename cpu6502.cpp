@@ -13,11 +13,12 @@ void cpu6502::setOperation(Operation *operation) {
 }
 
 void cpu6502::setFlag(cpu6502::FLAGS flag, bool value) {
-
+    if(value) status_register |= flag;
+    else status_register &= ~flag;
 }
 
 uint8_t cpu6502::getFlag(cpu6502::FLAGS flag) {
-    return 0;
+    return ((status_register & flag) > 0) ? 1 : 0;
 }
 
 
