@@ -15,7 +15,7 @@ class cpu6502 {
     uint8_t y_register;
     uint8_t stack_pointer;
     uint8_t status_register;
-    uint8_t program_counter;
+    uint16_t program_counter;
 
 
 };

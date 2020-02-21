@@ -84,6 +84,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/denis/CLionProjects/NES/Instruction.cpp">
+			<Option target="NES"/>
+		</Unit>
+		<Unit filename="/home/denis/CLionProjects/NES/Instruction.h">
+			<Option target="NES"/>
+		</Unit>
 		<Unit filename="/home/denis/CLionProjects/NES/cpu6502.cpp">
 			<Option target="NES"/>
 		</Unit>

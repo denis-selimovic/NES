@@ -123,6 +123,33 @@ NES/fast:
 	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/build
 .PHONY : NES/fast
 
+Instruction.o: Instruction.cpp.o
+
+.PHONY : Instruction.o
+
+# target to build an object file
+Instruction.cpp.o:
+	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/Instruction.cpp.o
+.PHONY : Instruction.cpp.o
+
+Instruction.i: Instruction.cpp.i
+
+.PHONY : Instruction.i
+
+# target to preprocess a source file
+Instruction.cpp.i:
+	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/Instruction.cpp.i
+.PHONY : Instruction.cpp.i
+
+Instruction.s: Instruction.cpp.s
+
+.PHONY : Instruction.s
+
+# target to generate assembly for a file
+Instruction.cpp.s:
+	$(MAKE) -f CMakeFiles/NES.dir/build.make CMakeFiles/NES.dir/Instruction.cpp.s
+.PHONY : Instruction.cpp.s
+
 cpu6502.o: cpu6502.cpp.o
 
 .PHONY : cpu6502.o
@@ -186,6 +213,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... NES"
 	@echo "... edit_cache"
+	@echo "... Instruction.o"
+	@echo "... Instruction.i"
+	@echo "... Instruction.s"
 	@echo "... cpu6502.o"
 	@echo "... cpu6502.i"
 	@echo "... cpu6502.s"
