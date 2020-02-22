@@ -3,4 +3,4 @@ project(NES)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(NES main.cpp cpu6502.cpp cpu6502.h Instruction.cpp Instruction.h AddressingMode.cpp AddressingMode.h Operation.cpp Operation.h)
+add_executable(NES main.cpp cpu6502.cpp cpu6502.h Instruction.cpp Instruction.h AddressingMode.cpp AddressingMode.h Operation.cpp Operation.h Buss.cpp Buss.h)
