@@ -51,6 +51,9 @@ private:
     void write(uint16_t address, uint8_t data);
     uint8_t read(uint16_t address);
 
+    //tabela instrukcija
+    //indeksira sa pomoću opcode-a
+    std::vector<Instruction> lookup;
 
 public:
     cpu6502();
@@ -68,10 +71,6 @@ public:
     uint16_t relative_address = 0x00;
     uint16_t absolute_adress = 0x0000;
 
-private:
-    //tabela instrukcija
-    //indeksira sa pomoću opcode-a
-    std::vector<Instruction> lookup;
 };
 
 
