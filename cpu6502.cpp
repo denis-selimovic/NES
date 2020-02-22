@@ -297,3 +297,19 @@ cpu6502::cpu6502() {
                     Instruction("???", &Operation::XXX, &AddressingMode::IMP, 7),
             };
 }
+
+void cpu6502::clock() {
+
+}
+
+void cpu6502::reset() {
+
+}
+
+void cpu6502::interruptRequest() {
+
+}
+
+void cpu6502::nonmaskableInterrupt() {
+
+}
