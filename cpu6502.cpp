@@ -36,7 +36,8 @@ uint8_t cpu6502::read(uint16_t address) {
 
 cpu6502::cpu6502() {
     lookup = {
-            {Instruction("BRK", 7, &Operation::BRK, &AddressingMode::imm), },
+            {Instruction("BRK", 7, &Operation::BRK, &AddressingMode::IMP), Instruction("ORA", 6, &Operation::ORA, &AddressingMode::IZX), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("ORA", 3, &Operation::ORA, &AddressingMode::ZP0), Instruction("ASL", 5, &Operation::ASL, &AddressingMode::ZP0), Instruction("XXX", 0, nullptr, nullptr),
+             Instruction("PHP", 3, &Operation::PHP, &AddressingMode::IMP), Instruction("ORA", 2, &Operation::ORA, &AddressingMode::IMP), Instruction("ASL", 2, &Operation::ASL, &AddressingMode::IMP), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("ORA", 4, &Operation::ORA, &AddressingMode::ABS), Instruction("ASL", 6, &Operation::ASL, &AddressingMode::ABS), Instruction("XXX", 0, nullptr, nullptr)},
             {},
             {},
             {},
