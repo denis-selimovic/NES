@@ -30,7 +30,8 @@ void cpu6502::write(uint16_t address, uint8_t data) {
 }
 
 uint8_t cpu6502::read(uint16_t address) {
-    return bus->readMemory(address);
+    memory_content = bus->readMemory(address);
+    return memory_content;
 }
 
 
