@@ -25,4 +25,12 @@ void cpu6502::connectToBus(Bus *bus) {
     this->bus = bus;
 }
 
+void cpu6502::write(uint16_t address, uint8_t data) {
+    bus->writeMemory(address, data);
+}
+
+uint8_t cpu6502::read(uint16_t address) {
+    return bus->readMemory(address);
+}
+
 

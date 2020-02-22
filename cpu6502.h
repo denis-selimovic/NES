@@ -9,6 +9,7 @@
 #include "Instruction.h"
 #include "AddressingMode.h"
 #include "Operation.h"
+#include "Bus.h"
 
 class Instruction;
 class AddressingMode;
@@ -46,9 +47,10 @@ private:
 
     void setFlag(FLAGS flag, bool value);
     uint8_t getFlag(FLAGS flag);
+    void write(uint16_t address, uint8_t data);
+    uint8_t read(uint16_t address);
 
 public:
-
     void setAddressingMode(AddressingMode * mode);
     void setOperation(Operation *operation);
     void connectToBus(Bus *bus);
