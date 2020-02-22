@@ -51,18 +51,15 @@ private:
     uint8_t read(uint16_t address);
 
 
-    //pomocne varijable pri pozivanju funkcija za adresiranje i instrukcija
-    uint8_t cycles = 0;
-    uint8_t memory_content = 0x00;
-    uint8_t relative_address = 0x00;
-    uint16_t absolute_adress = 0x0000;
-
-    friend class AddressingMode;
-    friend class Operation;
 public:
     void setAddressingMode(AddressingMode * mode);
     void setOperation(Operation *operation);
     void connectToBus(Bus *bus);
+
+    uint8_t cycles = 0;
+    uint8_t memory_content = 0x00;
+    uint16_t relative_address = 0x00;
+    uint16_t absolute_adress = 0x0000;
 };
 
 
