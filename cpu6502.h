@@ -50,7 +50,8 @@ private:
     void write(uint16_t address, uint8_t data);
     uint8_t read(uint16_t address);
 
-
+    //tabela instrukcija
+    //indeksira sa pomoću opcode-a
     Instruction lookup[][];
 public:
     cpu6502();
