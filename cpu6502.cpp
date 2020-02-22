@@ -34,4 +34,25 @@ uint8_t cpu6502::read(uint16_t address) {
     return memory_content;
 }
 
+cpu6502::cpu6502() {
+    lookup = {
+            {Instruction("BRK", 7, &Operation::BRK, &AddressingMode::)},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
+    };
+}
+
 

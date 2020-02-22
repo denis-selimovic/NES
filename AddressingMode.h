@@ -14,18 +14,18 @@ class AddressingMode {
     //klasa koja prikazuje sve moguće načine adresiranja
 
 public:
-    uint8_t imp(cpu6502 *cpu);
-    uint8_t imm(cpu6502 *cpu);
-    uint8_t zp0(cpu6502 *cpu);
-    uint8_t zpx(cpu6502 *cpu);
-    uint8_t zpy(cpu6502 *cpu);
-    uint8_t rel(cpu6502 *cpu);
-    uint8_t abs(cpu6502 *cpu);
-    uint8_t abx(cpu6502 *cpu);
-    uint8_t aby(cpu6502 *cpu);
-    uint8_t ind(cpu6502 *cpu);
-    uint8_t izx(cpu6502 *cpu);
-    uint8_t izy(cpu6502 *cpu);
+    static uint8_t imp(cpu6502 *cpu);
+    static uint8_t imm(cpu6502 *cpu);
+    static uint8_t zp0(cpu6502 *cpu);
+    static uint8_t zpx(cpu6502 *cpu);
+    static uint8_t zpy(cpu6502 *cpu);
+    static uint8_t rel(cpu6502 *cpu);
+    static uint8_t abs(cpu6502 *cpu);
+    static uint8_t abx(cpu6502 *cpu);
+    static uint8_t aby(cpu6502 *cpu);
+    static uint8_t ind(cpu6502 *cpu);
+    static uint8_t izx(cpu6502 *cpu);
+    static uint8_t izy(cpu6502 *cpu);
 };
 
 
