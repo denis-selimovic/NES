@@ -38,7 +38,8 @@ cpu6502::cpu6502() {
     lookup = {
             {Instruction("BRK", 7, &Operation::BRK, &AddressingMode::IMP), Instruction("ORA", 6, &Operation::ORA, &AddressingMode::IZX), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("ORA", 3, &Operation::ORA, &AddressingMode::ZP0), Instruction("ASL", 5, &Operation::ASL, &AddressingMode::ZP0), Instruction("XXX", 0, nullptr, nullptr),
              Instruction("PHP", 3, &Operation::PHP, &AddressingMode::IMP), Instruction("ORA", 2, &Operation::ORA, &AddressingMode::IMP), Instruction("ASL", 2, &Operation::ASL, &AddressingMode::IMP), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("ORA", 4, &Operation::ORA, &AddressingMode::ABS), Instruction("ASL", 6, &Operation::ASL, &AddressingMode::ABS), Instruction("XXX", 0, nullptr, nullptr)},
-            {},
+            {Instruction("BPL", 2, &Operation::BPL, &AddressingMode::REL), Instruction("ORA", 5, &Operation::ORA, &AddressingMode::IZY), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("ORA", 4, &Operation::ORA, &AddressingMode::ZPX), Instruction("ASL", 6, &Operation::ASL, &AddressingMode::ZPX), Instruction("XXX", 0, nullptr, nullptr),
+             Instruction("CLC",23, &Operation::CLC, &AddressingMode::IMP), Instruction("ORA", 4, &Operation::ORA, &AddressingMode::ABY), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("XXX", 0, nullptr, nullptr), Instruction("ORA", 4, &Operation::ORA, &AddressingMode::ABX), Instruction("ASL", 7, &Operation::ASL, &AddressingMode::ABX), Instruction("XXX", 0, nullptr, nullptr)},
             {},
             {},
             {},
