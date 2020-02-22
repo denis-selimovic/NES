@@ -4,7 +4,7 @@
 
 #include "Instruction.h"
 
-Instruction::Instruction(std::string name, uint8_t cycles, uint8_t (*opp)(cpu6502 *cpu), uint8_t (*addrmode)(cpu6502 *cpu)) {
+Instruction::Instruction(std::string name, uint8_t (*opp)(cpu6502 *cpu), uint8_t (*addrmode)(cpu6502 *cpu), uint8_t cycles) {
     this->name = name;
     this->total_cycles = cycles;
     this->operation = opp;
