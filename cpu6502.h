@@ -51,7 +51,7 @@ private:
     uint8_t read(uint16_t address);
 
 
-    Instruction[16][16] lookup;
+    Instruction lookup[][];
 public:
     cpu6502();
     void setAddressingMode(AddressingMode * mode);
