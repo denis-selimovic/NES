@@ -1,3 +1,0 @@
-/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/NES.dir
-/home/denis/CLionProjects/NES/cmake-build-debug/CMakeFiles/edit_cache.dir
