@@ -3,3 +3,7 @@
 //
 
 #include "Operation.h"
+
+uint8_t Operation::BRK(cpu6502 &cpu) {
+    return 0;
+}

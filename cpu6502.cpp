@@ -3,6 +3,8 @@
 //
 
 #include "cpu6502.h"
+#include "Operation.h"
+#include "AddressingMode.h"
 
 void cpu6502::setAddressingMode(AddressingMode *mode) {
     this->addr_mode = mode;
@@ -35,7 +37,7 @@ uint8_t cpu6502::read(uint16_t address) {
 }
 
 cpu6502::cpu6502() {
-    lookup[16][16] =
+    lookup =
             {
                     Instruction("BRK", &Operation::BRK, &AddressingMode::IMM, 7),
                     Instruction("ORA", &Operation::ORA, &AddressingMode::IZX, 6),
@@ -295,5 +297,3 @@ cpu6502::cpu6502() {
                     Instruction("???", &Operation::XXX, &AddressingMode::IMP, 7),
             };
 }
-
-
