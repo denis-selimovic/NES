@@ -14,9 +14,9 @@ class Instruction {
 public:
     std::string name;
     uint8_t total_cycles;
-    uint8_t (*operation) (cpu6502 *cpu);
-    uint8_t (*addressing_mode) (cpu6502 *cpu);
-    Instruction(std::string name, uint8_t (*opp) (cpu6502 *cpu) = nullptr, uint8_t (*addrmode) (cpu6502 *cpu) = nullptr, uint8_t cycles = 0);
+    uint8_t (*operation) (cpu6502 &cpu);
+    uint8_t (*addressing_mode) (cpu6502 &cpu);
+    Instruction(std::string name, uint8_t (*opp) (cpu6502 &cpu) = nullptr, uint8_t (*addrmode) (cpu6502 &cpu) = nullptr, uint8_t cycles = 0);
     Instruction();
 };
 
