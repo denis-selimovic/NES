@@ -42,7 +42,7 @@ private:
     Operation *operation = nullptr;
 
     //pokazivac na sabirnicu
-    Bus *bus;
+    Bus *bus = nullptr;
 
     void setFlag(FLAGS flag, bool value);
     uint8_t getFlag(FLAGS flag);
