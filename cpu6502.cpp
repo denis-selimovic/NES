@@ -21,4 +21,8 @@ uint8_t cpu6502::getFlag(cpu6502::FLAGS flag) {
     return ((status_register & flag) > 0) ? 1 : 0;
 }
 
+void cpu6502::connectToBus(Bus *bus) {
+    this->bus = bus;
+}
+
 

@@ -13,6 +13,7 @@
 class Instruction;
 class AddressingMode;
 class Operation;
+class Bus;
 
 class cpu6502 {
 
@@ -40,6 +41,9 @@ private:
     //pokazivac na implementaciju instrukcije
     Operation *operation = nullptr;
 
+    //pokazivac na sabirnicu
+    Bus *bus;
+
     void setFlag(FLAGS flag, bool value);
     uint8_t getFlag(FLAGS flag);
 
@@ -47,6 +51,7 @@ public:
 
     void setAddressingMode(AddressingMode * mode);
     void setOperation(Operation *operation);
+    void connectToBus(Bus *bus);
 };
 
 
