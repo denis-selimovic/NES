@@ -57,6 +57,8 @@ private:
     uint8_t relative_address = 0x00;
     uint16_t absolute_adress = 0x0000;
 
+    friend class AddressingMode;
+    friend class Operation;
 public:
     void setAddressingMode(AddressingMode * mode);
     void setOperation(Operation *operation);
