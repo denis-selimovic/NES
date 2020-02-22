@@ -56,6 +56,11 @@ public:
     void setOperation(Operation *operation);
     void connectToBus(Bus *bus);
 
+    void clock();
+    void reset();
+    void interruptRequest();
+    void nonmaskableInterrupt();
+
     uint8_t cycles = 0;
     uint8_t memory_content = 0x00;
     uint16_t relative_address = 0x00;
