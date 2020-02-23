@@ -56,9 +56,9 @@ uint8_t AddressingMode::ABX(cpu6502 &cpu) {
     cpu.program_counter++;
     uint8_t high_nibble = cpu.read(cpu.program_counter);
     cpu.program_counter++;
-    cpu.absolute_adress = high_nibble << 8 | low_nibble;
+    cpu.absolute_adress = (high_nibble << 8u) | low_nibble;
     cpu.absolute_adress += cpu.x_register;
-    return ((cpu.absolute_adress & 0xFF00) != (high_nibble << 8)) ? 1 : 0;
+    return ((cpu.absolute_adress & 0xFF00u) != (high_nibble << 8u)) ? 1 : 0;
 }
 
 uint8_t AddressingMode::ABY(cpu6502 &cpu) {
@@ -66,9 +66,9 @@ uint8_t AddressingMode::ABY(cpu6502 &cpu) {
     cpu.program_counter++;
     uint8_t high_nibble = cpu.read(cpu.program_counter);
     cpu.program_counter++;
-    cpu.absolute_adress = high_nibble << 8 | low_nibble;
+    cpu.absolute_adress = (high_nibble << 8u) | low_nibble;
     cpu.absolute_adress += cpu.y_register;
-    return ((cpu.absolute_adress & 0xFF00) != (high_nibble << 8)) ? 1 : 0;
+    return ((cpu.absolute_adress & 0xFF00u) != (high_nibble << 8u)) ? 1 : 0;
 }
 
 uint8_t AddressingMode::IND(cpu6502 &cpu) {
