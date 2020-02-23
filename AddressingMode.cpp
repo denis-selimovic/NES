@@ -15,6 +15,9 @@ uint8_t AddressingMode::IMP(cpu6502 &cpu) {
 }
 
 uint8_t AddressingMode::ZP0(cpu6502 &cpu) {
+    cpu.absolute_adress = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
+    cpu.absolute_adress &= 0x00FF;
     return 0;
 }
 
