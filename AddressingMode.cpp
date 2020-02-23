@@ -5,6 +5,7 @@
 #include "AddressingMode.h"
 
 uint8_t AddressingMode::IMM(cpu6502 &cpu) {
+    cpu.absolute_adress = cpu.program_counter++;
     return 0;
 }
 
