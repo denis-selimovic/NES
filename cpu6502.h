@@ -55,6 +55,13 @@ private:
     //indeksira sa pomoću opcode-a
     std::vector<Instruction> lookup;
 
+    uint8_t cycles = 0;
+    uint8_t memory_content = 0x00;
+    uint16_t relative_address = 0x00;
+    uint16_t absolute_adress = 0x0000;
+
+    friend class Operation;
+    friend class AddressingMode;
 public:
     cpu6502();
     void setAddressingMode(AddressingMode * mode);
@@ -67,10 +74,6 @@ public:
     void nonmaskableInterrupt();
     uint8_t getMemoryContent();
 
-    uint8_t cycles = 0;
-    uint8_t memory_content = 0x00;
-    uint16_t relative_address = 0x00;
-    uint16_t absolute_adress = 0x0000;
 
 };
 
