@@ -22,10 +22,16 @@ uint8_t AddressingMode::ZP0(cpu6502 &cpu) {
 }
 
 uint8_t AddressingMode::ZPX(cpu6502 &cpu) {
+    cpu.absolute_adress = cpu.read(cpu.program_counter) + cpu.x_register;
+    cpu.program_counter++;
+    cpu.absolute_adress &= 0x00FF;
     return 0;
 }
 
 uint8_t AddressingMode::ZPY(cpu6502 &cpu) {
+    cpu.absolute_adress = cpu.read(cpu.program_counter) + cpu.y_register;
+    cpu.program_counter++;
+    cpu.absolute_adress &= 0x00FF;
     return 0;
 }
 
