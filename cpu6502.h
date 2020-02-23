@@ -13,8 +13,6 @@
 #include "Bus.h"
 
 class Instruction;
-class AddressingMode;
-class Operation;
 class Bus;
 
 class cpu6502 {
@@ -37,12 +35,6 @@ private:
     //pokazivac na trenutnu instrukciju
     Instruction *instruction = nullptr;
 
-    //pokazivac na mod adresiranja
-    AddressingMode *addr_mode = nullptr;
-
-    //pokazivac na implementaciju instrukcije
-    Operation *operation = nullptr;
-
     //pokazivac na sabirnicu
     Bus *bus = nullptr;
 
@@ -64,8 +56,6 @@ private:
     friend class AddressingMode;
 public:
     cpu6502();
-    void setAddressingMode(AddressingMode * mode);
-    void setOperation(Operation *operation);
     void connectToBus(Bus *bus);
 
     void clock();

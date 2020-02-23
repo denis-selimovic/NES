@@ -6,14 +6,6 @@
 #include "Operation.h"
 #include "AddressingMode.h"
 
-void cpu6502::setAddressingMode(AddressingMode *mode) {
-    this->addr_mode = mode;
-}
-
-void cpu6502::setOperation(Operation *operation) {
-    this->operation = operation;
-}
-
 void cpu6502::setFlag(cpu6502::FLAGS flag, bool value) {
     if(value) status_register |= flag;
     else status_register &= ~flag;
