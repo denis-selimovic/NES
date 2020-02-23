@@ -65,6 +65,7 @@ public:
     void reset();
     void interruptRequest();
     void nonmaskableInterrupt();
+    uint8_t getMemoryContent();
 
     uint8_t cycles = 0;
     uint8_t memory_content = 0x00;
