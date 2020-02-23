@@ -16,7 +16,7 @@ uint8_t Operation::AND(cpu6502 &cpu) {
     cpu.getMemoryContent();
     cpu.accumulator &= cpu.memory_content;
     cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
-    cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80);
+    cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80u);
     return 0;
 }
 
