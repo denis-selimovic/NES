@@ -36,15 +36,28 @@ uint8_t AddressingMode::ZPY(cpu6502 &cpu) {
 }
 
 uint8_t AddressingMode::REL(cpu6502 &cpu) {
+    cpu.relative_address = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
+    if(cpu.relative_address & 0x80) cpu.relative_address |= 0xFF00;
     return 0;
 }
 
 uint8_t AddressingMode::ABS(cpu6502 &cpu) {
+    uint8_t low_nibble = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
+    uint8_t high_nibble = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
+    cpu.absolute_adress = high_nibble << 8 | low_nibble;
     return 0;
 }
 
 uint8_t AddressingMode::ABX(cpu6502 &cpu) {
-    return 0;
+    uint8_t low_nibble = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
+    uint8_t high_nibble = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
+    cpu.absolute_adress = high_nibble << 8 | low_nibble;
+    return ((cpu.absolute_adress & 0xFF00) != (high_nibble << 8)) ? 1 : 0;
 }
 
 uint8_t AddressingMode::ABY(cpu6502 &cpu) {
