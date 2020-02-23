@@ -9,6 +9,7 @@ uint8_t AddressingMode::IMM(cpu6502 &cpu) {
 }
 
 uint8_t AddressingMode::IMP(cpu6502 &cpu) {
+    cpu.memory_content = cpu.accumulator;
     return 0;
 }
 
