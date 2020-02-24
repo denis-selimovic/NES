@@ -471,12 +471,13 @@ uint8_t Operation::TXA(cpu6502 &cpu) {
 
 uint8_t Operation::TXS(cpu6502 &cpu) {
     cpu.stack_pointer = cpu.x_register;
-    cpu.setFlag(cpu6502::N, cpu.stack_pointer & 0x80u);
-    cpu.setFlag(cpu6502::Z, cpu.stack_pointer == 0x00);
     return 0;
 }
 
 uint8_t Operation::TYA(cpu6502 &cpu) {
+    cpu.accumulator = cpu.y_register;
+    cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
     return 0;
 }
 
