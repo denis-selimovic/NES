@@ -379,7 +379,8 @@ uint8_t Operation::RTI(cpu6502 &cpu) {
     //čitamo statusni registar sa stacka
     cpu.stack_pointer++;
     cpu.status_register = cpu.read(0x0100 + cpu.stack_pointer);
-    cpu.setFlag(cpu6502::U, true);
+    cpu.setFlag(cpu6502::U, false);
+    cpu.setFlag(cpu6502::B, false);
 
     //uzimamo 8 najmanje značajnih bita pc-a
     cpu.stack_pointer++;
