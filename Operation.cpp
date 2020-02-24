@@ -276,15 +276,27 @@ uint8_t Operation::JSR(cpu6502 &cpu) {
 }
 
 uint8_t Operation::LDA(cpu6502 &cpu) {
-    return 0;
+    cpu.getMemoryContent();
+    cpu.accumulator = cpu.memory_content;
+    cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
+    return 1;
 }
 
 uint8_t Operation::LDX(cpu6502 &cpu) {
-    return 0;
+    cpu.getMemoryContent();
+    cpu.x_register = cpu.memory_content;
+    cpu.setFlag(cpu6502::N, cpu.x_register & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.x_register == 0x00);
+    return 1;
 }
 
 uint8_t Operation::LDY(cpu6502 &cpu) {
-    return 0;
+    cpu.getMemoryContent();
+    cpu.y_register = cpu.memory_content;
+    cpu.setFlag(cpu6502::N, cpu.y_register & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.y_register == 0x00);
+    return 1;
 }
 
 uint8_t Operation::LSR(cpu6502 &cpu) {
