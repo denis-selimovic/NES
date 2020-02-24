@@ -15,6 +15,6 @@ void Bus::writeCPUMemory(uint16_t address, uint8_t data) {
     else if (address >= 0x2000 && address <= 0x3FFF) ppu->writeCPUMemory(address & 0x0007u, data);
 }
 
-void Bus::connectPPU(ppu2C02 *ppu) {
-    this->ppu = ppu;
+void Bus::connectPPU(ppu2C02 *ppu2C02) {
+    this->ppu = ppu2C02;
 }
