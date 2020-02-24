@@ -6,8 +6,13 @@
 #define NES_PPU2C02_H
 
 
-class ppu2C02 {
+#include <cstdint>
 
+class ppu2C02 {
+public:
+
+    uint8_t readCPUMemory(uint16_t address);
+    void writeCPUMemory(uint16_t address, uint8_t data);
 };
 
 
