@@ -21,6 +21,13 @@ uint8_t Operation::AND(cpu6502 &cpu) {
 }
 
 uint8_t Operation::ASL(cpu6502 &cpu) {
+    cpu.getMemoryContent();
+    uint16_t shifted_value = uint16_t(cpu.memory_content) << 1u;
+    cpu.setFlag(cpu6502::C, (shifted_value & 0xFF00u) > 0);
+    cpu.setFlag(cpu6502::Z, (shifted_value & 0x00FFu) == 0x0000);
+    cpu.setFlag(cpu6502::N, shifted_value & 0x80u);
+    if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = shifted_value & 0x00FFu;
+    else cpu.write(cpu.absolute_adress, shifted_value & 0x00FFu);
     return 0;
 }
 
