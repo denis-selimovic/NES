@@ -242,10 +242,16 @@ uint8_t Operation::INC(cpu6502 &cpu) {
 }
 
 uint8_t Operation::INX(cpu6502 &cpu) {
+    cpu.x_register++;
+    cpu.setFlag(cpu6502::N, cpu.x_register & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.x_register == 0x00);
     return 0;
 }
 
 uint8_t Operation::INY(cpu6502 &cpu) {
+    cpu.y_register++;
+    cpu.setFlag(cpu6502::N, cpu.y_register & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.y_register == 0x00);
     return 0;
 }
 
