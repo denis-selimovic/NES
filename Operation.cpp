@@ -442,6 +442,9 @@ uint8_t Operation::STY(cpu6502 &cpu) {
 }
 
 uint8_t Operation::TAX(cpu6502 &cpu) {
+    cpu.x_register = cpu.accumulator;
+    cpu.setFlag(cpu6502::N, cpu.x_register & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.x_register == 0x00);
     return 0;
 }
 
