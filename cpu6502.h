@@ -47,10 +47,13 @@ private:
     //indeksira sa pomoću opcode-a
     std::vector<Instruction> lookup;
 
+    //pomoćne varijable pri izvršavanju instrukcija
     uint8_t cycles = 0;
     uint8_t memory_content = 0x00;
     uint16_t relative_address = 0x00;
     uint16_t absolute_address = 0x0000;
+
+    uint8_t getMemoryContent();
 
     friend class Operation;
     friend class AddressingMode;
@@ -62,9 +65,6 @@ public:
     void reset();
     void interruptRequest();
     void nonmaskableInterrupt();
-    uint8_t getMemoryContent();
-
-
 };
 
 
