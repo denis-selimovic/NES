@@ -412,14 +412,17 @@ uint8_t Operation::SBC(cpu6502 &cpu) {
 }
 
 uint8_t Operation::SEC(cpu6502 &cpu) {
+    cpu.setFlag(cpu6502::C, true);
     return 0;
 }
 
 uint8_t Operation::SED(cpu6502 &cpu) {
+    cpu.setFlag(cpu6502::D, true);
     return 0;
 }
 
 uint8_t Operation::SEI(cpu6502 &cpu) {
+    cpu.setFlag(cpu6502::I, true);
     return 0;
 }
 
