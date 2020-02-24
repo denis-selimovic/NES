@@ -20,11 +20,11 @@ void cpu6502::connectToBus(Bus *bus) {
 }
 
 void cpu6502::write(uint16_t address, uint8_t data) {
-    bus->writeCpuRAM(address, data);
+    bus->writeCPUMemory(address, data);
 }
 
 uint8_t cpu6502::read(uint16_t address) {
-    memory_content = bus->readCpuRAM(address);
+    memory_content = bus->readCPUMemory(address);
     return memory_content;
 }
 

@@ -12,8 +12,8 @@ class Bus {
 
     std::array<uint8_t, 2048> RAM;
 public:
-     uint8_t readCpuRAM(uint16_t address);
-     void writeCpuRAM(uint16_t address, uint8_t data);
+     uint8_t readCPUMemory(uint16_t address);
+     void writeCPUMemory(uint16_t address, uint8_t data);
 };
 
 
