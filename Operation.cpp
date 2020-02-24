@@ -384,16 +384,26 @@ uint8_t Operation::RTI(cpu6502 &cpu) {
 
     //uzimamo 8 najmanje značajnih bita pc-a
     cpu.stack_pointer++;
-    uint16_t low_pc = cpu.read(0x0100 + cpu.stack_pointer);
+    uint16_t low_byte = cpu.read(0x0100 + cpu.stack_pointer);
     //uzimamo 8 najznačajnijih bita pc-a
     cpu.stack_pointer++;
-    uint16_t high_pc = cpu.read(0x0100 + cpu.stack_pointer);
+    uint16_t high_byte = cpu.read(0x0100 + cpu.stack_pointer);
     //ažuriramo pc
-    cpu.program_counter = (high_pc << 8u) | low_pc;
+    cpu.program_counter = (high_byte << 8u) | low_byte;
     return 0;
 }
 
 uint8_t Operation::RTS(cpu6502 &cpu) {
+    //uzimamo low byte programskog brojača
+    cpu.stack_pointer++;
+    uint16_t low_byte = cpu.read(0x0100 + cpu.stack_pointer);
+
+    //uzimamo high byte programskog brojača
+    cpu.stack_pointer++;
+    uint16_t high_byte = cpu.read(0x0100 + cpu.stack_pointer);
+
+    //ažuriramo pc
+    cpu.program_counter = (high_byte << 8u) | low_byte;
     return 0;
 }
 
