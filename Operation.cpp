@@ -86,6 +86,13 @@ uint8_t Operation::BMI(cpu6502 &cpu) {
 }
 
 uint8_t Operation::BNE(cpu6502 &cpu) {
+    if(cpu.getFlag(cpu6502::Z) == 0) {
+        cpu.cycles++;
+        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        //provjera koji je broj stranica novog pc-a i starog pc-a
+        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_adress;
+    }
     return 0;
 }
 
