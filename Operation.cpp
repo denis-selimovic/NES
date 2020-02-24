@@ -13,7 +13,7 @@ uint8_t Operation::AND(cpu6502 &cpu) {
     cpu.accumulator &= cpu.memory_content;
     cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
     cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80u);
-    return 0;
+    return 1;
 }
 
 uint8_t Operation::ASL(cpu6502 &cpu) {
@@ -315,7 +315,11 @@ uint8_t Operation::NOP(cpu6502 &cpu) {
 }
 
 uint8_t Operation::ORA(cpu6502 &cpu) {
-    return 0;
+    cpu.getMemoryContent();
+    cpu.accumulator |= cpu.memory_content;
+    cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
+    return 1;
 }
 
 uint8_t Operation::PHA(cpu6502 &cpu) {
