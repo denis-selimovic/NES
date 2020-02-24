@@ -11,3 +11,11 @@ uint8_t ppu2C02::readCPUMemory(uint16_t address) {
 void ppu2C02::writeCPUMemory(uint16_t address, uint8_t data) {
 
 }
+
+uint8_t ppu2C02::readPPUMemory(uint16_t address) {
+    return 0;
+}
+
+void ppu2C02::writePPUMemory(uint16_t address, uint8_t data) {
+
+}
