@@ -427,14 +427,17 @@ uint8_t Operation::SEI(cpu6502 &cpu) {
 }
 
 uint8_t Operation::STA(cpu6502 &cpu) {
+    cpu.write(cpu.absolute_adress, cpu.accumulator);
     return 0;
 }
 
 uint8_t Operation::STX(cpu6502 &cpu) {
+    cpu.write(cpu.absolute_adress, cpu.x_register);
     return 0;
 }
 
 uint8_t Operation::STY(cpu6502 &cpu) {
+    cpu.write(cpu.absolute_adress, cpu.y_register);
     return 0;
 }
 
