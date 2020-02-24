@@ -104,6 +104,28 @@ uint8_t Operation::BPL(cpu6502 &cpu) {
 }
 
 uint8_t Operation::BRK(cpu6502 &cpu) {
+    // BRK ima dvobajtni opcode
+    // zbog se sljedeća vrijednost pc-a ignoriše nakon što je pročitan prvi bajt opcode-a za BRK -> inkrementirano pc
+    cpu.program_counter++;
+    //postavimo I flag na 1
+    cpu.setFlag(cpu6502::I, true);
+    //programski brojač stavimo na stack
+    //na stack prvo ide prvih 8 bita pc-a (najznačajnijih)
+    cpu.write(0x0100 + cpu.stack_pointer, (cpu.program_counter  >> 8u) & 0x00FFu);
+    cpu.stack_pointer--;
+    //zatim na stack ide 8 najmanje značajnih bita
+    cpu.write(0x0100 + cpu.stack_pointer, cpu.program_counter & 0x00FFu);
+    cpu.stack_pointer--;
+
+    //nakon ovog na stack se stavlja sadržaj statusnog registra sa B flagom postavljenim na 1
+    //B flag se nakon toga vraća na 0
+    cpu.setFlag(cpu6502::B, true);
+    cpu.write(0x0100 + cpu.stack_pointer, cpu.status_register);
+    cpu.setFlag(cpu6502::B, false);
+    cpu.stack_pointer--;
+
+    //adresa interrupt rutine se dobija sa lokacija 0xFFFF (high byte) i 0xFFFE (low byte)
+    cpu.program_counter = uint16_t(cpu.read(0xFFFF) << 8u) | uint16_t(cpu.read(0xFFFE));
     return 0;
 }
 
