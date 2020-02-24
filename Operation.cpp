@@ -339,6 +339,10 @@ uint8_t Operation::PHP(cpu6502 &cpu) {
 }
 
 uint8_t Operation::PLA(cpu6502 &cpu) {
+    cpu.stack_pointer++;
+    cpu.accumulator = cpu.read(0x0100 + cpu.stack_pointer);
+    cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
     return 0;
 }
 
