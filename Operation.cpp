@@ -202,6 +202,11 @@ uint8_t Operation::CPY(cpu6502 &cpu) {
 }
 
 uint8_t Operation::DEC(cpu6502 &cpu) {
+    cpu.getMemoryContent();
+    uint16_t result = cpu.memory_content - 1;
+    cpu.write(cpu.absolute_adress, result & 0x00FFu);
+    cpu.setFlag(cpu6502::N, result & 0x0080u);
+    cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     return 0;
 }
 
