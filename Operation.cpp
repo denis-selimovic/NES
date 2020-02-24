@@ -456,6 +456,9 @@ uint8_t Operation::TAY(cpu6502 &cpu) {
 }
 
 uint8_t Operation::TSX(cpu6502 &cpu) {
+    cpu.x_register = cpu.stack_pointer;
+    cpu.setFlag(cpu6502::N, cpu.x_register & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.x_register == 0x00);
     return 0;
 }
 
