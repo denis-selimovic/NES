@@ -32,6 +32,14 @@ uint8_t Operation::ASL(cpu6502 &cpu) {
 }
 
 uint8_t Operation::BCC(cpu6502 &cpu) {
+    if(cpu.getFlag(cpu6502::C) == 0) {
+        cpu.cycles++;
+        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        //Ako je dodavanje relativnog skoka promijenilo stranicu u memoriju broj ciklusa se ponovo povecava
+        //Ovo provjeravamo poredeći broj stranice pc-a i nove apsolutne adrese
+        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_adress;
+    }
     return 0;
 }
 
