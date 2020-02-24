@@ -323,6 +323,8 @@ uint8_t Operation::ORA(cpu6502 &cpu) {
 }
 
 uint8_t Operation::PHA(cpu6502 &cpu) {
+    cpu.write(0x0100 + cpu.stack_pointer, cpu.accumulator);
+    cpu.stack_pointer--;
     return 0;
 }
 
