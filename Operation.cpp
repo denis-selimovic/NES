@@ -4,10 +4,6 @@
 
 #include "Operation.h"
 
-uint8_t Operation::BRK(cpu6502 &cpu) {
-    return 0;
-}
-
 uint8_t Operation::ADC(cpu6502 &cpu) {
     return 0;
 }
@@ -97,6 +93,17 @@ uint8_t Operation::BNE(cpu6502 &cpu) {
 }
 
 uint8_t Operation::BPL(cpu6502 &cpu) {
+    if(cpu.getFlag(cpu6502::N) == 0) {
+        cpu.cycles++;
+        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        //provjera stranice
+        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_adress;
+    }
+    return 0;
+}
+
+uint8_t Operation::BRK(cpu6502 &cpu) {
     return 0;
 }
 
