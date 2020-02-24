@@ -162,10 +162,12 @@ uint8_t Operation::CLD(cpu6502 &cpu) {
 }
 
 uint8_t Operation::CLI(cpu6502 &cpu) {
+    cpu.setFlag(cpu6502::I, false);
     return 0;
 }
 
 uint8_t Operation::CLV(cpu6502 &cpu) {
+    cpu.setFlag(cpu6502::V, false);
     return 0;
 }
 
