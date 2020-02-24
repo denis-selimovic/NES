@@ -172,7 +172,12 @@ uint8_t Operation::CLV(cpu6502 &cpu) {
 }
 
 uint8_t Operation::CMP(cpu6502 &cpu) {
-    return 0;
+    cpu.getMemoryContent();
+    uint16_t result = uint16_t(cpu.accumulator) - uint16_t(cpu.memory_content);
+    cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x00);
+    cpu.setFlag(cpu6502::N, result & 0x0080u);
+    cpu.setFlag(cpu6502::C, cpu.accumulator >= cpu.memory_content);
+    return 1;
 }
 
 uint8_t Operation::CPX(cpu6502 &cpu) {
