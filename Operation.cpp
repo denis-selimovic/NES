@@ -55,6 +55,13 @@ uint8_t Operation::BCS(cpu6502 &cpu) {
 }
 
 uint8_t Operation::BEQ(cpu6502 &cpu) {
+    if(cpu.getFlag(cpu6502::Z) == 1) {
+        cpu.cycles++;
+        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        //ako pc i apsolutna adresa nisu na istoj stranici povecavamo broj ciklusa za 1
+        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_adress;
+    }
     return 0;
 }
 
