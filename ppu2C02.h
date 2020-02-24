@@ -10,6 +10,20 @@
 
 class ppu2C02 {
 
+    //Memorijska mapa ppu
+    //ppu ima svoj memorijski prostor odvojen od cpu
+    //2KB RAM-a je odvojeno za PPU na NES platformi
+
+    //na adresama 0x0000 do 0x1FFF je za dvije tabele paterna
+    uint8_t pattern_table[2][4096];
+    //na adresama 0x2000 do 0x3EFF se nalaze 4 tabele imena
+    //pošto NES ima samo 2KB VRAM-a 4 tabele se koristeći mirroring pamte kao dvije tabele
+    uint8_t nametable[2][1024];
+    //na adresama 0x3F00 do 0x3FFF su palete
+    //i ovdje se koristi mirroring
+    uint8_t pallete[32];
+
+
     //PPU registri
 
     //prvi registar je PPUCTRL koji sadrži 8 bita
