@@ -50,7 +50,7 @@ private:
     uint8_t cycles = 0;
     uint8_t memory_content = 0x00;
     uint16_t relative_address = 0x00;
-    uint16_t absolute_adress = 0x0000;
+    uint16_t absolute_address = 0x0000;
 
     friend class Operation;
     friend class AddressingMode;

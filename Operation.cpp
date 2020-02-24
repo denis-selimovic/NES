@@ -23,18 +23,18 @@ uint8_t Operation::ASL(cpu6502 &cpu) {
     cpu.setFlag(cpu6502::Z, (shifted_value & 0x00FFu) == 0x0000);
     cpu.setFlag(cpu6502::N, shifted_value & 0x80u);
     if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = shifted_value & 0x00FFu;
-    else cpu.write(cpu.absolute_adress, shifted_value & 0x00FFu);
+    else cpu.write(cpu.absolute_address, shifted_value & 0x00FFu);
     return 0;
 }
 
 uint8_t Operation::BCC(cpu6502 &cpu) {
     if(cpu.getFlag(cpu6502::C) == 0) {
         cpu.cycles++;
-        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //Ako je dodavanje relativnog skoka promijenilo stranicu u memoriju broj ciklusa se ponovo povecava
         //Ovo provjeravamo poredeći broj stranice pc-a i nove apsolutne adrese
-        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_adress;
+        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_address;
     }
     return 0;
 }
@@ -42,10 +42,10 @@ uint8_t Operation::BCC(cpu6502 &cpu) {
 uint8_t Operation::BCS(cpu6502 &cpu) {
     if(cpu.getFlag(cpu6502::C) == 1) {
         cpu.cycles++;
-        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //ako je promijenjen broj stranice povećavamo broj ciklusa za 1
-        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_adress;
+        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_address;
     }
     return 0;
 }
@@ -53,10 +53,10 @@ uint8_t Operation::BCS(cpu6502 &cpu) {
 uint8_t Operation::BEQ(cpu6502 &cpu) {
     if(cpu.getFlag(cpu6502::Z) == 1) {
         cpu.cycles++;
-        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //ako pc i apsolutna adresa nisu na istoj stranici povecavamo broj ciklusa za 1
-        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_adress;
+        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_address;
     }
     return 0;
 }
@@ -73,10 +73,10 @@ uint8_t Operation::BIT(cpu6502 &cpu) {
 uint8_t Operation::BMI(cpu6502 &cpu) {
     if(cpu.getFlag(cpu6502::N) == 1) {
         cpu.cycles++;
-        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //provjera da li su novi pc i stari pc na istoj stranici u memoriji
-        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_adress;
+        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_address;
     }
     return 0;
 }
@@ -84,10 +84,10 @@ uint8_t Operation::BMI(cpu6502 &cpu) {
 uint8_t Operation::BNE(cpu6502 &cpu) {
     if(cpu.getFlag(cpu6502::Z) == 0) {
         cpu.cycles++;
-        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //provjera koji je broj stranica novog pc-a i starog pc-a
-        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_adress;
+        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_address;
     }
     return 0;
 }
@@ -95,10 +95,10 @@ uint8_t Operation::BNE(cpu6502 &cpu) {
 uint8_t Operation::BPL(cpu6502 &cpu) {
     if(cpu.getFlag(cpu6502::N) == 0) {
         cpu.cycles++;
-        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //provjera stranice
-        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_adress;
+        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.absolute_address;
     }
     return 0;
 }
@@ -132,9 +132,9 @@ uint8_t Operation::BRK(cpu6502 &cpu) {
 uint8_t Operation::BVC(cpu6502 &cpu) {
     if(cpu.getFlag(cpu6502::V) == 0) {
         cpu.cycles++;
-        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //ako pc i novi pc nisu na istoj stranici broj ciklusa se povecava
-        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
         cpu.program_counter = cpu.program_counter;
     }
     return 0;
@@ -143,9 +143,9 @@ uint8_t Operation::BVC(cpu6502 &cpu) {
 uint8_t Operation::BVS(cpu6502 &cpu) {
     if(cpu.getFlag(cpu6502::V) == 1) {
         cpu.cycles++;
-        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //ako pc i novi pc nisu na istoj stranici broj ciklusa se povecava
-        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
         cpu.program_counter = cpu.program_counter;
     }
     return 0;
@@ -204,7 +204,7 @@ uint8_t Operation::CPY(cpu6502 &cpu) {
 uint8_t Operation::DEC(cpu6502 &cpu) {
     cpu.getMemoryContent();
     uint16_t result = cpu.memory_content - 1;
-    cpu.write(cpu.absolute_adress, result & 0x00FFu);
+    cpu.write(cpu.absolute_address, result & 0x00FFu);
     cpu.setFlag(cpu6502::N, result & 0x0080u);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     return 0;
@@ -235,7 +235,7 @@ uint8_t Operation::EOR(cpu6502 &cpu) {
 uint8_t Operation::INC(cpu6502 &cpu) {
     cpu.getMemoryContent();
     uint16_t result = cpu.memory_content + 1;
-    cpu.write(cpu.absolute_adress, result & 0x00FFu);
+    cpu.write(cpu.absolute_address, result & 0x00FFu);
     cpu.setFlag(cpu6502::N, result & 0x0080u);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     return 0;
@@ -271,7 +271,7 @@ uint8_t Operation::JSR(cpu6502 &cpu) {
     cpu.stack_pointer--;
 
     //mijenjamo pc
-    cpu.program_counter = cpu.absolute_adress;
+    cpu.program_counter = cpu.absolute_address;
     return 0;
 }
 
@@ -306,7 +306,7 @@ uint8_t Operation::LSR(cpu6502 &cpu) {
     cpu.setFlag(cpu6502::N, false);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
-    else cpu.write(cpu.absolute_adress, result & 0x00FFu);
+    else cpu.write(cpu.absolute_address, result & 0x00FFu);
     return 0;
 }
 
@@ -360,7 +360,7 @@ uint8_t Operation::ROL(cpu6502 &cpu) {
     cpu.setFlag(cpu6502::N, result & 0x0080u);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
-    else cpu.write(cpu.absolute_adress, result & 0x00FFu);
+    else cpu.write(cpu.absolute_address, result & 0x00FFu);
     return 0;
 }
 
@@ -371,7 +371,7 @@ uint8_t Operation::ROR(cpu6502 &cpu) {
     cpu.setFlag(cpu6502::N, result & 0x0080u);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
-    else cpu.write(cpu.absolute_adress, result & 0x00FFu);
+    else cpu.write(cpu.absolute_address, result & 0x00FFu);
     return 0;
 }
 
@@ -427,17 +427,17 @@ uint8_t Operation::SEI(cpu6502 &cpu) {
 }
 
 uint8_t Operation::STA(cpu6502 &cpu) {
-    cpu.write(cpu.absolute_adress, cpu.accumulator);
+    cpu.write(cpu.absolute_address, cpu.accumulator);
     return 0;
 }
 
 uint8_t Operation::STX(cpu6502 &cpu) {
-    cpu.write(cpu.absolute_adress, cpu.x_register);
+    cpu.write(cpu.absolute_address, cpu.x_register);
     return 0;
 }
 
 uint8_t Operation::STY(cpu6502 &cpu) {
-    cpu.write(cpu.absolute_adress, cpu.y_register);
+    cpu.write(cpu.absolute_address, cpu.y_register);
     return 0;
 }
 

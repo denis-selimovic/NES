@@ -307,6 +307,6 @@ void cpu6502::nonmaskableInterrupt() {
 }
 
 uint8_t cpu6502::getMemoryContent() {
-    if(instruction->addressing_mode != &AddressingMode::IMP) memory_content = read(absolute_adress);
+    if(instruction->addressing_mode != &AddressingMode::IMP) memory_content = read(absolute_address);
     return memory_content;
 }
