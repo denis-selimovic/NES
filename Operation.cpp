@@ -66,6 +66,11 @@ uint8_t Operation::BEQ(cpu6502 &cpu) {
 }
 
 uint8_t Operation::BIT(cpu6502 &cpu) {
+    cpu.getMemoryContent();
+    uint8_t result = cpu.accumulator & cpu.memory_content;
+    cpu.setFlag(cpu6502::V, cpu.memory_content & (1u << 6u));
+    cpu.setFlag(cpu6502::N, cpu.memory_content & (1u << 7u));
+    cpu.setFlag(cpu6502::Z, result == 0x00);
     return 0;
 }
 
