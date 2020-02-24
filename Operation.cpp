@@ -300,6 +300,13 @@ uint8_t Operation::LDY(cpu6502 &cpu) {
 }
 
 uint8_t Operation::LSR(cpu6502 &cpu) {
+    cpu.getMemoryContent();
+    uint16_t result = cpu.memory_content >> 1u;
+    cpu.setFlag(cpu6502::C, cpu.memory_content & 0x0001u);
+    cpu.setFlag(cpu6502::N, false);
+    cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
+    if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
+    else cpu.write(cpu.absolute_adress, result & 0x00FFu);
     return 0;
 }
 
