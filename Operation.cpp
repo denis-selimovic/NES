@@ -363,6 +363,11 @@ uint8_t Operation::ROL(cpu6502 &cpu) {
 }
 
 uint8_t Operation::ROR(cpu6502 &cpu) {
+    cpu.getMemoryContent();
+    uint16_t result = uint16_t((cpu.getFlag(cpu6502::C) << 7u)  | (cpu.memory_content >> 1u));
+    cpu.setFlag(cpu6502::C, cpu.memory_content & 0x01u);
+    cpu.setFlag(cpu6502::N, result & 0x0080u);
+    cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     return 0;
 }
 
