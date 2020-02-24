@@ -176,11 +176,18 @@ uint8_t Operation::CMP(cpu6502 &cpu) {
     uint16_t result = uint16_t(cpu.accumulator) - uint16_t(cpu.memory_content);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x00);
     cpu.setFlag(cpu6502::N, result & 0x0080u);
+    //C flag se postavlja ako je accumulator >= memory
     cpu.setFlag(cpu6502::C, cpu.accumulator >= cpu.memory_content);
     return 1;
 }
 
 uint8_t Operation::CPX(cpu6502 &cpu) {
+    cpu.getMemoryContent();
+    uint16_t result = uint16_t(cpu.x_register) - uint16_t(cpu.memory_content);
+    cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x00);
+    cpu.setFlag(cpu6502::N, result & 0x0080u);
+    //C flag se postavlja ako x >= memory
+    cpu.setFlag(cpu6502::C, cpu.x_register >= cpu.memory_content);
     return 0;
 }
 
