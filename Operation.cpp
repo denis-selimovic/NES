@@ -329,6 +329,12 @@ uint8_t Operation::PHA(cpu6502 &cpu) {
 }
 
 uint8_t Operation::PHP(cpu6502 &cpu) {
+    cpu.setFlag(cpu6502::B, true);
+    cpu.setFlag(cpu6502::U, true);
+    cpu.write(0x0100 + cpu.stack_pointer, cpu.status_register);
+    cpu.stack_pointer--;
+    cpu.setFlag(cpu6502::B, false);
+    cpu.setFlag(cpu6502::U, false);
     return 0;
 }
 
