@@ -8,7 +8,7 @@
 
 class GamePak {
 public:
-    enum MIRRORING {HORIZONTAL, VERTICAL};
+    enum MIRRORING {HORIZONTAL, VERTICAL} mirroring = HORIZONTAL;
 };
 
 

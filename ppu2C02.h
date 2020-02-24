@@ -7,6 +7,7 @@
 
 
 #include <cstdint>
+#include "GamePak.h"
 
 class ppu2C02 {
 
@@ -80,12 +81,15 @@ class ppu2C02 {
         uint8_t index;
     } OAM[64];
 
+
+    GamePak *gamepak;
 public:
 
     uint8_t readCPUMemory(uint16_t address);
     void writeCPUMemory(uint16_t address, uint8_t data);
     uint8_t readPPUMemory(uint16_t address);
     void writePPUMemory(uint16_t address, uint8_t data);
+    void connectGamePak(GamePak *gamepak);
 };
 
 
