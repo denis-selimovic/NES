@@ -359,6 +359,8 @@ uint8_t Operation::ROL(cpu6502 &cpu) {
     cpu.setFlag(cpu6502::C, result & 0xFF00u);
     cpu.setFlag(cpu6502::N, result & 0x0080u);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
+    if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
+    else cpu.write(cpu.absolute_adress, result & 0x00FFu);
     return 0;
 }
 
@@ -368,6 +370,8 @@ uint8_t Operation::ROR(cpu6502 &cpu) {
     cpu.setFlag(cpu6502::C, cpu.memory_content & 0x01u);
     cpu.setFlag(cpu6502::N, result & 0x0080u);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
+    if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
+    else cpu.write(cpu.absolute_adress, result & 0x00FFu);
     return 0;
 }
 
