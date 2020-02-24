@@ -261,6 +261,17 @@ uint8_t Operation::JMP(cpu6502 &cpu) {
 }
 
 uint8_t Operation::JSR(cpu6502 &cpu) {
+    //cuvamo mjesto povratka tj pc--
+    cpu.program_counter--;
+
+    //stavimo pc na stek
+    cpu.write(0x0100 + cpu.stack_pointer, (cpu.program_counter >> 8u) & 0x00FFu);
+    cpu.stack_pointer--;
+    cpu.write(0x0100 + cpu.stack_pointer, cpu.program_counter & 0x00FFu);
+    cpu.stack_pointer--;
+
+    //mijenjamo pc
+    cpu.program_counter = cpu.absolute_adress;
     return 0;
 }
 
