@@ -157,6 +157,7 @@ uint8_t Operation::CLC(cpu6502 &cpu) {
 }
 
 uint8_t Operation::CLD(cpu6502 &cpu) {
+    cpu.setFlag(cpu6502::D, false);
     return 0;
 }
 
