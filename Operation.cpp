@@ -463,6 +463,9 @@ uint8_t Operation::TSX(cpu6502 &cpu) {
 }
 
 uint8_t Operation::TXA(cpu6502 &cpu) {
+    cpu.accumulator = cpu.x_register;
+    cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80);
+    cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
     return 0;
 }
 
