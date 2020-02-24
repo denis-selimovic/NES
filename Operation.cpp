@@ -130,10 +130,24 @@ uint8_t Operation::BRK(cpu6502 &cpu) {
 }
 
 uint8_t Operation::BVC(cpu6502 &cpu) {
+    if(cpu.getFlag(cpu6502::V) == 0) {
+        cpu.cycles++;
+        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        //ako pc i novi pc nisu na istoj stranici broj ciklusa se povecava
+        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.program_counter;
+    }
     return 0;
 }
 
 uint8_t Operation::BVS(cpu6502 &cpu) {
+    if(cpu.getFlag(cpu6502::V) == 1) {
+        cpu.cycles++;
+        cpu.absolute_adress = cpu.program_counter + cpu.relative_address;
+        //ako pc i novi pc nisu na istoj stranici broj ciklusa se povecava
+        if((cpu.absolute_adress & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        cpu.program_counter = cpu.program_counter;
+    }
     return 0;
 }
 
