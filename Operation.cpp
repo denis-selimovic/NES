@@ -347,6 +347,9 @@ uint8_t Operation::PLA(cpu6502 &cpu) {
 }
 
 uint8_t Operation::PLP(cpu6502 &cpu) {
+    cpu.stack_pointer++;
+    cpu.status_register = cpu.read(0x0100 + cpu.stack_pointer);
+    cpu.setFlag(cpu6502::U, true);
     return 0;
 }
 
