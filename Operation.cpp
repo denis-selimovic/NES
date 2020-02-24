@@ -152,6 +152,7 @@ uint8_t Operation::BVS(cpu6502 &cpu) {
 }
 
 uint8_t Operation::CLC(cpu6502 &cpu) {
+    cpu.setFlag(cpu6502::C, false);
     return 0;
 }
 
