@@ -44,6 +44,28 @@ class ppu2C02 {
         uint8_t reg;
     } ppumask;
 
+    //treći registar je PPUSTATUS
+    union PPUSTATUS {
+        struct {
+            uint8_t U : 5;
+            uint8_t sprite_overflow : 1;
+            uint8_t sprite_zero_hit : 1;
+            uint8_t vblank : 1;
+        } bits;
+        uint8_t reg;
+    } ppustatus;
+
+    //četvrti registar čuva adresu pomoću koje se pristupa OAM-u
+    uint8_t OAM_address;
+    //OAM je object attribute memory koja čuva informacije o spirte-ovima
+    //interna memorija koja čuva do 64 spirte-a svaki sprite se sastoji od 4 bajta
+    struct Sprite{
+        uint8_t y_position;
+        uint8_t tile_index;
+        uint8_t attributes;
+        uint8_t index;
+    } OAM[64];
+
 public:
 
     uint8_t readCPUMemory(uint16_t address);
