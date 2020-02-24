@@ -366,7 +366,7 @@ uint8_t Operation::ROL(cpu6502 &cpu) {
 
 uint8_t Operation::ROR(cpu6502 &cpu) {
     cpu.getMemoryContent();
-    uint16_t result = uint16_t((cpu.getFlag(cpu6502::C) << 7u)  | (cpu.memory_content >> 1u));
+    auto result = uint16_t((cpu.getFlag(cpu6502::C) << 7u)  | (cpu.memory_content >> 1u));
     cpu.setFlag(cpu6502::C, cpu.memory_content & 0x01u);
     cpu.setFlag(cpu6502::N, result & 0x0080u);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
@@ -376,6 +376,19 @@ uint8_t Operation::ROR(cpu6502 &cpu) {
 }
 
 uint8_t Operation::RTI(cpu6502 &cpu) {
+    //čitamo statusni registar sa stacka
+    cpu.stack_pointer++;
+    cpu.status_register = cpu.read(0x0100 + cpu.stack_pointer);
+    cpu.setFlag(cpu6502::U, true);
+
+    //uzimamo 8 najmanje značajnih bita pc-a
+    cpu.stack_pointer++;
+    uint16_t low_pc = cpu.read(0x0100 + cpu.stack_pointer);
+    //uzimamo 8 najznačajnijih bita pc-a
+    cpu.stack_pointer++;
+    uint16_t high_pc = cpu.read(0x0100 + cpu.stack_pointer);
+    //ažuriramo pc
+    cpu.program_counter = (high_pc << 8u) | low_pc;
     return 0;
 }
 
