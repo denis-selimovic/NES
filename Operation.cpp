@@ -225,7 +225,11 @@ uint8_t Operation::DEY(cpu6502 &cpu) {
 }
 
 uint8_t Operation::EOR(cpu6502 &cpu) {
-    return 0;
+    cpu.getMemoryContent();
+    cpu.accumulator ^= cpu.memory_content;
+    cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80u);
+    cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
+    return 1;
 }
 
 uint8_t Operation::INC(cpu6502 &cpu) {
