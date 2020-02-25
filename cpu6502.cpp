@@ -291,7 +291,31 @@ cpu6502::cpu6502() {
 }
 
 void cpu6502::clock() {
+    if(cycles == 0) {
+        //ako je broj ciklusa 0 prelazimo na sljedeću instrukciju
+        //opcode trenutne instrukcije dobijamo preko programskog brojača
+        uint8_t opcode = read(program_counter);
+        //povećamo programski brojač
+        program_counter++;
 
+        //ažuriramo novu instrukciju
+        instruction = &lookup[opcode];
+
+        //ažuriramo broj ciklusa
+        cycles = instruction->total_cycles;
+
+        //izvršimo adresiranje a zatim operaciju
+        uint8_t cycles_addr = instruction->addressing_mode(*this);
+        uint8_t cycle_opp = instruction->operation(*this);
+
+        //povećamo broj ciklusa ako je ponovo potrebno
+        cycles += (cycles_addr & cycle_opp);
+
+        //postavimo U flag uvijek na 1
+        setFlag(U, true);
+    }
+    //smanjimo broj ciklusa za 1
+    cycles--;
 }
 
 void cpu6502::reset() {
