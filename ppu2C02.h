@@ -74,6 +74,8 @@ class ppu2C02 {
     uint8_t OAM_address;
     //OAM je object attribute memory koja čuva informacije o spirte-ovima
     //interna memorija koja čuva do 64 spirte-a svaki sprite se sastoji od 4 bajta
+    //peti registar neće biti implementiran
+    //njemu pristupamo preko adrese koja je u OAM_address
     struct Sprite{
         uint8_t y_position;
         uint8_t tile_index;
@@ -81,6 +83,39 @@ class ppu2C02 {
         uint8_t index;
     } OAM[64];
 
+    //šesti registar je PPUSCROLL, a sedmi je adresa u VRAM-u
+    //osmi registar neće biti implementiran jer njemu pristupamo preko adrese u VRAM-u
+    //osmi registar je sličan petom registru
+    //template za šesti i sedmi registar je dat ispod
+    union PPUADDRESS {
+        struct {
+            uint16_t coarse_x : 5;
+            uint16_t coarse_y : 5;
+            uint16_t nametable_select_x : 1;
+            uint16_t nametable_select_y : 1;
+            uint16_t fine_x : 3;
+            uint16_t unused : 1;
+        };
+        uint16_t reg;
+    };
+
+    //vram address predstavlja sadržaj sedmog registra
+    //t_address je pomoćna varijabla preko koje vršimo upis u šesti i sedmi registar
+    //ova dva registra koriste isti buffer za upis podataka
+    //zbog ovoga prvo moramo pisati u VRAM pa onda mijenjati PPUSCROLL
+    PPUADDRESS vram_address, t_address;
+
+
+    //oba registra koriste isti latch za upis
+    //upis u ova dva registra se odvija u dvije faze
+    //služi kao latch za upis u PPUSCROLL i VRAMADDRESS
+    uint8_t toggle = 0x00;
+
+    //buffer za čitanje osmog registra PPU
+    //čitanje iz ovog registra kasni jedan ciklus ako je adresa < 0x3F00
+    //zbog toga prethodno pročitanu vrijednost čuvamo u bufferu
+    //ako je adresa >= 0x3F00 buffer nije potreban
+    uint8_t ppudata_buffer = 0x00;
 
     GamePak *gamepak;
 public:
