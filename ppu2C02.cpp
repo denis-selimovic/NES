@@ -12,6 +12,14 @@ uint8_t ppu2C02::readCPUMemory(uint16_t address) {
             //PPUCTRL i PPUMASK su write-only registri
             break;
         case 0x0002:
+            //čitanje iz ovog registra utiče i na ostale registre
+            //postavlja se toggle na 0
+            //takođe vblank se postavlja na 0
+
+            //samo najznačanija tri bita su validna
+            data = ppustatus.reg & 0xE0u;
+            toggle = false;
+            ppustatus.vblank = 0;
             break;
         case 0x0003:
             //OAM_ADDRESS nije readable
@@ -36,6 +44,8 @@ uint8_t ppu2C02::readCPUMemory(uint16_t address) {
 
             //na kraju inkrementiramo adresu
             vram_address.reg += (ppuctrl.increment_mode ? 32 : 1);
+            break;
+        default:
             break;
     }
     return data;
@@ -109,6 +119,8 @@ void ppu2C02::writeCPUMemory(uint16_t address, uint8_t data) {
             writePPUMemory(vram_address.reg, data);
             //adresu inkrementiramo na osnovu PPUCTRL regista za 1 ili 32
             vram_address.reg += (ppuctrl.increment_mode ? 32 : 1);
+            break;
+        default:
             break;
     }
 }
