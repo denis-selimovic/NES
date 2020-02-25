@@ -348,7 +348,26 @@ void cpu6502::interruptRequest() {
 }
 
 void cpu6502::nonmaskableInterrupt() {
+    //nonmaskable interrupt se dešava uvijek
 
+    //stavljamo pc na stack
+    write(0x0100 + stack_pointer, (program_counter >> 8u) & 0x00FFu);
+    stack_pointer--;
+    write(0x0100 + stack_pointer, program_counter & 0x00FFu);
+    stack_pointer--;
+
+    //stavljamo statusni registar na stack
+    setFlag(B, 0);
+    write(0x0100 + stack_pointer, status_register | U | I);
+    stack_pointer--;
+
+    //adresa koja se čita je 0xFFFA
+    absolute_address = 0xFFFA;
+    uint16_t low_byte = read(absolute_address);
+    uint16_t high_byte = read(absolute_address + 1);
+
+    program_counter = high_byte << 8u | low_byte;
+    cycles = 8;
 }
 
 uint8_t cpu6502::getMemoryContent() {
