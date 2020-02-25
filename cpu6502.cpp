@@ -295,6 +295,30 @@ void cpu6502::clock() {
 }
 
 void cpu6502::reset() {
+    //ova tri registra se restartuju
+    accumulator = x_register = y_register = 0x00;
+
+    //stack pointer pokazuje na 0xFD
+    stack_pointer = 0xFD;
+
+    //svi statusni biti koji se koriste su 0
+    status_register = 0x00u | B;
+
+    //adresa sa koje se čita novi pc je 0xFFFC
+    absolute_address = 0xFFFC;
+    uint8_t low_byte = read(absolute_address);
+    absolute_address++;
+    uint8_t high_byte = read(absolute_address);
+
+    //dobijamo novi pc
+    program_counter = uint16_t(high_byte << 8u) | uint16_t(low_byte);
+
+    //broj ciklusa za reset je 8
+    cycles = 8;
+
+    //resetujemo pomoćne varijable
+    absolute_address = relative_address = 0x0000;
+    memory_content = 0x00;
 
 }
 
