@@ -302,7 +302,7 @@ void cpu6502::reset() {
     stack_pointer = 0xFD;
 
     //svi statusni biti koji se koriste su 0
-    status_register = 0x00u | B;
+    status_register = 0x00u | U;
 
     //adresa sa koje se čita novi pc je 0xFFFC
     absolute_address = 0xFFFC;
