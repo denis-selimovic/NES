@@ -9,7 +9,75 @@ uint8_t ppu2C02::readCPUMemory(uint16_t address) {
 }
 
 void ppu2C02::writeCPUMemory(uint16_t address, uint8_t data) {
-
+    switch(address) {
+        case 0x0000:
+            //upis u ovaj registar je moguć
+            //upis u ovaj registar vrši upis i u PPUSCROLL registar - t_address pomoćna varijabla
+            ppuctrl.reg = data;
+            t_address.nametable_select_x = ppuctrl.nametable_select_1;
+            t_address.nametable_select_y = ppuctrl.nametable_select_2;
+            break;
+        case 0x0001:
+            //upis u mask registar je isto moguć
+            ppumask.reg = data;
+            break;
+        case 0x0002:
+            //upis u ovaj registar nije moguć
+            break;
+        case 0x0003:
+            //upis adrese za OAM
+            OAM_address = data;
+            break;
+        case 0x0004:
+            //upis u OAM preko sadržaja četvrtog registra
+            //ua upis koristimo pokazivač na tu memoriju
+            oam_memory[OAM_address] = data;
+            break;
+        case 0x0005:
+            //upis u PPUSCROLL ide u dvije faze
+            //prvo vršimo upis u X scroll, pa onda u Y scroll
+            //ovo se određuje na osnovu latch varijable - toggle
+            if(!toggle) {
+                //prvo postavimo vrijednost fine_x i coarse_x
+                fine_x = data & 0x07u;
+                t_address.coarse_x = data >> 3u;
+                // postavimo toggle na 1;
+                toggle = true;
+            }
+            else {
+                //postavimo fine_y i coarse_y
+                //vratimo toggle na 0
+                t_address.fine_y = data & 0x07u;
+                t_address.coarse_y = data >> 3u;
+                toggle = false;
+            }
+            break;
+        case 0x0006:
+            //t_address koritimo kao buffer za vram_address
+            //upis se vrši iz dva dijela
+            //kad je latch u nuli upišemo high byte
+            //nakon toga upišemo low byte
+            if(!toggle) {
+                //adresu svodimo na opseg 0x3F i generišemo high byte
+                t_address.reg = (uint16_t)(((data & 0x3Fu) << 8u) | (t_address.reg & 0x00FFu));
+                toggle = true;
+            }
+            else {
+                //sada dodajemo low byte
+                t_address.reg = (t_address.reg & 0xFF00u) | data;
+                vram_address = t_address;
+                toggle = false;
+            }
+            break;
+        case 0x0007:
+            //upis u VRAM
+            //koristmo writePPUMemory funkciju
+            //inkrementiramo adresu
+            writePPUMemory(vram_address.reg, data);
+            //adresu inkrementiramo na osnovu PPUCTRL regista za 1 ili 32
+            vram_address.reg += (ppuctrl.increment_mode ? 32 : 1);
+            break;
+    }
 }
 
 uint8_t ppu2C02::readPPUMemory(uint16_t address) {
