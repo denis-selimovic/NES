@@ -8,4 +8,8 @@ add_library(cpu cpu6502.cpp)
 target_link_libraries(cpu PUBLIC operation)
 target_link_libraries(cpu PUBLIC adrmode)
 
+find_package(SDL2 REQUIRED)
+include_directories(${SDLA2_INCLUDE_DIRS})
+
 add_executable(NES main.cpp Instruction.cpp Instruction.h AddressingMode.cpp AddressingMode.h Operation.cpp Operation.h Bus.cpp Bus.h cpu6502.cpp cpu6502.h ppu2C02.cpp ppu2C02.h GamePak.cpp GamePak.h)
+target_link_libraries(NES ${SDL2_LIBRARIES})
