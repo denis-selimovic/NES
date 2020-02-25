@@ -5,7 +5,40 @@
 #include "ppu2C02.h"
 
 uint8_t ppu2C02::readCPUMemory(uint16_t address) {
-    return 0;
+    uint8_t data = 0x00;
+    switch(address) {
+        case 0x0000:
+        case 0x0001:
+            //PPUCTRL i PPUMASK su write-only registri
+            break;
+        case 0x0002:
+            break;
+        case 0x0003:
+            //OAM_ADDRESS nije readable
+            break;
+        case 0x0004:
+            //pristup oam memoriji je moguć uvijek
+            data = oam_memory[address];
+            break;
+        case 0x0005:
+        case 0x0006:
+            //PPUSCROLL i VRAM_ADDRESS su write-only
+            break;
+        case 0x0007:
+            //koristimo buffer od ranije da vratimo podatke koji su pročitani u prethodnom ciklusu
+            data = ppudata_buffer;
+            //sada počinje sljedeći ciklus čitanja
+            ppudata_buffer = readPPUMemory(vram_address.reg);
+
+            //ako je adresa >= 0x3F00 onda se radi o čitanju paleta
+            //ovo je moguće uraditi bez čekanja i u tom slučaju se podaci vraćaju odmah
+            if(vram_address.reg >= 0x3F00) data = ppudata_buffer;
+
+            //na kraju inkrementiramo adresu
+            vram_address.reg += (ppuctrl.increment_mode ? 32 : 1);
+            break;
+    }
+    return data;
 }
 
 void ppu2C02::writeCPUMemory(uint16_t address, uint8_t data) {
