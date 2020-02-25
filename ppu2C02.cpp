@@ -38,7 +38,7 @@ uint8_t ppu2C02::readPPUMemory(uint16_t address) {
         else if (address == 0x0014) address = 0x0004;
         else if (address == 0x0018) address = 0x0008;
         else if (address == 0x001C) address = 0x000C;
-        return pallete[address] & unsigned(ppumask.bits.grayscale ? 0x30 : 0x3F);
+        return pallete[address] & unsigned(ppumask.grayscale ? 0x30 : 0x3F);
     }
     return 0;
 }

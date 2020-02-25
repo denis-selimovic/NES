@@ -40,7 +40,7 @@ class ppu2C02 {
             uint8_t sprite_height : 1;
             uint8_t ppu_master_slave : 1;
             uint8_t nmi_enable : 1;
-        } bits;
+        };
         uint8_t reg;
     } ppuctrl;
 
@@ -55,7 +55,7 @@ class ppu2C02 {
             uint8_t red_emphasis : 1;
             uint8_t green_emphasis : 1;
             uint8_t blue_emphasis : 1;
-        } bits;
+        };
         uint8_t reg;
     } ppumask;
 
@@ -66,7 +66,7 @@ class ppu2C02 {
             uint8_t sprite_overflow : 1;
             uint8_t sprite_zero_hit : 1;
             uint8_t vblank : 1;
-        } bits;
+        };
         uint8_t reg;
     } ppustatus;
 
