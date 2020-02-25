@@ -306,12 +306,12 @@ void cpu6502::reset() {
 
     //adresa sa koje se čita novi pc je 0xFFFC
     absolute_address = 0xFFFC;
-    uint8_t low_byte = read(absolute_address);
+    uint16_t low_byte = read(absolute_address);
     absolute_address++;
-    uint8_t high_byte = read(absolute_address);
+    uint16_t high_byte = read(absolute_address);
 
     //dobijamo novi pc
-    program_counter = uint16_t(high_byte << 8u) | uint16_t(low_byte);
+    program_counter = unsigned(high_byte) << 8u | low_byte;
 
     //broj ciklusa za reset je 8
     cycles = 8;
@@ -323,7 +323,28 @@ void cpu6502::reset() {
 }
 
 void cpu6502::interruptRequest() {
+    if(getFlag(I) == 0) {
+        //stavimo pc na stack
+        write(0x0100 + stack_pointer, (program_counter >> 8u) & 0x00FFu);
+        stack_pointer--;
+        write(0x0100 + stack_pointer, program_counter & 0x00FFu);
+        stack_pointer--;
 
+        //stavimo statusni registar na stack
+        setFlag(B, 0);
+        write(0x0100 + stack_pointer, status_register | U | I);
+        stack_pointer--;
+
+        //adresa u memoriji za novi pc je 0xFFFE
+        absolute_address = 0xFFFE;
+        uint16_t low_byte = read(absolute_address);
+        uint16_t high_byte = read(absolute_address + 1);
+
+        program_counter = unsigned (high_byte) << 8u | low_byte;
+
+        //broj ciklusa je 7
+        cycles = 7;
+    }
 }
 
 void cpu6502::nonmaskableInterrupt() {
