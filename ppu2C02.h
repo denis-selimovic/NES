@@ -93,7 +93,7 @@ class ppu2C02 {
             uint16_t coarse_y : 5;
             uint16_t nametable_select_x : 1;
             uint16_t nametable_select_y : 1;
-            uint16_t fine_x : 3;
+            uint16_t fine_y : 3;
             uint16_t unused : 1;
         };
         uint16_t reg;
@@ -105,6 +105,8 @@ class ppu2C02 {
     //zbog ovoga prvo moramo pisati u VRAM pa onda mijenjati PPUSCROLL
     PPUADDRESS vram_address, t_address;
 
+    //tri bita za PPUSCROLL
+    uint8_t fine_x = 0x00;
 
     //oba registra koriste isti latch za upis
     //upis u ova dva registra se odvija u dvije faze
