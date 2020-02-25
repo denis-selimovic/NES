@@ -83,6 +83,8 @@ class ppu2C02 {
         uint8_t index;
     } OAM[64];
 
+
+    //pokazivač na OAM memoriju
     uint8_t *oam_memory = (uint8_t*)OAM;
 
     //šesti registar je PPUSCROLL, a sedmi je adresa u VRAM-u
