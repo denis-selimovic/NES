@@ -43,6 +43,10 @@ private:
 
 public:
     GamePak(const std::string &game);
+    bool readCPUMemory(uint16_t address, uint8_t &data);
+    bool writeCPUMemory(uint16_t address, uint8_t data);
+    bool readPPUMemory(uint16_t address, uint8_t &data);
+    bool writePPUMemory(uint16_t address, uint8_t data);
 };
 
 

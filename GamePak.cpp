@@ -62,3 +62,29 @@ Mapper *GamePak::setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_bank
     return nullptr;
 }
 
+bool GamePak::readCPUMemory(uint16_t address, uint8_t &data) {
+    uint32_t mapped_address = 0x0000;
+    if(mapper->readCPUMemory(address, mapped_address)) {
+        data = PRG[mapped_address];
+        return true;
+    }
+    return false;
+}
+
+bool GamePak::writeCPUMemory(uint16_t address, uint8_t data) {
+    uint32_t mapped_address = 0x0000;
+    if(mapper->writeCPUMemory(address, mapped_address)) {
+        PRG[mapped_address] = data;
+        return true;
+    }
+    return false;
+}
+
+bool GamePak::readPPUMemory(uint16_t address, uint8_t &data) {
+    return false;
+}
+
+bool GamePak::writePPUMemory(uint16_t address, uint8_t data) {
+    return false;
+}
+
