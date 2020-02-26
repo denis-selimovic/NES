@@ -195,5 +195,13 @@ void ppu2C02::clock() {
 }
 
 void ppu2C02::reset() {
-
+    ppustatus.reg = 0x00;
+    ppumask.reg = 0x00;
+    ppuctrl.reg = 0x00;
+    vram_address.reg = 0x0000;
+    t_address.reg = 0x0000;
+    ppudata_buffer = 0x00;
+    toggle = false;
+    fine_x = 0x00;
+    cycles = 0;
 }

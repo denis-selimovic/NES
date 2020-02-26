@@ -11,6 +11,9 @@
 
 class ppu2C02 {
 
+    //broj ciklusa sata
+    uint8_t cycles = 0;
+
     //Memorijska mapa ppu
     //ppu ima svoj memorijski prostor odvojen od cpu
     //2KB RAM-a je odvojeno za PPU na NES platformi
@@ -134,6 +137,7 @@ public:
     void clock();
     void reset();
     void connectGamePak(GamePak *gamepak);
+
 };
 
 
