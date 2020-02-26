@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include "Mapper.h"
 
 class GamePak {
 public:
@@ -33,6 +34,9 @@ public:
         uint8_t prg_ram_presence;
         uint8_t unused[5];
     };
+
+    //pokazivač na mapper koji se koristi za mapiranje adresa
+    Mapper *mapper = nullptr;
 public:
     GamePak(const std::string &game);
 };
