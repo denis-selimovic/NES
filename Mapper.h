@@ -6,8 +6,17 @@
 #define NES_MAPPER_H
 
 
+#include <cstdint>
+
 class Mapper {
 
+protected:
+    uint8_t PRG_banks;
+    uint8_t CHR_banks;
+
+public:
+    Mapper(uint8_t prg, uint8_t chr);
+    virtual ~Mapper();
 };
 
 
