@@ -191,7 +191,7 @@ void ppu2C02::connectGamePak(GamePak *g){
 }
 
 void ppu2C02::clock() {
-
+    cycles++;
 }
 
 void ppu2C02::reset() {
