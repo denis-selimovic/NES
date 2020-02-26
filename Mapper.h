@@ -20,12 +20,12 @@ public:
     virtual void reset() = 0;
 
     //funkcije za mapiranje adresa CPU
-    virtual void writeCPUMemory(uint16_t address, uint32_t &mapped_address) = 0;
-    virtual void readCPUMemory(uint16_t address, uint32_t &mapped_address) = 0;
+    virtual bool writeCPUMemory(uint16_t address, uint32_t &mapped_address) = 0;
+    virtual bool readCPUMemory(uint16_t address, uint32_t &mapped_address) = 0;
 
     //funkcije za mapiranje adresa PPU
-    virtual void writePPUMemory(uint16_t address, uint32_t &mapped_address) = 0;
-    virtual void readPPUMemory(uint16_t address, uint32_t &mapped_address) = 0;
+    virtual bool writePPUMemory(uint16_t address, uint32_t &mapped_address) = 0;
+    virtual bool readPPUMemory(uint16_t address, uint32_t &mapped_address) = 0;
 };
 
 
