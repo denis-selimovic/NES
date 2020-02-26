@@ -130,6 +130,9 @@ public:
     void writeCPUMemory(uint16_t address, uint8_t data);
     uint8_t readPPUMemory(uint16_t address);
     void writePPUMemory(uint16_t address, uint8_t data);
+
+    void clock();
+    void reset();
     void connectGamePak(GamePak *gamepak);
 };
 

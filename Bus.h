@@ -12,13 +12,19 @@
 
 class Bus {
 
+    //povezani na sabirnicu su RAM, ppu i cpu
     std::array<uint8_t, 2048> RAM{};
     ppu2C02 &ppu;
     cpu6502 &cpu;
+
+    //broj ciklusa sabirnice
+    uint32_t cycles = 0;
 public:
      Bus(cpu6502 &cpu, ppu2C02 &ppu);
      uint8_t readCPUMemory(uint16_t address);
      void writeCPUMemory(uint16_t address, uint8_t data);
+     void clock();
+     void reset();
 };
 
 

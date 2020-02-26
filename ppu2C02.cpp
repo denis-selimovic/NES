@@ -189,3 +189,11 @@ void ppu2C02::writePPUMemory(uint16_t address, uint8_t data) {
 void ppu2C02::connectGamePak(GamePak *g){
     this->gamepak = g;
 }
+
+void ppu2C02::clock() {
+
+}
+
+void ppu2C02::reset() {
+
+}

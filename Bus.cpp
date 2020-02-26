@@ -19,3 +19,18 @@ Bus::Bus(cpu6502 &cpu, ppu2C02 &ppu) : cpu(cpu), ppu(ppu) {
     this->cpu.connectToBus(this);
 }
 
+void Bus::clock() {
+    //svaki signal sata pozivamo funkciju clock iz klase ppu
+    //jedan ciklus sata cpu se dešava na svaka tri ciklusa sata ppu
+    ppu.clock();
+    if(cycles % 3 == 0) cpu.clock();
+    cycles++;
+}
+
+void Bus::reset() {
+    //resetujemo cpu i ppu
+    ppu.reset();
+    cpu.reset();
+    cycles = 0;
+}
+
