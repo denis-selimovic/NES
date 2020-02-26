@@ -10,7 +10,7 @@ GamePak::GamePak(const std::string &game) {
     // header of 16 bajta koji ćemo učitati koristeći strukturu header
     // sljedećih 512 bajta možda okupira trainer što možemo provjeriti
     // nakon ovog na red dolazi PRG-ROM koji zauzima prg_rom_size x 16KB
-    // na kraju dolazimo do CHR-ROm koji zauzima chr_rom_size x 8KB
+    // na kraju dolazimo do CHR-ROM koji zauzima chr_rom_size x 8KB
 
 
     //otvaramo binarnu datoteku
@@ -29,6 +29,11 @@ GamePak::GamePak(const std::string &game) {
         // bajt 4 iz headera nam govori kolika je veličina ove memorije u 16KB
         PRG.resize(header.prg_rom_size * 16384);
         nes.read((char*)PRG.data(), PRG.size());
+
+        //ako je broj bankova CHR-ROM 0 onda alociramo CHR-RAM od 8KB
+        //ako to nije slučaj alociramo CHR-ROM na isti način kao PRG-ROM
+        (header.chr_rom_size == 0) ? CHR.resize(8192) : CHR.resize(header.chr_rom_size * 8192);
+        nes.read((char*)CHR.data(), CHR.size());
 
         nes.close();
     }
