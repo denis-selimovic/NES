@@ -3,6 +3,7 @@
 //
 
 #include <fstream>
+#include <stdexcept>
 #include "GamePak.h"
 
 GamePak::GamePak(const std::string &game) {
@@ -47,5 +48,8 @@ GamePak::GamePak(const std::string &game) {
         nes.read((char*)CHR.data(), CHR.size());
 
         nes.close();
+    }
+    else {
+        throw std::logic_error("ERROR!");
     }
 }
