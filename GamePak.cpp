@@ -25,6 +25,17 @@ GamePak::GamePak(const std::string &game) {
         // ako je ovaj bit postavljen na 1 što saznajemo pomoću maske 0x04 onda možemo preskočiti 512 bajta
         if(header.flags_mirroring_trainer & 0x04u) nes.seekg(512, std::ios::cur);
 
+
+        // na osnovu prvog bita bajta 6 u header možemo odrediti mirroring
+        // 0 - horizontalni, 1 - vertikalni
+        (header.flags_mirroring_trainer & 0x01u) ? mirroring = VERTICAL : mirroring = HORIZONTAL;
+
+        // id mappera možemo odrediti na osnovu bita bajta 6 i bajta 7 u headeru
+        // na osnovu ovog id-a određujemo koji mapper se koristi
+        // gornja četiri bita 6. bajta određuju low nibble id-a
+        // gornja četiri bita 7. bajta određuju high nibble id-a
+        uint8_t mapper = ((header.flags_mirroring_trainer & 0xF0u) >> 4u) | (header.flags_playchoice & 0xF0u);
+
         // učitamo PRG-ROM
         // bajt 4 iz headera nam govori kolika je veličina ove memorije u 16KB
         PRG.resize(header.prg_rom_size * 16384);
