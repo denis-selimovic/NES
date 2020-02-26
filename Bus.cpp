@@ -15,7 +15,7 @@ void Bus::writeCPUMemory(uint16_t address, uint8_t data) {
     else if (address >= 0x2000 && address <= 0x3FFF) ppu.writeCPUMemory(address & 0x0007u, data);
 }
 
-Bus::Bus() {
-    cpu.connectToBus(this);
+Bus::Bus(cpu6502 &cpu, ppu2C02 &ppu) : cpu(cpu), ppu(ppu) {
+    this->cpu.connectToBus(this);
 }
 
