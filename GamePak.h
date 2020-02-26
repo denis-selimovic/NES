@@ -13,7 +13,7 @@ class GamePak {
 public:
     enum MIRRORING {HORIZONTAL, VERTICAL} mirroring = HORIZONTAL;
 
-
+private:
     //GamePak se sastoji PRG (programske memorije PRG-ROM) i CHR(memorija sprite-ova CHR-ROM)
     //njih učitamo iz .nes datoteke
     std::vector<uint8_t> PRG;
@@ -40,6 +40,7 @@ public:
 
     //funkcija za određivanje koji mapper se koristi
     Mapper *setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_banks);
+
 public:
     GamePak(const std::string &game);
 };
