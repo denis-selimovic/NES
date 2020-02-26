@@ -3,3 +3,7 @@
 //
 
 #include "GamePak.h"
+
+GamePak::GamePak(const std::string &game) {
+
+}
