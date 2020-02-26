@@ -19,12 +19,16 @@ class Bus {
 
     //broj ciklusa sabirnice
     uint32_t cycles = 0;
+
+    //pokazivač na gamepak
+    GamePak *gamePak = nullptr;
 public:
      Bus(cpu6502 &cpu, ppu2C02 &ppu);
      uint8_t readCPUMemory(uint16_t address);
      void writeCPUMemory(uint16_t address, uint8_t data);
      void clock();
      void reset();
+     void connectGamepak(GamePak *g);
 };
 
 

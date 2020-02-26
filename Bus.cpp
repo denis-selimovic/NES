@@ -5,13 +5,16 @@
 #include "Bus.h"
 
 uint8_t Bus::readCPUMemory(uint16_t address) {
-    if(address >= 0x0000 && address <= 0x1FFF) return RAM[address & 0x07FFu];
+    uint8_t data = 0x00;
+    if(gamePak->readCPUMemory(address, data)) {}
+    else if(address >= 0x0000 && address <= 0x1FFF) return RAM[address & 0x07FFu];
     else if(address >= 0x2000 && address <= 0x3FFF) return ppu.readCPUMemory(address & 0x0007u);
-    return 0;
+    return data;
 }
 
 void Bus::writeCPUMemory(uint16_t address, uint8_t data) {
-    if(address >= 0x0000 && address <= 0x01FF) RAM[address & 0x07FFu] = data;
+    if(gamePak->writeCPUMemory(address, data)) {}
+    else if(address >= 0x0000 && address <= 0x01FF) RAM[address & 0x07FFu] = data;
     else if (address >= 0x2000 && address <= 0x3FFF) ppu.writeCPUMemory(address & 0x0007u, data);
 }
 
@@ -32,5 +35,9 @@ void Bus::reset() {
     ppu.reset();
     cpu.reset();
     cycles = 0;
+}
+
+void Bus::connectGamepak(GamePak *g) {
+    gamePak = g;
 }
 
