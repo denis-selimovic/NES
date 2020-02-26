@@ -10,9 +10,6 @@
 #include "ppu2C02.h"
 #include "cpu6502.h"
 
-class ppu2C02;
-class cpu6502;
-
 class Bus {
 
     std::array<uint8_t, 2048> RAM{};
