@@ -129,7 +129,7 @@ uint8_t ppu2C02::readPPUMemory(uint16_t address) {
     //mapiramo adresu na opseg 0x0000 do 0x3fff
     uint8_t data = 0x00;
     address &= 0x3FFFu;
-    if(gamepak->readCPUMemory(address, data)) {}
+    if(gamepak->readPPUMemory(address, data)) {}
     else if(address >= 0x0000 && address <= 0x1FFF) return pattern_table[(address & 0x1000u) >> 12u][address & 0x0FFFu];
     else if(address >= 0x2000 && address <= 0x3EFF) {
         address &= 0xFFFu;
