@@ -47,9 +47,18 @@ GamePak::GamePak(const std::string &game) {
         (header.chr_rom_size == 0) ? CHR.resize(8192) : CHR.resize(header.chr_rom_size * 8192);
         nes.read((char*)CHR.data(), CHR.size());
 
+
+        //postavljamo mapper na osnovu id-a
+        this->mapper = setMapper(mapper, header.prg_rom_size, header.chr_rom_size);
+
         nes.close();
     }
     else {
         throw std::logic_error("ERROR!");
     }
 }
+
+Mapper *GamePak::setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_banks) {
+    return nullptr;
+}
+
