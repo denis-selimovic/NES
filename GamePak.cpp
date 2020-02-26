@@ -81,10 +81,20 @@ bool GamePak::writeCPUMemory(uint16_t address, uint8_t data) {
 }
 
 bool GamePak::readPPUMemory(uint16_t address, uint8_t &data) {
+    uint32_t mapped_address = 0x0000;
+    if(mapper->readPPUMemory(address, mapped_address)) {
+        data = CHR[mapped_address];
+        return true;
+    }
     return false;
 }
 
 bool GamePak::writePPUMemory(uint16_t address, uint8_t data) {
+    uint32_t mapped_address = 0x0000;
+    if(mapper->writePPUMemory(address, mapped_address)) {
+        CHR[mapped_address] = data;
+        return true;
+    }
     return false;
 }
 
