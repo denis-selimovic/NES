@@ -8,6 +8,8 @@ Debugger::Debugger(const std::string &test) {
     gamePak = new GamePak(test);
     bus = new Bus(cpu, ppu);
     bus->connectGamepak(gamePak);
+    createWindow();
+    createRenderer();
 }
 
 Debugger::~Debugger() {
@@ -37,6 +39,8 @@ void Debugger::createRenderer() {
     if(renderer == nullptr) {
         logError(std::cout, "SDL_CreateRenderer");
         cleanup(window);
+        SDL_Quit();
+        throwError("SDL_CreateRenderer");
     }
 }
 
