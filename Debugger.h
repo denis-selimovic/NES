@@ -29,8 +29,8 @@ class Debugger {
     void createRenderer();
 
     template <typename T, typename... Args> void cleanup(T *, Args&&... args);
-    template<> void cleanup<SDL_Window>(SDL_Window *w);
-    template<> void cleanup<SDL_Renderer>(SDL_Renderer *r);
+    void cleanup(SDL_Window *w);
+    void cleanup(SDL_Renderer *r);
 
     //atributi
     SDL_Window *window;

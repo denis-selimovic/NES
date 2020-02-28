@@ -56,14 +56,12 @@ void Debugger::cleanup(T *t, Args &&... args) {
     cleanup(std::forward<Args>(args)...);
 }
 
-template<>
-void Debugger::cleanup<SDL_Window>(SDL_Window *w) {
+void Debugger::cleanup(SDL_Window *w) {
     if(!w) return;
     SDL_DestroyWindow(w);
 }
 
-template<>
-void Debugger::cleanup<SDL_Renderer>(SDL_Renderer *r) {
+void Debugger::cleanup(SDL_Renderer *r) {
     if(!r) return;
     SDL_DestroyRenderer(r);
 }
