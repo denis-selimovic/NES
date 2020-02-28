@@ -2,6 +2,6 @@
 #include "Debugger.h"
 
 int main() {
-    Debugger debugger("/nes/nestest.nes");
+    Debugger debugger("nes//nestest.nes");
     return 0;
 }
