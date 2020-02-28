@@ -72,13 +72,31 @@ uint8_t AddressingMode::ABY(cpu6502 &cpu) {
 }
 
 uint8_t AddressingMode::IND(cpu6502 &cpu) {
+
     return 0;
 }
 
 uint8_t AddressingMode::IZX(cpu6502 &cpu) {
+    // sadržaj x registr se koristi kao offset pročitanoj adresi
+    uint16_t address = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
+    address += uint16_t(cpu.x_register);
+    uint16_t low_byte = cpu.read(address & 0x00FFu);
+    uint16_t high_byte = cpu.read((address + 1u) & 0x00FFu);
+    cpu.absolute_address = (high_byte << 8u) | low_byte;
     return 0;
 }
 
 uint8_t AddressingMode::IZY(cpu6502 &cpu) {
-    return 0;
+    // čita se zero page adresa sa lokacije na koju pokazuje pc
+    // na dobijenu absolutnu adresu doda se sadržaj y registra
+    // ako se stranica promijeni dodatni ciklus
+    uint16_t address = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
+    uint16_t low_byte = cpu.read(address & 0x00FFu);
+    uint16_t high_byte = cpu.read((address + 1u) & 0x00FFu);
+    // dodamo y na apsolutnu adresu
+    cpu.absolute_address = (high_byte << 8u) | low_byte;
+    cpu.absolute_address += cpu.y_register;
+    return ((cpu.absolute_address & 0xFF00u) != (high_byte << 8u)) ? 1 : 0;
 }
