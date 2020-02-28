@@ -20,7 +20,7 @@ class Debugger {
     cpu6502 cpu;
     ppu2C02 ppu;
     GamePak *gamePak;
-    Bus * bus;
+    Bus *bus;
 
     //SDL
     void logError(std::ostream &os, const std::string &error);

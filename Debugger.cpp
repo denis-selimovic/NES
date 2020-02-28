@@ -15,6 +15,8 @@ Debugger::Debugger(const std::string &test) {
 Debugger::~Debugger() {
     delete bus;
     delete gamePak;
+    cleanup(window, renderer);
+    SDL_Quit();
 }
 
 void Debugger::logError(std::ostream &os, const std::string &error) {
