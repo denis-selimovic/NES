@@ -82,6 +82,9 @@ cmake-build-*/
 # IntelliJ
 out/
 
+# nes files
+nes/
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
