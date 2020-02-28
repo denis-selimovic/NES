@@ -72,7 +72,14 @@ uint8_t AddressingMode::ABY(cpu6502 &cpu) {
 }
 
 uint8_t AddressingMode::IND(cpu6502 &cpu) {
+    uint16_t low_byte = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
+    uint16_t high_byte = cpu.read(cpu.program_counter);
+    cpu.program_counter++;
 
+    uint16_t indirect_address = (high_byte << 8u) | low_byte;
+    if(low_byte == 0x00FF) cpu.absolute_address = (cpu.read(indirect_address & 0xFF00u) << 8u) | cpu.read(indirect_address);
+    else cpu.absolute_address = (cpu.read(indirect_address + 1u) << 8u) | cpu.read(indirect_address);
     return 0;
 }
 
