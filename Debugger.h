@@ -6,7 +6,18 @@
 #define NES_DEBUGGER_H
 
 
+#include <string>
+#include "Bus.h"
+
 class Debugger {
+
+    cpu6502 cpu;
+    ppu2C02 ppu;
+    GamePak *gamePak;
+    Bus * bus;
+public:
+    Debugger(const std::string &test);
+    ~Debugger();
 };
 
 
