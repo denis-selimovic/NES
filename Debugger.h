@@ -18,6 +18,8 @@ class Debugger {
 public:
     Debugger(const std::string &test);
     ~Debugger();
+    Debugger(const Debugger &debugger) = delete;
+    Debugger(Debugger &&debugger) = delete;
 };
 
 
