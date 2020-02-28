@@ -24,8 +24,13 @@ class Debugger {
 
     //SDL
     void logError(std::ostream &os, const std::string &error);
+    void throwError(const std::string &error);
     void createWindow();
     void createRenderer();
+
+    template <typename T, typename... Args> void cleanup(T *, Args&&... args);
+    template<> void cleanup<SDL_Window>(SDL_Window *w);
+    template<> void cleanup<SDL_Renderer>(SDL_Renderer *r);
 
     //atributi
     SDL_Window *window;
