@@ -39,5 +39,6 @@ void Bus::reset() {
 
 void Bus::connectGamepak(GamePak *g) {
     gamePak = g;
+    ppu.connectGamePak(g);
 }
 
