@@ -16,6 +16,7 @@ class Debugger {
     //dimenzije ekrana
     const static uint32_t WINDOW_WIDTH = 1400;
     const static uint32_t WINDOW_HEIGHT = 1000;
+    const static uint32_t FONT_SIZE = 10;
 
     //NES
     cpu6502 cpu;
@@ -28,6 +29,7 @@ class Debugger {
     void throwError(const std::string &error);
     void createWindow();
     void createRenderer();
+    void initFont();
 
     //oslobađanje memorije
     template <typename T, typename... Args> void cleanup(T *, Args&&... args);
@@ -35,7 +37,8 @@ class Debugger {
     void cleanup(SDL_Renderer *r);
 
     //crtanje stanja emulatora
-    void drawStatus();
+    void drawText(std::string text);
+    SDL_Rect drawRect(int x, int y, int w, int h);
 
     //atributi
     SDL_Window *window;

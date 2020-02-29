@@ -15,4 +15,4 @@ find_package(SDL2_ttf REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIR})
 
 add_executable(NES main.cpp Instruction.cpp Instruction.h AddressingMode.cpp AddressingMode.h Operation.cpp Operation.h Bus.cpp Bus.h cpu6502.cpp cpu6502.h ppu2C02.cpp ppu2C02.h GamePak.cpp GamePak.h Renderer.cpp Renderer.h Mapper.cpp Mapper.h Mapper000.cpp Mapper000.h Debugger.cpp Debugger.h)
-target_link_libraries(NES ${SDL2_LIBRARY} ${SDL2_TTF_LIBRARIES})
+target_link_libraries(NES ${SDL2_LIBRARY} ${SDL2_TTF_LIBRARY})

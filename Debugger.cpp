@@ -10,13 +10,15 @@ Debugger::Debugger(const std::string &test) {
     bus->connectGamepak(gamePak);
     createWindow();
     createRenderer();
-    font = TTF_OpenFont("Sans.ttf", 24);
+    initFont();
+    font = TTF_OpenFont("../fonts/sans.ttf", FONT_SIZE);
 }
 
 Debugger::~Debugger() {
     delete bus;
     delete gamePak;
     cleanup(window, renderer);
+    TTF_CloseFont(font);
     SDL_Quit();
 }
 
@@ -47,6 +49,12 @@ void Debugger::createRenderer() {
     }
 }
 
+void Debugger::initFont() {
+    if(TTF_Init() != 0) {
+        throwError("ERROR");
+    }
+}
+
 void Debugger::throwError(const std::string &error) {
     throw std::logic_error(error);
 }
@@ -69,6 +77,7 @@ void Debugger::cleanup(SDL_Renderer *r) {
 
 void Debugger::run() {
     running = true;
+    drawStatus();
     SDL_Event e;
     while(running) {
         while(SDL_PollEvent(&e) != 0) {
@@ -77,9 +86,23 @@ void Debugger::run() {
     }
 }
 
-void Debugger::drawStatus() {
-
+void Debugger::drawText(std::string text) {
+    SDL_Color white = {255, 255, 255};
+    SDL_Surface *surface = TTF_RenderText_Solid(font, "C  Z  I  D  B  U  V  N", white);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_Rect messageRect = drawRect(0, 0, 150, 50);
+    SDL_RenderCopy(renderer, texture, nullptr, &messageRect);
+    SDL_RenderPresent(renderer);
 }
+
+SDL_Rect Debugger::drawRect(int x, int y, int w, int h) {
+    return SDL_Rect{x, y, w, h};
+}
+
+
+
+
+
 
 
 
