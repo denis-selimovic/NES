@@ -10,6 +10,7 @@ Debugger::Debugger(const std::string &test) {
     bus->connectGamepak(gamePak);
     createWindow();
     createRenderer();
+    font = TTF_OpenFont("Sans.ttf", 24);
 }
 
 Debugger::~Debugger() {
@@ -74,6 +75,10 @@ void Debugger::run() {
             if(e.type == SDL_QUIT) running = false;
         }
     }
+}
+
+void Debugger::drawStatus() {
+
 }
 
 

@@ -9,6 +9,7 @@
 #include <iostream>
 #include "Bus.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 class Debugger {
 
@@ -28,13 +29,18 @@ class Debugger {
     void createWindow();
     void createRenderer();
 
+    //oslobađanje memorije
     template <typename T, typename... Args> void cleanup(T *, Args&&... args);
     void cleanup(SDL_Window *w);
     void cleanup(SDL_Renderer *r);
 
+    //crtanje stanja emulatora
+    void drawStatus();
+
     //atributi
     SDL_Window *window;
     SDL_Renderer *renderer;
+    TTF_Font *font;
 
     //pomoćni atributi
     bool running = false;
