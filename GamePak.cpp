@@ -50,7 +50,7 @@ GamePak::GamePak(const std::string &game) {
 
 
         //postavljamo mapper na osnovu id-a
-        this->mapper = new Mapper000(header.prg_rom_size, header.chr_rom_size);
+        this->mapper = setMapper(mapper, header.prg_rom_size, header.chr_rom_size);
 
         nes.close();
     }
@@ -59,6 +59,9 @@ GamePak::GamePak(const std::string &game) {
     }
 }
 
+GamePak::~GamePak() {
+    delete mapper;
+}
 
 bool GamePak::readCPUMemory(uint16_t address, uint8_t &data) {
     uint32_t mapped_address = 0x0000;
@@ -95,4 +98,16 @@ bool GamePak::writePPUMemory(uint16_t address, uint8_t data) {
     }
     return false;
 }
+
+Mapper *GamePak::setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_banks) {
+    switch(mapperID) {
+        case 0:
+            return new Mapper000(prg_banks, chr_banks);
+        default:
+            break;
+    }
+    return nullptr;
+}
+
+
 

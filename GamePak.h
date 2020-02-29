@@ -39,10 +39,11 @@ private:
     Mapper *mapper = nullptr;
 
     //funkcija za određivanje koji mapper se koristi
-    //Mapper setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_banks);
+    Mapper *setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_banks);
 
 public:
     GamePak(const std::string &game);
+    ~GamePak();
     bool readCPUMemory(uint16_t address, uint8_t &data);
     bool writeCPUMemory(uint16_t address, uint8_t data);
     bool readPPUMemory(uint16_t address, uint8_t &data);
