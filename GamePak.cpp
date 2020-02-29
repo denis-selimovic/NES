@@ -5,6 +5,7 @@
 #include <fstream>
 #include <stdexcept>
 #include "GamePak.h"
+#include "Mapper000.h"
 
 GamePak::GamePak(const std::string &game) {
     // .nes fajl ima sljedeću strukturu
@@ -49,7 +50,7 @@ GamePak::GamePak(const std::string &game) {
 
 
         //postavljamo mapper na osnovu id-a
-        this->mapper = setMapper(mapper, header.prg_rom_size, header.chr_rom_size);
+        this->mapper = new Mapper000(header.prg_rom_size, header.chr_rom_size);
 
         nes.close();
     }
@@ -58,9 +59,6 @@ GamePak::GamePak(const std::string &game) {
     }
 }
 
-Mapper *GamePak::setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_banks) {
-    return nullptr;
-}
 
 bool GamePak::readCPUMemory(uint16_t address, uint8_t &data) {
     uint32_t mapped_address = 0x0000;
