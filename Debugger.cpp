@@ -2,7 +2,6 @@
 // Created by denis on 28/02/2020.
 //
 
-#include <sstream>
 #include "Debugger.h"
 
 Debugger::Debugger(const std::string &test) {
@@ -104,10 +103,7 @@ void Debugger::run() {
                     case SDLK_SPACE:
                         bus->clock();
                         SDL_RenderClear(renderer);
-                        std::stringstream address;
-                        address << std::hex << bus->cpu.absolute_address;
-                        drawText(std::to_string(bus->cpu.opcode), {100, 0, 100, 80}, {255, 255, 255, 255});
-                        drawText(address.str(), {100, 400, 100, 80}, {255, 255, 255, 255});
+                        drawText(bus->cpu.getInstructionName(), {100, 0, 100, 80}, {255, 255, 255, 255});
                         break;
                 }
             }
