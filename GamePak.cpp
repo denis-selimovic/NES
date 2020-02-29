@@ -104,7 +104,7 @@ Mapper *GamePak::setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_bank
         case 0:
             return new Mapper000(prg_banks, chr_banks);
         default:
-            break;
+            throw std::logic_error("UNSUPPORTED MAPPER!");
     }
     return nullptr;
 }
