@@ -75,9 +75,19 @@ void Debugger::cleanup(SDL_Renderer *r) {
     SDL_DestroyRenderer(r);
 }
 
+void Debugger::cleanup(SDL_Surface *s) {
+    if(!s) return;
+    SDL_FreeSurface(s);
+}
+
+void Debugger::cleanup(SDL_Texture *t) {
+    if(!t) return;
+    SDL_DestroyTexture(t);
+}
+
 void Debugger::run() {
     running = true;
-    drawStatus();
+    drawText("C   Z   I   D   B   U   V   N");
     SDL_Event e;
     while(running) {
         while(SDL_PollEvent(&e) != 0) {
@@ -90,7 +100,7 @@ void Debugger::drawText(std::string text) {
     SDL_Color white = {255, 255, 255};
     SDL_Surface *surface = TTF_RenderText_Solid(font, "C  Z  I  D  B  U  V  N", white);
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_Rect messageRect = drawRect(0, 0, 150, 50);
+    SDL_Rect messageRect = drawRect(0, 0, 220, 50);
     SDL_RenderCopy(renderer, texture, nullptr, &messageRect);
     SDL_RenderPresent(renderer);
 }
@@ -98,6 +108,10 @@ void Debugger::drawText(std::string text) {
 SDL_Rect Debugger::drawRect(int x, int y, int w, int h) {
     return SDL_Rect{x, y, w, h};
 }
+
+
+
+
 
 
 

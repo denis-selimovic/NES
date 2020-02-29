@@ -35,6 +35,8 @@ class Debugger {
     template <typename T, typename... Args> void cleanup(T *, Args&&... args);
     void cleanup(SDL_Window *w);
     void cleanup(SDL_Renderer *r);
+    void cleanup(SDL_Surface *s);
+    void cleanup(SDL_Texture *t);
 
     //crtanje stanja emulatora
     void drawText(std::string text);
