@@ -13,8 +13,8 @@
 class Debugger {
 
     //dimenzije ekrana
-    const static uint32_t WINDOW_WIDTH = 640;
-    const static uint32_t WINDOW_HEIGHT = 480;
+    const static uint32_t WINDOW_WIDTH = 1400;
+    const static uint32_t WINDOW_HEIGHT = 1000;
 
     //NES
     cpu6502 cpu;
@@ -35,11 +35,16 @@ class Debugger {
     //atributi
     SDL_Window *window;
     SDL_Renderer *renderer;
+
+    //pomoćni atributi
+    bool running = false;
 public:
     Debugger(const std::string &test);
     ~Debugger();
     Debugger(const Debugger &debugger) = delete;
     Debugger(Debugger &&debugger) = delete;
+
+    void run();
 };
 
 

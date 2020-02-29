@@ -66,5 +66,15 @@ void Debugger::cleanup(SDL_Renderer *r) {
     SDL_DestroyRenderer(r);
 }
 
+void Debugger::run() {
+    running = true;
+    SDL_Event e;
+    while(running) {
+        while(SDL_PollEvent(&e) != 0) {
+            if(e.type == SDL_QUIT) running = false;
+        }
+    }
+}
+
 
 
