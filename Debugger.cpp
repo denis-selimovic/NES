@@ -92,7 +92,7 @@ void Debugger::cleanup(TTF_Font *f) {
 
 void Debugger::run() {
     running = true;
-    drawText("C   Z   I   D   B   U   V   N", {10, 10, 220, 50}, {255, 255, 255, 255});
+    drawText("C   Z   I   D   B   U   V   N", {10, 10, 350, 50}, {255, 255, 255, 255});
     SDL_Event e;
     while(running) {
         while(SDL_PollEvent(&e) != 0) {

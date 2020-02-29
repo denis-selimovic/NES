@@ -398,3 +398,7 @@ uint8_t cpu6502::getMemoryContent() {
     if(instruction->addressing_mode != &AddressingMode::IMP) memory_content = read(absolute_address);
     return memory_content;
 }
+
+std::string cpu6502::getInstructionName() {
+    return instruction->name;
+}

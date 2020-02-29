@@ -22,6 +22,7 @@ class Bus {
 
     //pokazivač na gamepak
     GamePak *gamePak = nullptr;
+    friend class Debugger;
 public:
      Bus(cpu6502 &cpu, ppu2C02 &ppu);
      uint8_t readCPUMemory(uint16_t address);
