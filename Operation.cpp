@@ -263,7 +263,7 @@ uint8_t Operation::INY(cpu6502 &cpu) {
 }
 
 uint8_t Operation::JMP(cpu6502 &cpu) {
-    cpu.program_counter = cpu.relative_address;
+    cpu.program_counter = cpu.absolute_address;
     return 0;
 }
 

@@ -48,10 +48,8 @@ private:
     std::vector<Instruction> lookup;
 
     //pomoćne varijable pri izvršavanju instrukcija
-    uint8_t cycles = 0;
-    uint8_t memory_content = 0x00;
-    uint16_t relative_address = 0x00;
-    uint16_t absolute_address = 0x0000;
+
+
 
     uint8_t getMemoryContent();
 
@@ -67,6 +65,13 @@ public:
     void nonmaskableInterrupt();
     void testMode();
     std::string getInstructionName();
+
+    //testiranje
+    uint8_t opcode = 0x00;
+    uint8_t cycles = 0;
+    uint8_t memory_content = 0x00;
+    uint16_t relative_address = 0x00;
+    uint16_t absolute_address = 0x0000;
 };
 
 

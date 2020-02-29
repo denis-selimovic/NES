@@ -43,9 +43,9 @@ uint8_t AddressingMode::REL(cpu6502 &cpu) {
 }
 
 uint8_t AddressingMode::ABS(cpu6502 &cpu) {
-    uint8_t low_nibble = cpu.read(cpu.program_counter);
+    uint16_t low_nibble = cpu.read(cpu.program_counter);
     cpu.program_counter++;
-    uint8_t high_nibble = cpu.read(cpu.program_counter);
+    uint16_t high_nibble = cpu.read(cpu.program_counter);
     cpu.program_counter++;
     cpu.absolute_address = high_nibble << 8 | low_nibble;
     return 0;
