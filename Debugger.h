@@ -13,6 +13,15 @@
 
 class Debugger {
 
+    struct Color {
+        int r, g, b;
+    };
+
+    struct Rect {
+        int x, y, w, h;
+    };
+
+
     //dimenzije ekrana
     const static uint32_t WINDOW_WIDTH = 1400;
     const static uint32_t WINDOW_HEIGHT = 1000;
@@ -39,8 +48,8 @@ class Debugger {
     void cleanup(SDL_Texture *t);
 
     //crtanje stanja emulatora
-    void drawText(std::string text);
-    SDL_Rect drawRect(int x, int y, int w, int h);
+    void drawText(std::string text, Rect rect);
+    SDL_Rect drawRect(Rect rect);
 
     //atributi
     SDL_Window *window;
