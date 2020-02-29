@@ -17,9 +17,9 @@ Debugger::Debugger(const std::string &test) {
 Debugger::~Debugger() {
     delete bus;
     delete gamePak;
-    cleanup(window, renderer);
-    TTF_CloseFont(font);
+    cleanup(window, renderer, font);
     SDL_Quit();
+    TTF_Quit();
 }
 
 void Debugger::logError(std::ostream &os, const std::string &error) {
@@ -85,6 +85,11 @@ void Debugger::cleanup(SDL_Texture *t) {
     SDL_DestroyTexture(t);
 }
 
+void Debugger::cleanup(TTF_Font *f) {
+    if(!f) return;
+    TTF_CloseFont(f);
+}
+
 void Debugger::run() {
     running = true;
     drawText("C   Z   I   D   B   U   V   N", {10, 10, 220, 50}, {255, 255, 255, 255});
@@ -96,7 +101,7 @@ void Debugger::run() {
     }
 }
 
-void Debugger::drawText(std::string text, Rect rect, Color c) {
+void Debugger::drawText(const std::string &text, const Rect &rect, const Color &c) {
     SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), {c.r, c.g, c.b, c.a});
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_Rect messageRect = drawRect(rect);
@@ -108,6 +113,7 @@ void Debugger::drawText(std::string text, Rect rect, Color c) {
 SDL_Rect Debugger::drawRect(Rect r) {
     return SDL_Rect{r.x, r.y, r.w, r.h};
 }
+
 
 
 

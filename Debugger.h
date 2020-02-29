@@ -46,9 +46,10 @@ class Debugger {
     void cleanup(SDL_Renderer *r);
     void cleanup(SDL_Surface *s);
     void cleanup(SDL_Texture *t);
+    void cleanup(TTF_Font *f);
 
     //crtanje stanja emulatora
-    void drawText(std::string text, Rect rect, Color c);
+    void drawText(const std::string &text, const Rect &rect, const Color &c);
     SDL_Rect drawRect(Rect rect);
 
     //atributi
