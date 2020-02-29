@@ -102,7 +102,8 @@ void Debugger::run() {
                 switch (e.key.keysym.sym) {
                     case SDLK_SPACE:
                         bus->clock();
-                        drawText(bus->cpu.getInstructionName(), {0, 0, 200, 100}, {255, 255, 255, 255});
+                        SDL_RenderClear(renderer);
+                        drawText(bus->cpu.getInstructionName(), {0, 0, 100, 80}, {255, 255, 255, 255});
                         break;
                     default:
                         break;

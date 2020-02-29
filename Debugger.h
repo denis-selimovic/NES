@@ -50,7 +50,7 @@ class Debugger {
 
     //crtanje stanja emulatora
     void drawText(const std::string &text, const Rect &rect, const Color &c);
-    SDL_Rect drawRect(Rect rect);
+    static SDL_Rect drawRect(Rect rect);
 
     //atributi
     SDL_Window *window;
