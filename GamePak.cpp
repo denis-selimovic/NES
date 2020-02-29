@@ -15,8 +15,7 @@ GamePak::GamePak(const std::string &game) {
 
 
     //otvaramo binarnu datoteku
-    std::ifstream nes;
-    nes.open(game, std::ios::in | std::ios::binary);
+    std::ifstream nes(game, std::ios::in | std::ios::binary);
     if(nes.is_open()) {
         // .nes datoteka je uspješno otvorena
         // prvo učitavamo header
