@@ -19,8 +19,8 @@ class Debugger {
     //NES
     cpu6502 cpu;
     ppu2C02 ppu;
-    GamePak *gamePak;
-    Bus *bus;
+    GamePak *gamePak = nullptr;
+    Bus *bus = nullptr;
 
     //SDL
     void logError(std::ostream &os, const std::string &error);
