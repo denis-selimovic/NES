@@ -14,7 +14,7 @@
 class Debugger {
 
     struct Color {
-        int r, g, b;
+        uint8_t r, g, b, a;
     };
 
     struct Rect {
@@ -48,7 +48,7 @@ class Debugger {
     void cleanup(SDL_Texture *t);
 
     //crtanje stanja emulatora
-    void drawText(std::string text, Rect rect);
+    void drawText(std::string text, Rect rect, Color c);
     SDL_Rect drawRect(Rect rect);
 
     //atributi
