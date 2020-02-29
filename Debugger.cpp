@@ -8,6 +8,7 @@ Debugger::Debugger(const std::string &test) {
     gamePak = new GamePak(test);
     bus = new Bus(cpu, ppu);
     bus->connectGamepak(gamePak);
+    bus->cpu.testMode();
     createWindow();
     createRenderer();
     initFont();
@@ -97,6 +98,16 @@ void Debugger::run() {
     while(running) {
         while(SDL_PollEvent(&e) != 0) {
             if(e.type == SDL_QUIT) running = false;
+            else if(e.type == SDL_KEYDOWN) {
+                switch (e.key.keysym.sym) {
+                    case SDLK_SPACE:
+                        bus->clock();
+                        drawText(bus->cpu.getInstructionName(), {0, 0, 200, 100}, {255, 255, 255, 255});
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

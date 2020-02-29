@@ -65,6 +65,7 @@ public:
     void reset();
     void interruptRequest();
     void nonmaskableInterrupt();
+    void testMode();
     std::string getInstructionName();
 };
 

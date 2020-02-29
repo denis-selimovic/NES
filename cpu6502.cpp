@@ -402,3 +402,10 @@ uint8_t cpu6502::getMemoryContent() {
 std::string cpu6502::getInstructionName() {
     return instruction->name;
 }
+
+void cpu6502::testMode() {
+    accumulator = x_register = y_register = 0x00;
+    stack_pointer = 0xFD;
+    status_register = 0x00u | U;
+    program_counter = 0xC000;
+}
