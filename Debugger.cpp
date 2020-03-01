@@ -104,6 +104,8 @@ void Debugger::run() {
                         bus->clock();
                         SDL_RenderClear(renderer);
                         drawStatus();
+                        drawRegisters();
+                        SDL_RenderPresent(renderer);
                         break;
                 }
             }
@@ -116,8 +118,7 @@ void Debugger::drawText(const std::string &text, const Rect &rect, const Color &
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_Rect messageRect = drawRect(rect);
     SDL_RenderCopy(renderer, texture, nullptr, &messageRect);
-    SDL_RenderPresent(renderer);
-    cleanup(surface, texture);
+    cleanup(surface);
 }
 
 SDL_Rect Debugger::drawRect(Rect r) {
@@ -134,6 +135,12 @@ void Debugger::drawStatus() {
     }
     drawText("N   V   U   B   D   I   Z   C", {10, 10, 300, 50}, {255, 255, 255, 255});
     drawText(stream.str(), {10, 70, 300, 50}, {255, 255, 255, 255});
+}
+
+void Debugger::drawRegister(const std::string &reg, const uint8_t &value, const Rect &r, const Color &c) {
+    std::stringstream stream;
+    stream << reg << " : " << "0x " << std::hex << value;
+    drawText(stream.str(), {r.x, r.y, r.w, r.h}, {c.r, c.g, c.b, c.a});
 }
 
 

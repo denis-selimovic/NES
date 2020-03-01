@@ -49,6 +49,7 @@ class Debugger {
     void cleanup(TTF_Font *f);
 
     //crtanje stanja emulatora
+    void drawRegister(const std::string &reg, const uint8_t &value, const Rect &r, const Color &c);
     void drawStatus();
     void drawText(const std::string &text, const Rect &rect, const Color &c);
     static SDL_Rect drawRect(Rect rect);
