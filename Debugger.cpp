@@ -2,6 +2,7 @@
 // Created by denis on 28/02/2020.
 //
 
+#include <sstream>
 #include "Debugger.h"
 
 Debugger::Debugger(const std::string &test) {
@@ -93,7 +94,6 @@ void Debugger::cleanup(TTF_Font *f) {
 
 void Debugger::run() {
     running = true;
-    drawText("C   Z   I   D   B   U   V   N", {10, 10, 350, 50}, {255, 255, 255, 255});
     SDL_Event e;
     while(running) {
         while(SDL_PollEvent(&e) != 0) {
@@ -103,7 +103,7 @@ void Debugger::run() {
                     case SDLK_SPACE:
                         bus->clock();
                         SDL_RenderClear(renderer);
-                        drawText(bus->cpu.getInstructionName(), {100, 0, 100, 80}, {255, 255, 255, 255});
+                        drawStatus();
                         break;
                 }
             }
@@ -122,6 +122,18 @@ void Debugger::drawText(const std::string &text, const Rect &rect, const Color &
 
 SDL_Rect Debugger::drawRect(Rect r) {
     return SDL_Rect{r.x, r.y, r.w, r.h};
+}
+
+void Debugger::drawStatus() {
+    std::stringstream stream;
+    uint8_t status = bus->cpu.status_register;
+    for(int i = 0; i < 8; ++i) {
+        ((status & 0x80u) > 0) ? stream << 1 : stream << 0;
+        status <<= 1u;
+        if(i != 7) stream << "   ";
+    }
+    drawText("C   Z   I   D   B   U   V   N", {10, 10, 300, 80}, {255, 255, 255, 255});
+    drawText(stream.str(), {10, 110, 300, 80}, {255, 255, 255, 255});
 }
 
 
