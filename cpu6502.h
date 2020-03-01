@@ -58,6 +58,7 @@ private:
 
     friend class Operation;
     friend class AddressingMode;
+    friend class Debugger;
 public:
     cpu6502();
     void connectToBus(Bus *bus);

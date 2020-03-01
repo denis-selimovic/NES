@@ -295,7 +295,6 @@ void cpu6502::clock() {
         //ako je broj ciklusa 0 prelazimo na sljedeću instrukciju
         //opcode trenutne instrukcije dobijamo preko programskog brojača
         uint8_t opcode = read(program_counter);
-        this->opcode = opcode;
         //povećamo programski brojač
         program_counter++;
 
