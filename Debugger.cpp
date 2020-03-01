@@ -104,7 +104,7 @@ void Debugger::run() {
                         bus->clock();
                         SDL_RenderClear(renderer);
                         drawStatus();
-                        drawRegisters();
+                        drawRegister("PC", bus->cpu.program_counter, {10, 130, 100, 50}, {255, 255, 255, 255});
                         SDL_RenderPresent(renderer);
                         break;
                 }
@@ -139,8 +139,8 @@ void Debugger::drawStatus() {
 
 void Debugger::drawRegister(const std::string &reg, const uint8_t &value, const Rect &r, const Color &c) {
     std::stringstream stream;
-    stream << reg << " : " << "0x " << std::hex << value;
-    drawText(stream.str(), {r.x, r.y, r.w, r.h}, {c.r, c.g, c.b, c.a});
+    stream << value;
+    drawText(std::to_string(value), {r.x, r.y, r.w, r.h}, {c.r, c.g, c.b, c.a});
 }
 
 
