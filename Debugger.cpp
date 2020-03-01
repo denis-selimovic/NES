@@ -132,8 +132,8 @@ void Debugger::drawStatus() {
         status <<= 1u;
         if(i != 7) stream << "   ";
     }
-    drawText("C   Z   I   D   B   U   V   N", {10, 10, 300, 80}, {255, 255, 255, 255});
-    drawText(stream.str(), {10, 110, 300, 80}, {255, 255, 255, 255});
+    drawText("N   V   U   B   D   I   Z   C", {10, 10, 300, 50}, {255, 255, 255, 255});
+    drawText(stream.str(), {10, 70, 300, 50}, {255, 255, 255, 255});
 }
 
 
