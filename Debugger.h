@@ -65,6 +65,9 @@ class Debugger {
     void drawText(const std::string &text, const Rect &rect, const Color &c = {255, 255, 255, 255});
     static SDL_Rect drawRect(Rect rect);
 
+    //rad emulatora
+    void clock();
+
     //atributi
     SDL_Window *window;
     SDL_Renderer *renderer;

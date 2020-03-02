@@ -92,10 +92,7 @@ void Debugger::run() {
             else if(e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
                     case SDLK_SPACE:
-                        do {
-                            bus->clock();
-                        }
-                        while(bus->cpu.cycles != 0 || bus->cycles % 3 != 0);
+                        clock();
                         render();
                         break;
                     case SDLK_r:
@@ -189,6 +186,13 @@ void Debugger::freeSDL() {
     cleanup(window, renderer, font);
     SDL_Quit();
     TTF_Quit();
+}
+
+void Debugger::clock() {
+    do {
+        bus->clock();
+    }
+    while(bus->cpu.cycles != 0 || bus->cycles % 3 != 0);
 }
 
 
