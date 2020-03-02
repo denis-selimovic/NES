@@ -105,7 +105,7 @@ void Debugger::run() {
                         SDL_RenderClear(renderer);
                         drawStatus();
                         drawAllRegisters();
-                        drawRAM();
+                        (!RAM_bank) ? drawRAM() : drawRAM(32, 64);
                         SDL_RenderPresent(renderer);
                         break;
                 }

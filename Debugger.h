@@ -63,6 +63,7 @@ class Debugger {
 
     //pomoćni atributi
     bool running = false;
+    bool RAM_bank = false;
 public:
     Debugger(const std::string &test);
     ~Debugger();
