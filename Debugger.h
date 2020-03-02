@@ -35,7 +35,7 @@ class Debugger {
 
     //init functions
     void initNES(const std::string &nes);
-    void initSDL();
+    void initSDL(const std::string &font);
 
     //SDL
     void logError(std::ostream &os, const std::string &error);
@@ -70,7 +70,7 @@ class Debugger {
     bool running = false;
     bool RAM_bank = false;
 public:
-    Debugger(const std::string &test);
+    Debugger(const std::string &test = "../nes/nestet.nes", const std::string & font_path = "../fonts/sans.ttf");
     ~Debugger();
     Debugger(const Debugger &debugger) = delete;
     Debugger(Debugger &&debugger) = delete;

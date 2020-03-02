@@ -5,9 +5,9 @@
 #include <sstream>
 #include "Debugger.h"
 
-Debugger::Debugger(const std::string &test) {
+Debugger::Debugger(const std::string &test, const std::string &font_path) {
     initNES(test);
-    initSDL();
+    initSDL(font_path);
 }
 
 Debugger::~Debugger() {
@@ -173,11 +173,11 @@ void Debugger::initNES(const std::string &test) {
     bus->cpu.testMode();
 }
 
-void Debugger::initSDL() {
+void Debugger::initSDL(const std::string &font_path) {
     createWindow();
     createRenderer();
     initFont();
-    font = TTF_OpenFont("../fonts/sans.ttf", FONT_SIZE);
+    font = TTF_OpenFont(font_path.c_str(), FONT_SIZE);
 }
 
 

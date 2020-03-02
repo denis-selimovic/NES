@@ -2,7 +2,7 @@
 
 
 int main() {
-    Debugger debugger("../nes/nestest.nes");
+    Debugger debugger;
     debugger.run();
     return 0;
 }
