@@ -105,11 +105,7 @@ void Debugger::run() {
                         bus->clock();
                         SDL_RenderClear(renderer);
                         drawStatus();
-                        drawRegister("PC", bus->cpu.program_counter, {10, 130, 250, 50});
-                        drawRegister("X", bus->cpu.x_register, {10, 190, 250, 50});
-                        drawRegister("Y", bus->cpu.y_register, {10, 250, 250, 50});
-                        drawRegister("SP", bus->cpu.stack_pointer, {10, 310, 250, 50});
-                        drawRegister("A", bus->cpu.accumulator, {10, 370, 250, 50});
+                        drawAllRegisters();
                         SDL_RenderPresent(renderer);
                         break;
                 }
@@ -146,6 +142,14 @@ void Debugger::drawRegister(const std::string &reg, int value, const Rect &r, co
     std::stringstream ss;
     ss << reg << " : 0x " << std::hex << value;
     drawText(ss.str(), {r.x, r.y, r.w, r.h}, {c.r, c.g, c.b, c.a});
+}
+
+void Debugger::drawAllRegisters() {
+    drawRegister("PC", bus->cpu.program_counter, {10, 130, 250, 50});
+    drawRegister("X", bus->cpu.x_register, {10, 190, 250, 50});
+    drawRegister("Y", bus->cpu.y_register, {10, 250, 250, 50});
+    drawRegister("SP", bus->cpu.stack_pointer, {10, 310, 250, 50});
+    drawRegister("A", bus->cpu.accumulator, {10, 370, 250, 50});
 }
 
 
