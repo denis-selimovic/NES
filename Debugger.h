@@ -33,6 +33,10 @@ class Debugger {
     GamePak *gamePak = nullptr;
     Bus *bus = nullptr;
 
+    //init functions
+    void initNES(const std::string &nes);
+    void initSDL();
+
     //SDL
     void logError(std::ostream &os, const std::string &error);
     void throwError(const std::string &error);

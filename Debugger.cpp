@@ -6,14 +6,8 @@
 #include "Debugger.h"
 
 Debugger::Debugger(const std::string &test) {
-    gamePak = new GamePak(test);
-    bus = new Bus(cpu, ppu);
-    bus->connectGamepak(gamePak);
-    bus->cpu.testMode();
-    createWindow();
-    createRenderer();
-    initFont();
-    font = TTF_OpenFont("../fonts/sans.ttf", FONT_SIZE);
+    initNES(test);
+    initSDL();
 }
 
 Debugger::~Debugger() {
@@ -170,6 +164,20 @@ void Debugger::render() {
     drawAllRegisters();
     (!RAM_bank) ? drawRAM() : drawRAM(32);
     SDL_RenderPresent(renderer);
+}
+
+void Debugger::initNES(const std::string &test) {
+    gamePak = new GamePak(test);
+    bus = new Bus(cpu, ppu);
+    bus->connectGamepak(gamePak);
+    bus->cpu.testMode();
+}
+
+void Debugger::initSDL() {
+    createWindow();
+    createRenderer();
+    initFont();
+    font = TTF_OpenFont("../fonts/sans.ttf", FONT_SIZE);
 }
 
 
