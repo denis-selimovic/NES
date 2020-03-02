@@ -3,7 +3,6 @@
 //
 
 #include <sstream>
-#include <iomanip>
 #include "Debugger.h"
 
 Debugger::Debugger(const std::string &test) {
@@ -106,6 +105,7 @@ void Debugger::run() {
                         SDL_RenderClear(renderer);
                         drawStatus();
                         drawAllRegisters();
+                        drawRAM();
                         SDL_RenderPresent(renderer);
                         break;
                 }
@@ -145,11 +145,23 @@ void Debugger::drawRegister(const std::string &reg, int value, const Rect &r, co
 }
 
 void Debugger::drawAllRegisters() {
-    drawRegister("PC", bus->cpu.program_counter, {10, 130, 250, 50});
-    drawRegister("X", bus->cpu.x_register, {10, 190, 250, 50});
-    drawRegister("Y", bus->cpu.y_register, {10, 250, 250, 50});
-    drawRegister("SP", bus->cpu.stack_pointer, {10, 310, 250, 50});
-    drawRegister("A", bus->cpu.accumulator, {10, 370, 250, 50});
+    drawRegister("PC", bus->cpu.program_counter, {450, 10, 300, 50});
+    drawRegister("X", bus->cpu.x_register, {950, 10, 300, 50});
+    drawRegister("Y", bus->cpu.y_register, {1450, 10, 300, 50});
+    drawRegister("SP", bus->cpu.stack_pointer, {450, 70, 300, 50});
+    drawRegister("A", bus->cpu.accumulator, {950, 70, 300, 50});
+}
+
+void Debugger::drawRAM(int start, int end) {
+    std::stringstream ss;
+    for(int i = start; i < end; ++i) {
+        for(int j = 0; j < 32; ++j) {
+            int value = bus->RAM[i * 32 + j];
+            ss << std::hex << value;
+            drawText(ss.str(), {10 + 80 * i, 130 + 50 * j, 50, 40});
+            ss.str(std::string());
+        }
+    }
 }
 
 

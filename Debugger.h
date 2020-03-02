@@ -23,8 +23,8 @@ class Debugger {
 
 
     //dimenzije ekrana
-    const static uint32_t WINDOW_WIDTH = 1400;
-    const static uint32_t WINDOW_HEIGHT = 1000;
+    const static uint32_t WINDOW_WIDTH = 3400;
+    const static uint32_t WINDOW_HEIGHT = 2000;
     const static uint32_t FONT_SIZE = 10;
 
     //NES
@@ -49,10 +49,11 @@ class Debugger {
     void cleanup(TTF_Font *f);
 
     //crtanje stanja emulatora
+    void drawRAM(int start = 0, int end = 32);
     void drawAllRegisters();
     void drawRegister(const std::string &reg, int value, const Rect &r, const Color &c = {255, 255, 255, 255});
     void drawStatus();
-    void drawText(const std::string &text, const Rect &rect, const Color &c);
+    void drawText(const std::string &text, const Rect &rect, const Color &c = {255, 255, 255, 255});
     static SDL_Rect drawRect(Rect rect);
 
     //atributi
