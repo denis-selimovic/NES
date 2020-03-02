@@ -70,7 +70,7 @@ class Debugger {
     bool running = false;
     bool RAM_bank = false;
 public:
-    Debugger(const std::string &test = "../nes/nestet.nes", const std::string & font_path = "../fonts/sans.ttf");
+    Debugger(const std::string &test = "../nes/nestest.nes", const std::string & font_path = "../fonts/sans.ttf");
     ~Debugger();
     Debugger(const Debugger &debugger) = delete;
     Debugger(Debugger &&debugger) = delete;
