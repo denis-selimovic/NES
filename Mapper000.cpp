@@ -51,7 +51,7 @@ bool Mapper000::writePPUMemory(uint16_t address, uint32_t &mapped_address) {
 bool Mapper000::readPPUMemory(uint16_t address, uint32_t &mapped_address) {
     // što se tiče ppu sabirnice adresa je što se ovog mappera tiče samo proslijeđena tj nema mapiranja
     // opseg sa ppu sabirnice od 0x0000 do 0x1FFF se mapira u isti taj opseg
-    if(address >= 0x0000 && address <= 0x1FFF && CHR_banks == 0) {
+    if(address >= 0x0000 && address <= 0x1FFF) {
         mapped_address = address;
         return true;
     }
