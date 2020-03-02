@@ -102,11 +102,11 @@ void Debugger::run() {
                 switch (e.key.keysym.sym) {
                     case SDLK_SPACE:
                         bus->clock();
-                        SDL_RenderClear(renderer);
-                        drawStatus();
-                        drawAllRegisters();
-                        (!RAM_bank) ? drawRAM() : drawRAM(32, 64);
-                        SDL_RenderPresent(renderer);
+                        render();
+                        break;
+                    case SDLK_r:
+                        RAM_bank = !RAM_bank;
+                        render();
                         break;
                 }
             }
@@ -152,16 +152,24 @@ void Debugger::drawAllRegisters() {
     drawRegister("A", bus->cpu.accumulator, {950, 70, 300, 50});
 }
 
-void Debugger::drawRAM(int start, int end) {
+void Debugger::drawRAM(int start) {
     std::stringstream ss;
-    for(int i = start; i < end; ++i) {
+    for(int i = 0; i < 32; ++i) {
         for(int j = 0; j < 32; ++j) {
-            int value = bus->RAM[i * 32 + j];
+            int value = bus->RAM[(i + start) * 32 + j];
             ss << std::hex << value;
             drawText(ss.str(), {10 + 80 * i, 130 + 50 * j, 50, 40});
             ss.str(std::string());
         }
     }
+}
+
+void Debugger::render() {
+    SDL_RenderClear(renderer);
+    drawStatus();
+    drawAllRegisters();
+    (!RAM_bank) ? drawRAM() : drawRAM(32);
+    SDL_RenderPresent(renderer);
 }
 
 

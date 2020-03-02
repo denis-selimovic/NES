@@ -49,7 +49,8 @@ class Debugger {
     void cleanup(TTF_Font *f);
 
     //crtanje stanja emulatora
-    void drawRAM(int start = 0, int end = 32);
+    void render();
+    void drawRAM(int start = 0);
     void drawAllRegisters();
     void drawRegister(const std::string &reg, int value, const Rect &r, const Color &c = {255, 255, 255, 255});
     void drawStatus();
