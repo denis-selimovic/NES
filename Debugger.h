@@ -37,6 +37,10 @@ class Debugger {
     void initNES(const std::string &nes);
     void initSDL(const std::string &font);
 
+    //free memory functions
+    void freeNES();
+    void freeSDL();
+
     //SDL
     void logError(std::ostream &os, const std::string &error);
     void throwError(const std::string &error);

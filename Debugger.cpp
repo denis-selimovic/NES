@@ -11,11 +11,8 @@ Debugger::Debugger(const std::string &test, const std::string &font_path) {
 }
 
 Debugger::~Debugger() {
-    delete bus;
-    delete gamePak;
-    cleanup(window, renderer, font);
-    SDL_Quit();
-    TTF_Quit();
+    freeNES();
+    freeSDL();
 }
 
 void Debugger::logError(std::ostream &os, const std::string &error) {
@@ -178,6 +175,17 @@ void Debugger::initSDL(const std::string &font_path) {
     createRenderer();
     initFont();
     font = TTF_OpenFont(font_path.c_str(), FONT_SIZE);
+}
+
+void Debugger::freeNES() {
+    delete bus;
+    delete gamePak;
+}
+
+void Debugger::freeSDL() {
+    cleanup(window, renderer, font);
+    SDL_Quit();
+    TTF_Quit();
 }
 
 
