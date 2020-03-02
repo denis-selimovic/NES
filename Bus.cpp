@@ -34,6 +34,7 @@ void Bus::reset() {
     //resetujemo cpu i ppu
     ppu.reset();
     cpu.reset();
+    gamePak->reset();
     cycles = 0;
 }
 

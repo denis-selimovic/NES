@@ -48,6 +48,7 @@ public:
     bool writeCPUMemory(uint16_t address, uint8_t data);
     bool readPPUMemory(uint16_t address, uint8_t &data);
     bool writePPUMemory(uint16_t address, uint8_t data);
+    void reset();
 };
 
 

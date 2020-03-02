@@ -109,5 +109,10 @@ Mapper *GamePak::setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_bank
     return nullptr;
 }
 
+void GamePak::reset() {
+    if(!mapper) return;
+    mapper->reset();
+}
+
 
 
