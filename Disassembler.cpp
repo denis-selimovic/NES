@@ -13,7 +13,11 @@ std::string Disassembler::toHex(uint32_t number, uint8_t length) {
     return hex;
 }
 
-std::string Disassembler::getInstruction(std::string instruction, uint32_t operand) {
-    return instruction + " $ " + toHex(operand, 4);
+void Disassembler::addInstruction(const uint16_t &address, const std::string &instruction) {
+    disassembly[address] = instruction;
+}
+
+std::string Disassembler::getInstruction(const std::string &instruction, uint32_t operand) {
+    return instruction + " 0x " + toHex(operand, 4);
 }
 
