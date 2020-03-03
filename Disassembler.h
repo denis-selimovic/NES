@@ -6,8 +6,14 @@
 #define NES_DISASSEMBLER_H
 
 
+#include <string>
+
 class Disassembler {
 
+    std::string toHex(uint32_t number, uint8_t length);
+public:
+    Disassembler() = default;
+    ~Disassembler() = default;
 };
 
 
