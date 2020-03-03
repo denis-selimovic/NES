@@ -21,3 +21,7 @@ std::string Disassembler::getInstruction(const std::string &instruction, uint32_
     return instruction + " 0x " + toHex(operand, 4);
 }
 
+std::string Disassembler::getInstruction(const uint16_t &address) {
+    return disassembly[address];
+}
+

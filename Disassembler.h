@@ -20,6 +20,7 @@ class Disassembler {
 public:
     Disassembler() = default;
     ~Disassembler() = default;
+    std::string getInstruction(const uint16_t &address);
 };
 
 
