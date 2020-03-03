@@ -297,7 +297,7 @@ void cpu6502::clock() {
         //opcode trenutne instrukcije dobijamo preko programskog brojača
         uint8_t opcode = read(program_counter);
         //za DEBUG mode
-        uint16_t debugAddress = program_counter;
+        debugAddress = program_counter;
         //povećamo programski brojač
         program_counter++;
 

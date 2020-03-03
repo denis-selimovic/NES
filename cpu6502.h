@@ -55,7 +55,7 @@ private:
     uint8_t memory_content = 0x00;
     uint16_t relative_address = 0x00;
     uint16_t absolute_address = 0x0000;
-
+    uint16_t debugAddress = 0x0000;
 
     uint8_t getMemoryContent();
 
