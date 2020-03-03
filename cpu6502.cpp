@@ -296,6 +296,8 @@ void cpu6502::clock() {
         //ako je broj ciklusa 0 prelazimo na sljedeću instrukciju
         //opcode trenutne instrukcije dobijamo preko programskog brojača
         uint8_t opcode = read(program_counter);
+        //za DEBUG mode
+        uint16_t debugAddress = program_counter;
         //povećamo programski brojač
         program_counter++;
 
@@ -315,7 +317,8 @@ void cpu6502::clock() {
         //postavimo U flag uvijek na 1
         setFlag(U, true);
         if(mode == DEBUG) {
-            disassembler->
+            std::string ins = disassembler->getInstruction(instruction->name, memory_content);
+            disassembler->addInstruction(debugAddress, ins);
         }
     }
     //smanjimo broj ciklusa za 1
