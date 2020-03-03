@@ -411,3 +411,9 @@ void cpu6502::testMode() {
     program_counter = 0xC000;
 }
 
+void cpu6502::setDisassembler(Disassembler *disassembler) {
+    this->disassembler = disassembler;
+}
+
+
+

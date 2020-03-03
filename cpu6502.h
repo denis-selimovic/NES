@@ -11,6 +11,8 @@
 #include "AddressingMode.h"
 #include "Operation.h"
 #include "Bus.h"
+#include "Disassembler.h"
+
 
 class Instruction;
 class Bus;
@@ -59,13 +61,16 @@ private:
     //mod emulatora
     MODE mode;
 
+    //disassembler
+    Disassembler *disassembler = nullptr;
+
     friend class Operation;
     friend class AddressingMode;
     friend class Debugger;
 public:
     cpu6502(MODE mode = NORMAL);
     void connectToBus(Bus *bus);
-
+    void setDisassembler(Disassembler *disassembler);
     void clock();
     void reset();
     void interruptRequest();
