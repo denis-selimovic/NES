@@ -155,6 +155,10 @@ void Debugger::drawRAM(int start) {
     }
 }
 
+void Debugger::drawInstruction() {
+
+}
+
 void Debugger::render() {
     SDL_RenderClear(renderer);
     drawStatus();

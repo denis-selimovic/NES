@@ -59,6 +59,7 @@ class Debugger {
 
     //crtanje stanja emulatora
     void render();
+    void drawInstruction();
     void drawRAM(int start = 0);
     void drawAllRegisters();
     void drawRegister(const std::string &reg, int value, const Rect &r, const Color &c = {255, 255, 255, 255});
