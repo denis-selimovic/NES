@@ -314,6 +314,9 @@ void cpu6502::clock() {
 
         //postavimo U flag uvijek na 1
         setFlag(U, true);
+        if(mode == DEBUG) {
+            disassembler->
+        }
     }
     //smanjimo broj ciklusa za 1
     cycles--;
