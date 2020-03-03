@@ -32,6 +32,7 @@ class Debugger {
     ppu2C02 ppu;
     GamePak *gamePak = nullptr;
     Bus *bus = nullptr;
+    Disassembler *disassembler = nullptr;
 
     //init functions
     void initNES(const std::string &nes);

@@ -16,6 +16,7 @@
 
 class Instruction;
 class Bus;
+class Disassembler;
 
 class cpu6502 {
 

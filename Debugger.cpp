@@ -164,6 +164,9 @@ void Debugger::render() {
 }
 
 void Debugger::initNES(const std::string &test) {
+    disassembler = new Disassembler();
+    cpu = cpu6502(cpu6502::DEBUG);
+    cpu.setDisassembler(disassembler);
     gamePak = new GamePak(test);
     bus = new Bus(cpu, ppu);
     bus->connectGamepak(gamePak);
@@ -180,6 +183,7 @@ void Debugger::initSDL(const std::string &font_path) {
 void Debugger::freeNES() {
     delete bus;
     delete gamePak;
+    delete disassembler;
 }
 
 void Debugger::freeSDL() {
