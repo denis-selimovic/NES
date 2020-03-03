@@ -156,7 +156,7 @@ void Debugger::drawRAM(int start) {
 }
 
 void Debugger::drawInstruction() {
-
+    drawText(bus->cpu.disassembler->getInstruction(bus->cpu.debugAddress), {1450, 70, 300, 50});
 }
 
 void Debugger::render() {
@@ -164,6 +164,7 @@ void Debugger::render() {
     drawStatus();
     drawAllRegisters();
     (!RAM_bank) ? drawRAM() : drawRAM(32);
+    drawInstruction();
     SDL_RenderPresent(renderer);
 }
 
