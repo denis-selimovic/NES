@@ -21,7 +21,7 @@ public:
     //maske za postavljanje bita u statusnom registru
     //redom CARRY, ZERO, INTERRUPT, DECIMAL, BREAK, UNUSED, OVERFLOW, NEGATIVE
     enum FLAGS {C = (1 << 0), Z = (1 << 1), I = (1 << 2), D = (1 << 3), B = (1 << 4), U = (1 << 5), V = (1 << 6), N = (1 << 7)};
-
+    enum MODE {NORMAL, DEBUG};
 private:
     //cpu ima 6 registara opce namjene
     uint8_t accumulator;
@@ -56,11 +56,14 @@ private:
 
     uint8_t getMemoryContent();
 
+    //mod emulatora
+    MODE mode;
+
     friend class Operation;
     friend class AddressingMode;
     friend class Debugger;
 public:
-    cpu6502();
+    cpu6502(MODE mode = NORMAL);
     void connectToBus(Bus *bus);
 
     void clock();

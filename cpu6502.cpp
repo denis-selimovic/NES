@@ -28,7 +28,7 @@ uint8_t cpu6502::read(uint16_t address) {
     return memory_content;
 }
 
-cpu6502::cpu6502() {
+cpu6502::cpu6502(MODE mode) {
     lookup =
             {
                     Instruction("BRK", &Operation::BRK, &AddressingMode::IMM, 7),
@@ -288,6 +288,7 @@ cpu6502::cpu6502() {
                     Instruction("INC", &Operation::INC, &AddressingMode::ABX, 7),
                     Instruction("???", &Operation::XXX, &AddressingMode::IMP, 7),
             };
+    this->mode = mode;
 }
 
 void cpu6502::clock() {
