@@ -7,10 +7,12 @@
 
 
 #include <string>
+#include "Instruction.h"
 
 class Disassembler {
 
     std::string toHex(uint32_t number, uint8_t length);
+    std::string getInstruction(std::string instruction, uint32_t operand);
 public:
     Disassembler() = default;
     ~Disassembler() = default;

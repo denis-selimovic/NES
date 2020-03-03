@@ -12,3 +12,8 @@ std::string Disassembler::toHex(uint32_t number, uint8_t length) {
     }
     return hex;
 }
+
+std::string Disassembler::getInstruction(std::string instruction, uint32_t operand) {
+    return instruction + " $ " + toHex(operand, 4);
+}
+
