@@ -317,7 +317,7 @@ void cpu6502::clock() {
         //postavimo U flag uvijek na 1
         setFlag(U, true);
         if(mode == DEBUG) {
-            std::string ins = disassembler->getInstruction(instruction->name, memory_content);
+            std::string ins = disassembler->getInstruction(instruction->name, absolute_address);
             disassembler->addInstruction(debugAddress, ins);
         }
     }

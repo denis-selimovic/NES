@@ -2,15 +2,13 @@
 // Created by denis on 02/03/2020.
 //
 
+#include <sstream>
 #include "Disassembler.h"
 
-std::string Disassembler::toHex(uint32_t number, uint8_t length) {
-    std::string hex(length, '0');
-    for(int i = length - 1; i >= 0; --i) {
-        hex[i] = "0123456789ABCDEF"[number & 0xFu];
-        number >>= 4u;
-    }
-    return hex;
+std::string Disassembler::toHex(int number, uint8_t length) {
+    std::stringstream hex;
+    hex << std::hex << number;
+    return hex.str();
 }
 
 void Disassembler::addInstruction(const uint16_t &address, const std::string &instruction) {

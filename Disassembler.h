@@ -12,7 +12,7 @@
 
 class Disassembler {
 
-    std::string toHex(uint32_t number, uint8_t length);
+    std::string toHex(int number, uint8_t length);
 
     std::map<uint16_t, std::string> disassembly;
 public:
