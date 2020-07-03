@@ -140,11 +140,25 @@ private:
     uint16_t shifter_pattern_high = 0x0000;
 
 private:
-    // struktura za identifikaciju piksela i palete
+    // struktura za identifikaciju piksela i palete pozadine
     struct Palette {
-        uint8_t pixel_id, palette_id;
+        uint8_t pixel_id = 0x00, palette_id = 0x00;
     };
-    Palette getComposition();
+    Palette getComposition() const;
+
+private:
+    // struktura za identifikaciju piksela i pozadine sprite-a
+    struct SpritePalette {
+        uint8_t pixel_id = 0x00, palette_id = 0x00, priority = 0x00;
+    };
+    SpritePalette getSpriteComposition();
+
+private:
+    // struktura koja čuva rezultirajuću paletu
+    struct FinalPalette {
+        uint8_t pixel_id = 0x00, palette_id = 0x00;
+    };
+    FinalPalette getFinalComposition(Palette palette, SpritePalette spritePalette);
 
 private:
     void scrollingHorizontal();

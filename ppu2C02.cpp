@@ -217,7 +217,11 @@ void ppu2C02::clock() {
         }
     }
 
-    if(ppumask.background_enable) Palette palette = getComposition();
+    Palette palette{};
+    SpritePalette spritePalette{};
+    if(ppumask.background_enable) palette = getComposition();
+    if(ppumask.sprite_enable) spritePalette = getSpriteComposition();
+    FinalPalette finalPalette = getFinalComposition(palette, spritePalette);
 
     cycles++;
     if(cycles >= 341) {
@@ -343,10 +347,18 @@ void ppu2C02::fetchNextTile(uint8_t selector) {
     }
 }
 
-ppu2C02::Palette ppu2C02::getComposition() {
-    Palette palette;
+ppu2C02::Palette ppu2C02::getComposition() const {
+    Palette palette{};
     uint16_t selector = 0x8000u >> fine_x;
     palette.pixel_id = (((shifter_pattern_high & selector) > 0) << 1u) | ((shifter_pattern_low & selector) > 0);
     palette.palette_id = (((shifter_attribute_high & selector) > 0) << 1u) | ((shifter_attribute_low & selector) > 0);
     return palette;
+}
+
+ppu2C02::SpritePalette ppu2C02::getSpriteComposition() {
+    return ppu2C02::SpritePalette();
+}
+
+ppu2C02::FinalPalette ppu2C02::getFinalComposition(ppu2C02::Palette palette, ppu2C02::SpritePalette spritePalette) {
+    return ppu2C02::FinalPalette();
 }
