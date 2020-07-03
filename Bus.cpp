@@ -16,6 +16,7 @@ void Bus::writeCPUMemory(uint16_t address, uint8_t data) {
     if(gamePak->writeCPUMemory(address, data)) {}
     else if(address >= 0x0000 && address <= 0x01FF) RAM[address & 0x07FFu] = data;
     else if (address >= 0x2000 && address <= 0x3FFF) ppu.writeCPUMemory(address & 0x0007u, data);
+    else if (address == 0x4014) DMA = {data, 0x00, 0x00, true, true};
 }
 
 Bus::Bus(cpu6502 &cpu, ppu2C02 &ppu) : cpu(cpu), ppu(ppu) {
@@ -26,7 +27,13 @@ void Bus::clock() {
     //svaki signal sata pozivamo funkciju clock iz klase ppu
     //jedan ciklus sata cpu se dešava na svaka tri ciklusa sata ppu
     ppu.clock();
-    if(cycles % 3 == 0) cpu.clock();
+    if(cycles % 3 == 0) {
+        if(DMA.transfer) {
+            if(DMA.disable && cycles % 2 == 1) DMA.disable = false;
+            else if(!DMA.disable) startDMA();
+        }
+        else cpu.clock();
+    }
     if(ppu.interrupt) {
         ppu.interrupt = false;
         cpu.nonmaskableInterrupt();
@@ -45,5 +52,22 @@ void Bus::reset() {
 void Bus::connectGamepak(GamePak *g) {
     gamePak = g;
     ppu.connectGamePak(g);
+}
+
+void Bus::startDMA() {
+    (cycles % 2 == 0) ? readDMA() : writeDMA();
+}
+
+void Bus::writeDMA() {
+    ppu.oam_memory[DMA.address] = DMA.data;
+    DMA.address++;
+    if(DMA.address == 0x00) {
+        DMA.transfer = false;
+        DMA.disable = true;
+    }
+}
+
+void Bus::readDMA() {
+    DMA.data = readCPUMemory((DMA.page << 8u) | DMA.address);
 }
 

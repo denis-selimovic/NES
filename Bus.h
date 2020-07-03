@@ -20,6 +20,14 @@ class Bus {
     //broj ciklusa sabirnice
     uint32_t cycles = 0;
 
+    struct DirectMemoryAccess {
+        uint8_t page = 0x00, address = 0x00, data = 0x00;
+        bool transfer = false, disable = true;
+    } DMA;
+    void startDMA();
+    void readDMA();
+    void writeDMA();
+
     //pokazivač na gamepak
     GamePak *gamePak = nullptr;
     friend class Debugger;
