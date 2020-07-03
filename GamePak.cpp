@@ -36,7 +36,7 @@ GamePak::GamePak(const std::string &game) {
         // na osnovu ovog id-a određujemo koji mapper se koristi
         // gornja četiri bita 6. bajta određuju low nibble id-a
         // gornja četiri bita 7. bajta određuju high nibble id-a
-        uint8_t mapper = ((header.flags_mirroring_trainer & 0xF0u) >> 4u) | (header.flags_playchoice & 0xF0u);
+        uint8_t mapperType = ((header.flags_mirroring_trainer & 0xF0u) >> 4u) | (header.flags_playchoice & 0xF0u);
 
         // učitamo PRG-ROM
         // bajt 4 iz headera nam govori kolika je veličina ove memorije u 16KB
@@ -50,7 +50,7 @@ GamePak::GamePak(const std::string &game) {
 
 
         //postavljamo mapper na osnovu id-a
-        this->mapper = setMapper(mapper, header.prg_rom_size, header.chr_rom_size);
+        this->mapper = setMapper(mapperType, header.prg_rom_size, header.chr_rom_size);
 
         nes.close();
     }
@@ -106,7 +106,6 @@ Mapper *GamePak::setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_bank
         default:
             throw std::logic_error("UNSUPPORTED MAPPER!");
     }
-    return nullptr;
 }
 
 void GamePak::reset() {
