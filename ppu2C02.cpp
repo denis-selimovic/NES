@@ -217,6 +217,8 @@ void ppu2C02::clock() {
         }
     }
 
+    if(ppumask.background_enable) Palette palette = getComposition();
+
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
@@ -306,13 +308,45 @@ void ppu2C02::loadPixel() {
 void ppu2C02::updateShiftRegister() {
     // ažurira shift registre za svaki ciklus PPU
     shifter_pattern_low <<= 1u;
-    shifter_attribute_high <<= 1u;
+    shifter_pattern_high <<= 1u;
     shifter_attribute_low <<= 1u;
     shifter_attribute_high <<= 1u;
 }
 
 void ppu2C02::fetchNextTile(uint8_t selector) {
+    uint16_t address = 0x0000, lsb_address = 0x0000, msb_address = 0x0000;
     switch (selector) {
-
+        case 0:
+            loadPixel();
+            tile_id = readPPUMemory(0x2000u | (vram_address.reg & 0x0FFFu));
+            break;
+        case 2:
+            address = 0x23C0u | (vram_address.nametable_select_y << 11u) | (vram_address.nametable_select_x << 10u) | ((vram_address.coarse_y >> 2u) << 3u) | (vram_address.coarse_x >> 2u);
+            tile_attribute = readPPUMemory(address);
+            if(vram_address.coarse_y & 0x02u) tile_attribute >>= 4u;
+            if(vram_address.coarse_x & 0x02u) tile_attribute >>= 2u;
+            tile_attribute &= 0x03u;
+            break;
+        case 4:
+            lsb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile_id) << 4u) + vram_address.fine_y;
+            tile_lsb = readPPUMemory(lsb_address);
+            break;
+        case 6:
+            msb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile_id) << 4u) + vram_address.fine_y + 8;
+            tile_msb = readPPUMemory(msb_address);
+            break;
+        case 7:
+            scrollingHorizontal();
+            break;
+        default:
+            break;
     }
+}
+
+ppu2C02::Palette ppu2C02::getComposition() {
+    Palette palette;
+    uint16_t selector = 0x8000u >> fine_x;
+    palette.pixel_id = (((shifter_pattern_high & selector) > 0) << 1u) | ((shifter_pattern_low & selector) > 0);
+    palette.palette_id = (((shifter_attribute_high & selector) > 0) << 1u) | ((shifter_attribute_low & selector) > 0);
+    return palette;
 }

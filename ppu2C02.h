@@ -87,9 +87,6 @@ class ppu2C02 {
     } OAM[64];
 
 
-    //pokazivač na OAM memoriju
-    uint8_t *oam_memory = (uint8_t*)OAM;
-
     //šesti registar je PPUSCROLL, a sedmi je adresa u VRAM-u
     //osmi registar neće biti implementiran jer njemu pristupamo preko adrese u VRAM-u
     //osmi registar je sličan petom registru
@@ -143,6 +140,13 @@ private:
     uint16_t shifter_pattern_high = 0x0000;
 
 private:
+    // struktura za identifikaciju piksela i palete
+    struct Palette {
+        uint8_t pixel_id, palette_id;
+    };
+    Palette getComposition();
+
+private:
     void scrollingHorizontal();
     void scrollingVertical();
     void transferHorizontal();
@@ -150,12 +154,13 @@ private:
     void loadPixel();
     void updateShiftRegister();
     void fetchNextTile(uint8_t selector);
+
 public:
     bool interrupt = false;
     int scanline = -1;
+    uint8_t *oam_memory = (uint8_t*)OAM;
 
 public:
-
     uint8_t readCPUMemory(uint16_t address);
     void writeCPUMemory(uint16_t address, uint8_t data);
     uint8_t readPPUMemory(uint16_t address);
