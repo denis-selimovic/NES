@@ -27,6 +27,10 @@ void Bus::clock() {
     //jedan ciklus sata cpu se dešava na svaka tri ciklusa sata ppu
     ppu.clock();
     if(cycles % 3 == 0) cpu.clock();
+    if(ppu.interrupt) {
+        ppu.interrupt = false;
+        cpu.nonmaskableInterrupt();
+    }
     cycles++;
 }
 

@@ -127,6 +127,33 @@ class ppu2C02 {
     uint8_t ppudata_buffer = 0x00;
 
     GamePak *gamepak;
+
+private:
+    // pomoćne varijable za background rendering
+    uint8_t tile_id = 0x00;
+    uint8_t tile_attribute = 0x00;
+    uint8_t tile_lsb = 0x00;
+    uint8_t tile_msb = 0x00;
+
+private:
+    // pomoćne varijable koje modeliraju shift registre
+    uint16_t shifter_attribute_low = 0x0000;
+    uint16_t shifter_attribute_high = 0x0000;
+    uint16_t shifter_pattern_low = 0x0000;
+    uint16_t shifter_pattern_high = 0x0000;
+
+private:
+    void scrollingHorizontal();
+    void scrollingVertical();
+    void transferHorizontal();
+    void transferVertical();
+    void loadPixel();
+    void updateShiftRegister();
+    void fetchNextTile(uint8_t selector);
+public:
+    bool interrupt = false;
+    int scanline = -1;
+
 public:
 
     uint8_t readCPUMemory(uint16_t address);
@@ -136,8 +163,7 @@ public:
 
     void clock();
     void reset();
-    void connectGamePak(GamePak *gamepak);
-
+    void connectGamePak(GamePak *gamePak);
 };
 
 

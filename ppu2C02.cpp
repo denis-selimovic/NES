@@ -189,12 +189,40 @@ void ppu2C02::writePPUMemory(uint16_t address, uint8_t data) {
     }
 }
 
-void ppu2C02::connectGamePak(GamePak *g){
-    this->gamepak = g;
+void ppu2C02::connectGamePak(GamePak *gamePak){
+    this->gamepak = gamePak;
 }
 
 void ppu2C02::clock() {
+    if(scanline >= -1 && scanline < 240) {
+        if(scanline == 0 && cycles == 0) cycles = 1;
+        if(scanline == -1 && cycles == 1) ppustatus.vblank = 0;
+        if((cycles >= 2 && cycles < 258) || (cycles >= 321 && cycles < 338)) {
+            updateShiftRegister();
+            uint8_t tile_selector = (cycles - 1) % 8;
+            fetchNextTile(tile_selector);
+        }
+        if(cycles == 256) scrollingVertical();
+        if(cycles == 257) {
+            loadPixel();
+            transferHorizontal();
+        }
+        if(cycles == 338 || cycles == 340) tile_id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
+        if(scanline == -1 && cycles >= 280 && cycles < 305) transferVertical();
+    }
+    if(scanline >= 241 && scanline < 261) {
+        if(scanline == 241 && cycles == 1) {
+            ppustatus.vblank = 1;
+            if(ppuctrl.nmi_enable) interrupt = true;
+        }
+    }
+
     cycles++;
+    if(cycles >= 341) {
+        cycles = 0;
+        scanline++;
+        if(scanline >= 261) scanline = -1;
+    }
 }
 
 void ppu2C02::reset() {
@@ -207,4 +235,84 @@ void ppu2C02::reset() {
     toggle = false;
     fine_x = 0x00;
     cycles = 0;
+}
+
+void ppu2C02::scrollingHorizontal() {
+    // Ako su biti za rendering pozadine ili sprite-a postavljeni može se izvršiti scroll horizontalno
+    if(ppumask.background_enable || ppumask.sprite_enable) {
+        // prilikom skrolanja možemo preći u sljedeći nametable
+        // ukoliko se to desi moramo ažurirati bit koji označava sljedeći nametable
+        // u suprotnom samo povećamo adresu sa koje se čita sljedeći bajt
+        // jedan nametable ima 32x30 pločica, nakon što naiđemo na 31. pločicu u redu prelazimo na sljedeći nametable
+        if(vram_address.coarse_x == 31) {
+            vram_address.coarse_x = 0;
+            vram_address.nametable_select_x = ~vram_address.nametable_select_x;
+        }
+        else {
+            vram_address.coarse_x++;
+        }
+    }
+}
+
+void ppu2C02::scrollingVertical() {
+    // scroll vertikalno je isto moguć samo kad su biti za rendering omogućeni
+    if(ppumask.background_enable || ppumask.sprite_enable) {
+        // scroll vertikalno ne ide na svakih 8 piksela (kolika je visina jedne pločice)
+        // moguć je scroll za određeni broj piksela, zato koristimo fine_y varijablu
+        // pored toga, kako nametable ima 32x32 pločica, a vidljivo je samo 32x30 posljednja dva reda traže poseban tretman
+        if(vram_address.fine_y < 7) {
+            vram_address.fine_y++;
+        }
+        else {
+            vram_address.fine_y = 0;
+            if(vram_address.coarse_y == 29 || vram_address.coarse_y == 31) {
+                vram_address.coarse_y = 0;
+                if(vram_address.coarse_y == 29) vram_address.nametable_select_y = ~vram_address.nametable_select_y;
+            }
+            else {
+                vram_address.coarse_y++;
+            }
+        }
+    }
+}
+
+void ppu2C02::transferHorizontal() {
+    if(ppumask.sprite_enable || ppumask.background_enable) {
+        vram_address.coarse_x = t_address.coarse_x;
+        vram_address.nametable_select_x = t_address.nametable_select_x;
+    }
+
+}
+
+void ppu2C02::transferVertical() {
+    if(ppumask.sprite_enable || ppumask.background_enable) {
+        vram_address.coarse_y = t_address.coarse_y;
+        vram_address.nametable_select_y = t_address.nametable_select_y;
+        vram_address.fine_y = t_address.fine_y;
+    }
+}
+
+void ppu2C02::loadPixel() {
+    // PPU ima 16-bitni shift registar
+    // prvih 8 najznačajnijih bita predstavljaju piksel koji se crta
+    // sljedeći piksel koji će se crtati u novom ciklusu je u donjih 8 bita registra
+    // ova funkcija ažurira donjih 8 bita shift registra
+    shifter_pattern_low = (shifter_attribute_low & 0xFF00u) | tile_lsb;
+    shifter_pattern_high = (shifter_attribute_high & 0xFF00u) | tile_msb;
+    shifter_attribute_low = (shifter_attribute_low & 0xFF00u) | ((tile_attribute & 0b01u) ? 0xFF : 0x00);
+    shifter_attribute_high = (shifter_attribute_high & 0xFF00u) | ((tile_attribute & 0b10u) ? 0xFF : 0x00);
+}
+
+void ppu2C02::updateShiftRegister() {
+    // ažurira shift registre za svaki ciklus PPU
+    shifter_pattern_low <<= 1u;
+    shifter_attribute_high <<= 1u;
+    shifter_attribute_low <<= 1u;
+    shifter_attribute_high <<= 1u;
+}
+
+void ppu2C02::fetchNextTile(uint8_t selector) {
+    switch (selector) {
+
+    }
 }
