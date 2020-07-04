@@ -17,8 +17,8 @@ class Bus;
 class Renderer {
 
     // window size
-    const static uint32_t WINDOW_WIDTH = 2560;
-    const static uint32_t WINDOW_HEIGHT = 2400;
+    const static uint32_t WINDOW_WIDTH = 256;
+    const static uint32_t WINDOW_HEIGHT = 240;
 
     // SDL utility
     void initSDL();
@@ -31,6 +31,9 @@ class Renderer {
     // SDL atributi
     SDL_Window  *window;
     SDL_Renderer *renderer;
+    SDL_Texture *texture;
+
+    unsigned int *pixels;
 
     // Oslobađanje memorije
     template <typename T, typename... Args> void cleanup(T *, Args&&... args);

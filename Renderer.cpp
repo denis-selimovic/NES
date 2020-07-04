@@ -11,7 +11,12 @@ void Renderer::drawPixel(int x, int y, int r, int g, int b) {
         SDL_SetRenderDrawColor(renderer, r, g, b, 0);
         SDL_RenderDrawPoint(renderer, x, y);
         SDL_RenderPresent(renderer);
+        /*pixels[WINDOW_WIDTH * y + x] = 0xFF000000u | (b << 4u) | (g << 2u) | r;
+        SDL_UpdateTexture(texture, NULL, pixels, WINDOW_WIDTH * 4);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderPresent(renderer);*/
     }
+
 }
 
 void Renderer::initSDL() {
@@ -21,6 +26,7 @@ void Renderer::initSDL() {
 
 void Renderer::freeSDL() {
     cleanup(window, renderer);
+    delete[] pixels;
     SDL_Quit();
 }
 
@@ -45,6 +51,8 @@ void Renderer::createRenderer() {
         SDL_Quit();
         throwError("SDL_CreateRenderer");
     }
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, WINDOW_WIDTH , WINDOW_HEIGHT);
+    pixels = new unsigned int[WINDOW_WIDTH * WINDOW_HEIGHT * 4];
 }
 
 void Renderer::logError(std::ostream &os, const std::string &error) {
