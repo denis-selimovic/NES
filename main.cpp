@@ -1,8 +1,9 @@
 #include "Debugger.h"
+#include "Renderer.h"
 
 
 int main() {
-    Debugger debugger;
-    debugger.run();
+    Renderer renderer;
+    renderer.run();
     return 0;
 }

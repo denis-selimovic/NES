@@ -31,7 +31,7 @@ class Bus {
     //pokazivač na gamepak
     GamePak *gamePak = nullptr;
     friend class Debugger;
-
+    friend class Renderer;
 public:
     ppu2C02::RenderingInfo currentPixel{};
 

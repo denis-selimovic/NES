@@ -10,6 +10,10 @@
 #include <ostream>
 #include "Bus.h"
 
+class cpu6502;
+class ppu2C02;
+class Bus;
+
 class Renderer {
 
     // window size
@@ -34,8 +38,8 @@ class Renderer {
     void cleanup(SDL_Renderer *r);
 
     // povezivanje na emulator
-    cpu6502 cpu6502;
-    ppu2C02 ppu2C02;
+    cpu6502 cpu;
+    ppu2C02 ppu;
     Bus *bus = nullptr;
     GamePak *gamePak = nullptr;
 

@@ -80,7 +80,7 @@ Renderer::~Renderer() {
 }
 
 void Renderer::initNES(const std::string &nes) {
-    bus = new Bus(cpu6502, ppu2C02);
+    bus = new Bus(cpu, ppu);
     gamePak = new GamePak(nes);
     bus->connectGamepak(gamePak);
 }

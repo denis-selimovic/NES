@@ -8,7 +8,6 @@
 
 #include <cstdint>
 #include "GamePak.h"
-#include "Renderer.h"
 
 class ppu2C02 {
 

@@ -17,6 +17,7 @@
 class Instruction;
 class Bus;
 class Disassembler;
+class Renderer;
 
 class cpu6502 {
 
@@ -68,6 +69,7 @@ private:
     friend class Operation;
     friend class AddressingMode;
     friend class Debugger;
+    friend class Renderer;
 public:
     cpu6502(MODE mode = NORMAL);
     void connectToBus(Bus *bus);
