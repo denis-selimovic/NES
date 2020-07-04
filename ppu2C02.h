@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include "GamePak.h"
+#include "Renderer.h"
 
 class ppu2C02 {
 
@@ -19,13 +20,13 @@ class ppu2C02 {
     //2KB RAM-a je odvojeno za PPU na NES platformi
 
     //na adresama 0x0000 do 0x1FFF je za dvije tabele paterna
-    uint8_t pattern_table[2][4096];
+    uint8_t pattern_table[2][4096] = {0};
     //na adresama 0x2000 do 0x3EFF se nalaze 4 tabele imena
     //pošto NES ima samo 2KB VRAM-a 4 tabele se koristeći mirroring pamte kao dvije tabele
-    uint8_t nametable[2][1024];
+    uint8_t nametable[2][1024] = {0};
     //na adresama 0x3F00 do 0x3FFF su palete
     //i ovdje se koristi mirroring
-    uint8_t pallete[32];
+    uint8_t pallete[32] = {0};
 
 
     //PPU registri
@@ -174,8 +175,8 @@ private:
     Sprite foundSprites[8];
     uint8_t sprite_count = 0;
     // 8 shift registra koje čuvaju 8 najznačijih bita sprite-a i 8 shift registra koji čuvaju 8 najmanje značajnih bita sprite-a
-    uint8_t sprite_low[8];
-    uint8_t sprite_high[8];
+    uint8_t sprite_low[8] = {0};
+    uint8_t sprite_high[8] = {0};
     void findSprites();
     // funkcije za određivanje adrese sprite-a
     uint16_t sprite8x8(uint8_t i);
@@ -186,10 +187,19 @@ private:
     uint16_t sprite8x16FlippedHelper(uint8_t i, uint8_t temp);
     uint8_t flipBytes(uint8_t bytes);
 
+private:
+    // sprite zero pomoćne varijable
+    struct SpriteZero {
+        bool enabled = false, rendered = false;
+    } spriteZero{};
+
 public:
     bool interrupt = false;
     int scanline = -1;
     uint8_t *oam_memory = (uint8_t*)OAM;
+
+public:
+    Renderer renderer;
 
 public:
     uint8_t readCPUMemory(uint16_t address);

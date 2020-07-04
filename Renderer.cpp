@@ -3,3 +3,7 @@
 //
 
 #include "Renderer.h"
+
+void Renderer::drawPixel(uint x, uint y, uint pixel, uint palette) {
+
+}

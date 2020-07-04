@@ -9,6 +9,8 @@
 
 class Renderer {
 
+public:
+    void drawPixel(uint x, uint y, uint pixel, uint palette);
 };
 
 
