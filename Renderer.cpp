@@ -103,8 +103,21 @@ void Renderer::freeNES() {
 void Renderer::run() {
     running = true;
     while(running) {
-        bus->clock();
-        drawPixel(bus->currentPixel.x, bus->currentPixel.y, bus->currentPixel.r, bus->currentPixel.g, bus->currentPixel.b);
+        while(!bus->ppu.rendered) bus->clock();
+        std::cout<<"Rendering done!\n";
+        bus->ppu.rendered = false;
+        //drawPixel(bus->currentPixel.x, bus->currentPixel.y, bus->currentPixel.r, bus->currentPixel.g, bus->currentPixel.b);
+        render();
+        bus->ppu.info.resize(0);
      }
+}
+
+void Renderer::render() {
+    SDL_RenderClear(renderer);
+    for(auto pixel: bus->ppu.info) {
+        SDL_SetRenderDrawColor(renderer, pixel.r, pixel.g, pixel.b, 255);
+        SDL_RenderDrawPoint(renderer, pixel.y, pixel.x);
+    }
+    SDL_RenderPresent(renderer);
 }
 

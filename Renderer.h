@@ -52,6 +52,7 @@ class Renderer {
 
     // Funkcije za crtanje na ekran
     void drawPixel(int x, int y, int r, int g, int b);
+    void render();
 
     // rad renderera
     bool running = false;

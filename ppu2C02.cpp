@@ -260,12 +260,17 @@ ppu2C02::RenderingInfo ppu2C02::clock() {
     if(ppumask.background_enable)palette = getComposition();
     if(ppumask.sprite_enable) spritePalette = getSpriteComposition();
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
+    std::cout<<pixel.r<<" "<<pixel.g<<" "<<pixel.b<<"\n";
+    info.push_back({scanline, cycles - 1, pixel.r, pixel.g, pixel.b});
     int old_cycles = cycles - 1, old_scanline = scanline;
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
         scanline++;
-        if(scanline >= 261) scanline = -1;
+        if(scanline >= 261) {
+            rendered = true;
+            scanline = -1;
+        }
     }
     return {old_cycles, old_scanline, pixel.r, pixel.g, pixel.b};
 }

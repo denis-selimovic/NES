@@ -205,9 +205,10 @@ public:
         int x = 0, y = 0;
         int r = 0, g = 0, b = 0;
     };
-
+    std::vector<RenderingInfo> info;
 public:
     bool interrupt = false;
+    bool rendered = false;
     int scanline = -1;
     uint8_t *oam_memory = (uint8_t*)OAM;
 
