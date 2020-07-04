@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <ostream>
+#include "Bus.h"
 
 class Renderer {
 
@@ -31,12 +32,28 @@ class Renderer {
     template <typename T, typename... Args> void cleanup(T *, Args&&... args);
     void cleanup(SDL_Window *w);
     void cleanup(SDL_Renderer *r);
+
+    // povezivanje na emulator
+    cpu6502 cpu6502;
+    ppu2C02 ppu2C02;
+    Bus *bus = nullptr;
+    GamePak *gamePak = nullptr;
+
+    // inicijalizacija emulatora
+    void initNES(const std::string &nes);
+    void freeNES();
+
+    // Funkcije za crtanje na ekran
+    void drawPixel(uint x, uint y, int r, int g, int b);
+
+    // rad renderera
+    bool running = false;
 public:
-    Renderer();
+    explicit Renderer(const std::string &test = "../nes/nestest.nes");
     ~Renderer();
     Renderer(const Renderer &renderer) = delete;
     Renderer(Renderer &&renderer) = delete;
-    void drawPixel(uint x, uint y, int r, int g, int b);
+    void run();
 };
 
 

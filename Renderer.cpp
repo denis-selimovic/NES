@@ -6,7 +6,10 @@
 #include "Renderer.h"
 
 void Renderer::drawPixel(uint x, uint y, int r, int g, int b) {
-
+    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+    SDL_RenderDrawPoint(renderer, x, y);
+    SDL_RenderPresent(renderer);
 }
 
 void Renderer::initSDL() {
@@ -66,11 +69,32 @@ void Renderer::cleanup(SDL_Renderer *r) {
     SDL_DestroyRenderer(r);
 }
 
-Renderer::Renderer() {
+Renderer::Renderer(const std::string &nes) {
+    initNES(nes);
     initSDL();
 }
 
 Renderer::~Renderer() {
+    freeNES();
     freeSDL();
+}
+
+void Renderer::initNES(const std::string &nes) {
+    bus = new Bus(cpu6502, ppu2C02);
+    gamePak = new GamePak(nes);
+    bus->connectGamepak(gamePak);
+}
+
+void Renderer::freeNES() {
+    delete gamePak;
+    delete bus;
+}
+
+void Renderer::run() {
+    running = true;
+    while(running) {
+        bus->clock();
+        drawPixel(bus->currentPixel.x, bus->currentPixel.y, bus->currentPixel.r, bus->currentPixel.g, bus->currentPixel.b);
+    }
 }
 
