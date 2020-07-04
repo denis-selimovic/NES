@@ -199,6 +199,7 @@ private:
     };
     std::vector<Pixel> ppuPalette;
     Pixel getColor(FinalPalette palette);
+    unsigned int getColorCode(Pixel pixel);
 
 public:
     struct RenderingInfo {
@@ -224,9 +225,9 @@ public:
     void connectGamePak(GamePak *gamePak);
 
     ppu2C02();
+    ~ppu2C02();
     ppu2C02(const ppu2C02 &ppu) = delete;
     ppu2C02(ppu2C02 &&ppu) = delete;
-    ~ppu2C02();
 };
 
 

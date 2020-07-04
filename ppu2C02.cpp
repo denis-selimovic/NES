@@ -260,7 +260,7 @@ ppu2C02::RenderingInfo ppu2C02::clock() {
     if(ppumask.sprite_enable) spritePalette = getSpriteComposition();
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
     if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240)
-        pixels[256 * scanline + (cycles - 1)] = (0xFF << 0u) | (pixel.b << 2u) | (pixel.g << 4u) | (pixel.r << 6u);
+        pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
     int old_cycles = cycles - 1, old_scanline = scanline;
     cycles++;
     if(cycles >= 341) {
@@ -564,6 +564,10 @@ ppu2C02::ppu2C02() {
 
 ppu2C02::Pixel ppu2C02::getColor(ppu2C02::FinalPalette palette) {
     return ppuPalette[readPPUMemory(0x3F00u + (palette.palette_id << 2u) + palette.pixel_id) & 0x3Fu];
+}
+
+unsigned int ppu2C02::getColorCode(ppu2C02::Pixel pixel) {
+    return (0xff << 24u) | ((pixel.b & 0xffu) << 16u) | ((pixel.g & 0xffu) << 8u) | (pixel.r & 0xffu);
 }
 
 
