@@ -195,7 +195,7 @@ void ppu2C02::connectGamePak(GamePak *gamePak){
     this->gamepak = gamePak;
 }
 
-ppu2C02::RenderingInfo ppu2C02::clock() {
+void ppu2C02::clock() {
     if(scanline >= -1 && scanline < 240) {
         if(scanline == 0 && cycles == 0) cycles = 1;
         if(scanline == -1 && cycles == 1) {
@@ -271,7 +271,6 @@ ppu2C02::RenderingInfo ppu2C02::clock() {
             scanline = -1;
         }
     }
-    return {old_cycles, old_scanline, pixel.r, pixel.g, pixel.b};
 }
 
 ppu2C02::~ppu2C02() {

@@ -26,7 +26,7 @@ Bus::Bus(cpu6502 &cpu, ppu2C02 &ppu) : cpu(cpu), ppu(ppu) {
 void Bus::clock() {
     //svaki signal sata pozivamo funkciju clock iz klase ppu
     //jedan ciklus sata cpu se dešava na svaka tri ciklusa sata ppu
-    currentPixel = ppu.clock();
+    ppu.clock();
     if(cycles % 3 == 0) {
         if(DMA.transfer) {
             if(DMA.disable && cycles % 2 == 1) DMA.disable = false;

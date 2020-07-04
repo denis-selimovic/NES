@@ -33,9 +33,6 @@ class Bus {
     friend class Debugger;
     friend class Renderer;
 public:
-    ppu2C02::RenderingInfo currentPixel{};
-
-public:
      Bus(cpu6502 &cpu, ppu2C02 &ppu);
      uint8_t readCPUMemory(uint16_t address);
      void writeCPUMemory(uint16_t address, uint8_t data);
