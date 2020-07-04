@@ -3,6 +3,7 @@
 //
 
 #include <cstring>
+#include <iostream>
 #include "ppu2C02.h"
 
 uint8_t ppu2C02::readCPUMemory(uint16_t address) {
@@ -255,10 +256,10 @@ ppu2C02::RenderingInfo ppu2C02::clock() {
 
     Palette palette{};
     SpritePalette spritePalette{};
-    if(ppumask.background_enable) palette = getComposition();
+    if(ppumask.background_enable)palette = getComposition();
     if(ppumask.sprite_enable) spritePalette = getSpriteComposition();
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
-    uint old_cycles = cycles - 1, old_scanline = scanline;
+    int old_cycles = cycles - 1, old_scanline = scanline;
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
@@ -340,10 +341,10 @@ void ppu2C02::loadPixel() {
     // prvih 8 najznačajnijih bita predstavljaju piksel koji se crta
     // sljedeći piksel koji će se crtati u novom ciklusu je u donjih 8 bita registra
     // ova funkcija ažurira donjih 8 bita shift registra
-    shifter_pattern_low = (shifter_attribute_low & 0xFF00u) | tile_lsb;
-    shifter_pattern_high = (shifter_attribute_high & 0xFF00u) | tile_msb;
-    shifter_attribute_low = (shifter_attribute_low & 0xFF00u) | ((tile_attribute & 0b01u) ? 0xFF : 0x00);
-    shifter_attribute_high = (shifter_attribute_high & 0xFF00u) | ((tile_attribute & 0b10u) ? 0xFF : 0x00);
+    shifter_pattern_low = ((shifter_pattern_low & 0xFF00u) | tile_lsb);
+    shifter_pattern_high = ((shifter_pattern_high & 0xFF00u) | tile_msb);
+    shifter_attribute_low = ((shifter_attribute_low & 0xFF00u) | ((tile_attribute & 0b01u) ? 0xFF : 0x00));
+    shifter_attribute_high = ((shifter_attribute_high & 0xFF00u) | ((tile_attribute & 0b10u) ? 0xFF : 0x00));
 }
 
 void ppu2C02::updateShiftRegister() {
@@ -395,12 +396,11 @@ void ppu2C02::fetchNextTile(uint8_t selector) {
     }
 }
 
-ppu2C02::Palette ppu2C02::getComposition() const {
-    Palette palette{};
-    uint16_t selector = 0x8000u >> fine_x;
-    palette.pixel_id = (((shifter_pattern_high & selector) > 0) << 1u) | ((shifter_pattern_low & selector) > 0);
-    palette.palette_id = (((shifter_attribute_high & selector) > 0) << 1u) | ((shifter_attribute_low & selector) > 0);
-    return palette;
+ppu2C02::Palette ppu2C02::getComposition() {
+    uint16_t selector = (0x8000u >> fine_x);
+    uint8_t pixel_id = (((shifter_pattern_high & selector) > 0) << 1u) | ((shifter_pattern_low & selector) > 0);
+    uint8_t palette_id = (((shifter_attribute_high & selector) > 0) << 1u) | ((shifter_attribute_low & selector) > 0);
+    return {pixel_id, palette_id};
 }
 
 ppu2C02::SpritePalette ppu2C02::getSpriteComposition() {

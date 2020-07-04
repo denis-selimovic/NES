@@ -144,7 +144,7 @@ private:
     struct Palette {
         uint8_t pixel_id = 0x00, palette_id = 0x00;
     };
-    Palette getComposition() const;
+    Palette getComposition();
 
 private:
     // struktura za identifikaciju piksela i pozadine sprite-a
