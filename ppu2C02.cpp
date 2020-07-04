@@ -187,7 +187,6 @@ void ppu2C02::writePPUMemory(uint16_t address, uint8_t data) {
         else if (address == 0x0014) address = 0x0004;
         else if (address == 0x0018) address = 0x0008;
         else if (address == 0x001C) address = 0x000C;
-        std::cout << "PPU Read in pallete \n";
         pallete[address] = data;
     }
 }
