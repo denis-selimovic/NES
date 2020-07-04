@@ -5,11 +5,13 @@
 #include <iostream>
 #include "Renderer.h"
 
-void Renderer::drawPixel(uint x, uint y, int r, int g, int b) {
-    SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
-    SDL_RenderDrawPoint(renderer, x, y);
-    SDL_RenderPresent(renderer);
+void Renderer::drawPixel(int x, int y, int r, int g, int b) {
+    if(x >= 0 && y >= 0) {
+        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+        SDL_RenderDrawPoint(renderer, x, y);
+        SDL_RenderPresent(renderer);
+    }
 }
 
 void Renderer::initSDL() {
@@ -83,6 +85,7 @@ void Renderer::initNES(const std::string &nes) {
     bus = new Bus(cpu, ppu);
     gamePak = new GamePak(nes);
     bus->connectGamepak(gamePak);
+    bus->cpu.testMode();
 }
 
 void Renderer::freeNES() {
@@ -95,6 +98,7 @@ void Renderer::run() {
     while(running) {
         bus->clock();
         drawPixel(bus->currentPixel.x, bus->currentPixel.y, bus->currentPixel.r, bus->currentPixel.g, bus->currentPixel.b);
+        std::cout << bus->currentPixel.x << " " << bus->currentPixel.y << std::endl;
     }
 }
 

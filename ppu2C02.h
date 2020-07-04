@@ -12,7 +12,7 @@
 class ppu2C02 {
 
     //broj ciklusa sata
-    uint8_t cycles = 0;
+    uint16_t cycles = 0;
 
     //Memorijska mapa ppu
     //ppu ima svoj memorijski prostor odvojen od cpu
@@ -201,7 +201,7 @@ private:
 
 public:
     struct RenderingInfo {
-        uint x = 0, y = 0;
+        int x = 0, y = 0;
         int r = 0, g = 0, b = 0;
     };
 

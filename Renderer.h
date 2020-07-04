@@ -17,8 +17,8 @@ class Bus;
 class Renderer {
 
     // window size
-    const static uint32_t WINDOW_WIDTH = 256;
-    const static uint32_t WINDOW_HEIGHT = 240;
+    const static uint32_t WINDOW_WIDTH = 2560;
+    const static uint32_t WINDOW_HEIGHT = 2400;
 
     // SDL utility
     void initSDL();
@@ -48,7 +48,7 @@ class Renderer {
     void freeNES();
 
     // Funkcije za crtanje na ekran
-    void drawPixel(uint x, uint y, int r, int g, int b);
+    void drawPixel(int x, int y, int r, int g, int b);
 
     // rad renderera
     bool running = false;

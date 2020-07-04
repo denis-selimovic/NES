@@ -28,12 +28,12 @@ public:
     enum MODE {NORMAL, DEBUG};
 private:
     //cpu ima 6 registara opce namjene
-    uint8_t accumulator;
-    uint8_t x_register;
-    uint8_t y_register;
-    uint8_t stack_pointer;
-    uint8_t status_register;
-    uint16_t program_counter;
+    uint8_t accumulator = 0x00;
+    uint8_t x_register = 0x00;
+    uint8_t y_register = 0x00;
+    uint8_t stack_pointer = 0x00;
+    uint8_t status_register = 0x00;
+    uint16_t program_counter = 0x0000;
 
 
     //pokazivac na trenutnu instrukciju
