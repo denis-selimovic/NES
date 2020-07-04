@@ -17,8 +17,8 @@ class Bus;
 class Renderer {
 
     // window size
-    const static uint32_t WINDOW_WIDTH = 256;
-    const static uint32_t WINDOW_HEIGHT = 240;
+    const static uint32_t WINDOW_WIDTH = 1024;
+    const static uint32_t WINDOW_HEIGHT = 960;
 
     // SDL utility
     void initSDL();
@@ -29,16 +29,15 @@ class Renderer {
     void throwError(const std::string &error);
 
     // SDL atributi
-    SDL_Window  *window;
-    SDL_Renderer *renderer;
-    SDL_Texture *texture;
-
-    unsigned int *pixels;
+    SDL_Window  *window = nullptr;
+    SDL_Renderer *renderer = nullptr;
+    SDL_Texture *texture = nullptr;
 
     // Oslobađanje memorije
     template <typename T, typename... Args> void cleanup(T *, Args&&... args);
     void cleanup(SDL_Window *w);
     void cleanup(SDL_Renderer *r);
+    void cleanup(SDL_Texture *t);
 
     // povezivanje na emulator
     cpu6502 cpu;
@@ -51,7 +50,6 @@ class Renderer {
     void freeNES();
 
     // Funkcije za crtanje na ekran
-    void drawPixel(int x, int y, int r, int g, int b);
     void render();
 
     // rad renderera

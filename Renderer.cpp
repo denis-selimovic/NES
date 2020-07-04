@@ -5,19 +5,6 @@
 #include <iostream>
 #include "Renderer.h"
 
-void Renderer::drawPixel(int x, int y, int r, int g, int b) {
-    if(x >= 0 && y >= 0) {
-        SDL_RenderClear(renderer);
-        SDL_SetRenderDrawColor(renderer, r, g, b, 0);
-        SDL_RenderDrawPoint(renderer, x, y);
-        SDL_RenderPresent(renderer);
-        /*pixels[WINDOW_WIDTH * y + x] = 0xFF000000u | (b << 4u) | (g << 2u) | r;
-        SDL_UpdateTexture(texture, NULL, pixels, WINDOW_WIDTH * 4);
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
-        SDL_RenderPresent(renderer);*/
-    }
-
-}
 
 void Renderer::initSDL() {
     createWindow();
@@ -25,8 +12,7 @@ void Renderer::initSDL() {
 }
 
 void Renderer::freeSDL() {
-    cleanup(window, renderer);
-    delete[] pixels;
+    cleanup(window, renderer, texture);
     SDL_Quit();
 }
 
@@ -51,8 +37,7 @@ void Renderer::createRenderer() {
         SDL_Quit();
         throwError("SDL_CreateRenderer");
     }
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, WINDOW_WIDTH , WINDOW_HEIGHT);
-    pixels = new unsigned int[WINDOW_WIDTH * WINDOW_HEIGHT * 4];
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STATIC, WINDOW_WIDTH / 4 , WINDOW_HEIGHT / 4);
 }
 
 void Renderer::logError(std::ostream &os, const std::string &error) {
@@ -77,6 +62,11 @@ void Renderer::cleanup(SDL_Window *w) {
 void Renderer::cleanup(SDL_Renderer *r) {
     if(!r) return;
     SDL_DestroyRenderer(r);
+}
+
+void Renderer::cleanup(SDL_Texture *t) {
+    if(!t) return;
+    SDL_DestroyTexture(t);
 }
 
 Renderer::Renderer(const std::string &nes) {
@@ -104,20 +94,17 @@ void Renderer::run() {
     running = true;
     while(running) {
         while(!bus->ppu.rendered) bus->clock();
-        std::cout<<"Rendering done!\n";
         bus->ppu.rendered = false;
-        //drawPixel(bus->currentPixel.x, bus->currentPixel.y, bus->currentPixel.r, bus->currentPixel.g, bus->currentPixel.b);
         render();
-        bus->ppu.info.resize(0);
      }
 }
 
 void Renderer::render() {
+    SDL_UpdateTexture(texture, NULL, bus->ppu.pixels, 256 * 4);
     SDL_RenderClear(renderer);
-    for(auto pixel: bus->ppu.info) {
-        SDL_SetRenderDrawColor(renderer, pixel.r, pixel.g, pixel.b, 255);
-        SDL_RenderDrawPoint(renderer, pixel.y, pixel.x);
-    }
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
 }
+
+
 

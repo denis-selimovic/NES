@@ -260,8 +260,8 @@ ppu2C02::RenderingInfo ppu2C02::clock() {
     if(ppumask.background_enable)palette = getComposition();
     if(ppumask.sprite_enable) spritePalette = getSpriteComposition();
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
-    std::cout<<pixel.r<<" "<<pixel.g<<" "<<pixel.b<<"\n";
-    info.push_back({scanline, cycles - 1, pixel.r, pixel.g, pixel.b});
+    if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240)
+        pixels[256 * scanline + (cycles - 1)] = (0xFF << 0u) | (pixel.b << 2u) | (pixel.g << 4u) | (pixel.r << 6u);
     int old_cycles = cycles - 1, old_scanline = scanline;
     cycles++;
     if(cycles >= 341) {
@@ -273,6 +273,10 @@ ppu2C02::RenderingInfo ppu2C02::clock() {
         }
     }
     return {old_cycles, old_scanline, pixel.r, pixel.g, pixel.b};
+}
+
+ppu2C02::~ppu2C02() {
+    delete[] pixels;
 }
 
 void ppu2C02::reset() {
