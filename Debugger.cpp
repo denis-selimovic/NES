@@ -175,7 +175,8 @@ void Debugger::initNES(const std::string &test) {
     gamePak = new GamePak(test);
     bus = new Bus(cpu, ppu);
     bus->connectGamepak(gamePak);
-    bus->cpu.testMode();
+    //bus->cpu.testMode();
+    bus->reset();
 }
 
 void Debugger::initSDL(const std::string &font_path) {

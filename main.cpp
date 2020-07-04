@@ -3,7 +3,7 @@
 
 
 int main() {
-    Renderer renderer;
+    Debugger renderer;
     renderer.run();
     return 0;
 }

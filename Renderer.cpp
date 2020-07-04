@@ -92,6 +92,7 @@ void Renderer::freeNES() {
 
 void Renderer::run() {
     running = true;
+    bus->reset();
     while(running) {
         while(!bus->ppu.rendered) bus->clock();
         bus->ppu.rendered = false;
