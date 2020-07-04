@@ -257,8 +257,8 @@ void ppu2C02::clock() {
     SpritePalette spritePalette{};
     if(ppumask.background_enable) palette = getComposition();
     if(ppumask.sprite_enable) spritePalette = getSpriteComposition();
-    FinalPalette finalPalette = getFinalComposition(palette, spritePalette);
-    renderer.drawPixel(cycles - 1, scanline, finalPalette.pixel_id, finalPalette.palette_id);
+    Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
+    renderer.drawPixel(cycles - 1, scanline, pixel.r, pixel.g, pixel.b);
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
@@ -551,3 +551,10 @@ ppu2C02::ppu2C02() {
     ppuPalette.push_back({0, 0, 0});
     ppuPalette.push_back({0, 0, 0});
 }
+
+ppu2C02::Pixel ppu2C02::getColor(ppu2C02::FinalPalette palette) {
+    return ppuPalette[readPPUMemory(0x3F00u + (palette.palette_id << 2u) + palette.pixel_id) & 0x3Fu];
+}
+
+
+

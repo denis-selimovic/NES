@@ -198,6 +198,7 @@ private:
         int r = 0,g = 0,b = 0;
     };
     std::vector<Pixel> ppuPalette;
+    Pixel getColor(FinalPalette palette);
 
 public:
     bool interrupt = false;

@@ -4,6 +4,6 @@
 
 #include "Renderer.h"
 
-void Renderer::drawPixel(uint x, uint y, uint pixel, uint palette) {
+void Renderer::drawPixel(uint x, uint y, int r, int g, int b) {
 
 }
