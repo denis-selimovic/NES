@@ -194,7 +194,7 @@ void ppu2C02::connectGamePak(GamePak *gamePak){
     this->gamepak = gamePak;
 }
 
-void ppu2C02::clock() {
+ppu2C02::RenderingInfo ppu2C02::clock() {
     if(scanline >= -1 && scanline < 240) {
         if(scanline == 0 && cycles == 0) cycles = 1;
         if(scanline == -1 && cycles == 1) {
@@ -258,13 +258,14 @@ void ppu2C02::clock() {
     if(ppumask.background_enable) palette = getComposition();
     if(ppumask.sprite_enable) spritePalette = getSpriteComposition();
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
-    renderer.drawPixel(cycles - 1, scanline, pixel.r, pixel.g, pixel.b);
+    uint old_cycles = cycles - 1, old_scanline = scanline;
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
         scanline++;
         if(scanline >= 261) scanline = -1;
     }
+    return {old_cycles, old_scanline, pixel.r, pixel.g, pixel.b};
 }
 
 void ppu2C02::reset() {

@@ -201,12 +201,15 @@ private:
     Pixel getColor(FinalPalette palette);
 
 public:
+    struct RenderingInfo {
+        uint x = 0, y = 0;
+        int r = 0, g = 0, b = 0;
+    };
+
+public:
     bool interrupt = false;
     int scanline = -1;
     uint8_t *oam_memory = (uint8_t*)OAM;
-
-public:
-    Renderer renderer;
 
 public:
     uint8_t readCPUMemory(uint16_t address);
@@ -214,7 +217,7 @@ public:
     uint8_t readPPUMemory(uint16_t address);
     void writePPUMemory(uint16_t address, uint8_t data);
 
-    void clock();
+    RenderingInfo clock();
     void reset();
     void connectGamePak(GamePak *gamePak);
 
