@@ -193,6 +193,12 @@ private:
         bool enabled = false, rendered = false;
     } spriteZero{};
 
+private:
+    struct Pixel {
+        int r = 0,g = 0,b = 0;
+    };
+    std::vector<Pixel> ppuPalette;
+
 public:
     bool interrupt = false;
     int scanline = -1;
@@ -210,6 +216,10 @@ public:
     void clock();
     void reset();
     void connectGamePak(GamePak *gamePak);
+
+    ppu2C02();
+    ppu2C02(const ppu2C02 &ppu) = delete;
+    ppu2C02(ppu2C02 &&ppu) = delete;
 };
 
 
