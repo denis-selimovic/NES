@@ -17,7 +17,7 @@ bool Mapper000::writeCPUMemory(uint16_t address, uint32_t &mapped_address) {
     // ako je broj bankova 1 adrese iz opsega CPU se mapiraju u 0x0000-0x3FFF
     // ako je broj bankova veći od 1 adrese se mapiraju u 0x0000-0x7FFFF opseg PRG-ROM
     if(address >= 0x8000 && address <= 0xFFFF) {
-        mapped_address = address & unsigned(PRG_banks > 1 ? 0x7FFF : 0x3FFF);
+        mapped_address = address & (PRG_banks > 1 ? 0x7FFF : 0x3FFF);
         return true;
     }
     return false;
@@ -30,7 +30,7 @@ bool Mapper000::readCPUMemory(uint16_t address, uint32_t &mapped_address) {
     // ako je broj bankova 1 adrese iz opsega CPU se mapiraju u 0x0000-0x3FFF
     // ako je broj bankova veći od 1 adrese se mapiraju u 0x0000-0x7FFFF opseg PRG-ROM
     if(address >= 0x8000 && address <= 0xFFFF) {
-        mapped_address = address & unsigned(PRG_banks > 1 ? 0x7FFF : 0x3FFF);
+        mapped_address = address & (PRG_banks > 1 ? 0x7FFF : 0x3FFF);
         return true;
     }
     return false;

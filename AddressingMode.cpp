@@ -17,28 +17,28 @@ uint8_t AddressingMode::IMP(cpu6502 &cpu) {
 uint8_t AddressingMode::ZP0(cpu6502 &cpu) {
     cpu.absolute_address = cpu.read(cpu.program_counter);
     cpu.program_counter++;
-    cpu.absolute_address &= 0x00FF;
+    cpu.absolute_address &= 0x00FFu;
     return 0;
 }
 
 uint8_t AddressingMode::ZPX(cpu6502 &cpu) {
     cpu.absolute_address = cpu.read(cpu.program_counter) + cpu.x_register;
     cpu.program_counter++;
-    cpu.absolute_address &= 0x00FF;
+    cpu.absolute_address &= 0x00FFu;
     return 0;
 }
 
 uint8_t AddressingMode::ZPY(cpu6502 &cpu) {
     cpu.absolute_address = cpu.read(cpu.program_counter) + cpu.y_register;
     cpu.program_counter++;
-    cpu.absolute_address &= 0x00FF;
+    cpu.absolute_address &= 0x00FFu;
     return 0;
 }
 
 uint8_t AddressingMode::REL(cpu6502 &cpu) {
     cpu.relative_address = cpu.read(cpu.program_counter);
     cpu.program_counter++;
-    if(cpu.relative_address & 0x80) cpu.relative_address |= 0xFF00;
+    if(cpu.relative_address & 0x80) cpu.relative_address |= 0xFF00u;
     return 0;
 }
 
@@ -47,7 +47,7 @@ uint8_t AddressingMode::ABS(cpu6502 &cpu) {
     cpu.program_counter++;
     uint16_t high_nibble = cpu.read(cpu.program_counter);
     cpu.program_counter++;
-    cpu.absolute_address = high_nibble << 8 | low_nibble;
+    cpu.absolute_address = (high_nibble << 8u) | low_nibble;
     return 0;
 }
 

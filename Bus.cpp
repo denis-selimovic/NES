@@ -52,6 +52,7 @@ void Bus::reset() {
     cpu.reset();
     gamePak->reset();
     cycles = 0;
+    DMA = {0x00, 0x00, 0x00, false, true};
 }
 
 void Bus::connectGamepak(GamePak *g) {

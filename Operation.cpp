@@ -2,6 +2,7 @@
 // Created by denis on 21/02/2020.
 //
 
+#include <iostream>
 #include "Operation.h"
 
 uint8_t Operation::ADC(cpu6502 &cpu) {
@@ -132,7 +133,7 @@ uint8_t Operation::BRK(cpu6502 &cpu) {
     cpu.stack_pointer--;
 
     //adresa interrupt rutine se dobija sa lokacija 0xFFFF (high byte) i 0xFFFE (low byte)
-    cpu.program_counter = uint16_t(cpu.read(0xFFFF) << 8u) | uint16_t(cpu.read(0xFFFE));
+    cpu.program_counter = uint16_t(cpu.read(0xFFFE)) | (uint16_t(cpu.read(0xFFFF)) << 8u);
     return 0;
 }
 
@@ -497,6 +498,5 @@ uint8_t Operation::TYA(cpu6502 &cpu) {
 }
 
 uint8_t Operation::XXX(cpu6502 &cpu) {
-    //throw std::logic_error("UNSUPPORTED OPERATION");
-    return 0;
+    throw std::logic_error("UNSUPPORTED OPERATION");
 }
