@@ -7,11 +7,11 @@
 
 uint8_t Operation::ADC(cpu6502 &cpu) {
     cpu.getMemoryContent();
-    uint16_t result = uint16_t(cpu.accumulator) + uint16_t(cpu.memory_content) + cpu.getFlag(cpu6502::C);
+    uint16_t result = uint16_t(cpu.accumulator) + uint16_t(cpu.memory_content) +uint16_t(cpu.getFlag(cpu6502::C));
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
-    cpu.setFlag(cpu6502::N, (result & 0x00FFu) & 0x0080u);
+    cpu.setFlag(cpu6502::N, result & 0x0080u);
     cpu.setFlag(cpu6502::C, result > 255);
-    cpu.setFlag(cpu6502::V, ~((cpu.accumulator ^ (result & 0x00FFu)) & (cpu.memory_content ^ (result & 0x00FFu)) & 0x80u));
+    cpu.setFlag(cpu6502::V, (~((uint16_t)cpu.accumulator ^ (uint16_t)cpu.memory_content) & ((uint16_t)cpu.accumulator ^ (uint16_t)result)) & 0x0080u);
     cpu.accumulator = result & 0x00FFu;
     return 1;
 }
