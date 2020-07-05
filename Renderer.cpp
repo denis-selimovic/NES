@@ -37,7 +37,7 @@ void Renderer::createRenderer() {
         SDL_Quit();
         throwError("SDL_CreateRenderer");
     }
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, WINDOW_WIDTH / 4 , WINDOW_HEIGHT / 4);
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, WINDOW_WIDTH / 4, WINDOW_HEIGHT / 4);
 }
 
 void Renderer::logError(std::ostream &os, const std::string &error) {
@@ -133,7 +133,7 @@ void Renderer::run() {
 }
 
 void Renderer::render() {
-    SDL_UpdateTexture(texture, NULL, bus->ppu.pixels, 256 * 4);
+    SDL_UpdateTexture(texture, NULL, bus->ppu.pixels,  256 * 4);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);

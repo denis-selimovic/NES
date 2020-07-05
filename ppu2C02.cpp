@@ -270,8 +270,9 @@ void ppu2C02::clock() {
     }
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
     //std::cout<<int(pixel.r)<<" "<<int(pixel.g)<<" "<<int(pixel.b)<<std::endl;
-    if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240) pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
-
+    if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240)  {
+        pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
+    }
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
