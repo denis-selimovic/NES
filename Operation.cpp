@@ -26,7 +26,7 @@ uint8_t Operation::AND(cpu6502 &cpu) {
 
 uint8_t Operation::ASL(cpu6502 &cpu) {
     cpu.getMemoryContent();
-    uint16_t shifted_value = uint16_t(cpu.memory_content) << 1u;
+    uint16_t shifted_value = (uint16_t(cpu.memory_content) << 1u);
     cpu.setFlag(cpu6502::C, (shifted_value & 0xFF00u) > 0);
     cpu.setFlag(cpu6502::Z, (shifted_value & 0x00FFu) == 0x0000);
     cpu.setFlag(cpu6502::N, shifted_value & 0x80u);
@@ -71,10 +71,10 @@ uint8_t Operation::BEQ(cpu6502 &cpu) {
 
 uint8_t Operation::BIT(cpu6502 &cpu) {
     cpu.getMemoryContent();
-    uint8_t result = cpu.accumulator & cpu.memory_content;
+    uint16_t result = cpu.accumulator & cpu.memory_content;
     cpu.setFlag(cpu6502::V, cpu.memory_content & (1u << 6u));
     cpu.setFlag(cpu6502::N, cpu.memory_content & (1u << 7u));
-    cpu.setFlag(cpu6502::Z, result == 0x00);
+    cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x00);
     return 0;
 }
 
@@ -234,7 +234,7 @@ uint8_t Operation::DEY(cpu6502 &cpu) {
 
 uint8_t Operation::EOR(cpu6502 &cpu) {
     cpu.getMemoryContent();
-    cpu.accumulator ^= cpu.memory_content;
+    cpu.accumulator = cpu.accumulator ^ cpu.memory_content;
     cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80u);
     cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
     return 1;
@@ -324,7 +324,7 @@ uint8_t Operation::NOP(cpu6502 &cpu) {
 
 uint8_t Operation::ORA(cpu6502 &cpu) {
     cpu.getMemoryContent();
-    cpu.accumulator |= cpu.memory_content;
+    cpu.accumulator = cpu.accumulator | cpu.memory_content;
     cpu.setFlag(cpu6502::N, cpu.accumulator & 0x80u);
     cpu.setFlag(cpu6502::Z, cpu.accumulator == 0x00);
     return 1;
@@ -387,8 +387,8 @@ uint8_t Operation::RTI(cpu6502 &cpu) {
     //čitamo statusni registar sa stacka
     cpu.stack_pointer++;
     cpu.status_register = cpu.read(0x0100 + cpu.stack_pointer);
-    cpu.setFlag(cpu6502::B, false);
-    cpu.setFlag(cpu6502::U, false);
+    cpu.status_register &= ~cpu6502::B;
+    cpu.status_register &= ~cpu6502::U;
 
     //uzimamo 8 najmanje značajnih bita pc-a
     cpu.stack_pointer++;
@@ -420,8 +420,8 @@ uint8_t Operation::SBC(cpu6502 &cpu) {
     uint16_t result = uint16_t(cpu.accumulator) + complement + cpu.getFlag(cpu6502::C);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     cpu.setFlag(cpu6502::N, (result & 0x00FFu) & 0x0080u);
-    cpu.setFlag(cpu6502::C, result > 255);
-    cpu.setFlag(cpu6502::V, ~((cpu.accumulator ^ (result & 0x00FFu)) & (complement ^ (result & 0x00FFu)) & 0x80u));
+    cpu.setFlag(cpu6502::C, result & 0xFF00u);
+    cpu.setFlag(cpu6502::V, (result ^ (uint16_t)cpu.accumulator) & (result ^ complement) & 0x0080u);
     cpu.accumulator = result & 0x00FFu;
     return 1;
 }
