@@ -36,7 +36,7 @@ GamePak::GamePak(const std::string &game) {
         // na osnovu ovog id-a određujemo koji mapper se koristi
         // gornja četiri bita 6. bajta određuju low nibble id-a
         // gornja četiri bita 7. bajta određuju high nibble id-a
-        uint8_t mapperType = ((header.flags_mirroring_trainer & 0xF0u) >> 4u) | (header.flags_playchoice & 0xF0u);
+        uint8_t mapperType = ((header.flags_playchoice >> 4u) << 4u) | (header.flags_mirroring_trainer >> 4u);
 
         // učitamo PRG-ROM
         // bajt 4 iz headera nam govori kolika je veličina ove memorije u 16KB
