@@ -10,6 +10,7 @@ uint8_t ppu2C02::readCPUMemory(uint16_t address) {
     uint8_t data = 0x00;
     switch(address) {
         case 0x0000:
+            break;
         case 0x0001:
             //PPUCTRL i PPUMASK su write-only registri
             break;
@@ -19,8 +20,8 @@ uint8_t ppu2C02::readCPUMemory(uint16_t address) {
             //takođe vblank se postavlja na 0
 
             //samo najznačanija tri bita su validna
-            data = ppustatus.reg & 0xE0u;
-            toggle = false;
+            data = (ppustatus.reg & 0xE0u) | (ppudata_buffer & 0x1Fu);
+            toggle = 0;
             ppustatus.vblank = 0;
             break;
         case 0x0003:
@@ -31,6 +32,7 @@ uint8_t ppu2C02::readCPUMemory(uint16_t address) {
             data = oam_memory[address];
             break;
         case 0x0005:
+            break;
         case 0x0006:
             //PPUSCROLL i VRAM_ADDRESS su write-only
             break;
@@ -85,16 +87,16 @@ void ppu2C02::writeCPUMemory(uint16_t address, uint8_t data) {
             if(!toggle) {
                 //prvo postavimo vrijednost fine_x i coarse_x
                 fine_x = data & 0x07u;
-                t_address.coarse_x = data >> 3u;
+                t_address.coarse_x = (data >> 3u);
                 // postavimo toggle na 1;
-                toggle = true;
+                toggle = 1;
             }
             else {
                 //postavimo fine_y i coarse_y
                 //vratimo toggle na 0
                 t_address.fine_y = data & 0x07u;
-                t_address.coarse_y = data >> 3u;
-                toggle = false;
+                t_address.coarse_y = (data >> 3u);
+                toggle = 0;
             }
             break;
         case 0x0006:
@@ -104,14 +106,14 @@ void ppu2C02::writeCPUMemory(uint16_t address, uint8_t data) {
             //nakon toga upišemo low byte
             if(!toggle) {
                 //adresu svodimo na opseg 0x3F i generišemo high byte
-                t_address.reg = (uint16_t)(((data & 0x3Fu) << 8u) | (t_address.reg & 0x00FFu));
-                toggle = true;
+                t_address.reg = (uint16_t)((data & 0x3Fu) << 8u) | (t_address.reg & 0x00FFu);
+                toggle = 1;
             }
             else {
                 //sada dodajemo low byte
                 t_address.reg = (t_address.reg & 0xFF00u) | data;
                 vram_address = t_address;
-                toggle = false;
+                toggle = 0;
             }
             break;
         case 0x0007:
@@ -134,7 +136,7 @@ uint8_t ppu2C02::readPPUMemory(uint16_t address) {
     if(gamepak->readPPUMemory(address, data)) {}
     else if(address >= 0x0000 && address <= 0x1FFF) return pattern_table[(address & 0x1000u) >> 12u][address & 0x0FFFu];
     else if(address >= 0x2000 && address <= 0x3EFF) {
-        address &= 0xFFFu;
+        address &= 0x0FFFu;
         //ako se koristi vertikalni mirroring prvi i treći nametable su isti, kao i drugi i četvrti
         //ako se koristi horizontalni mirroring prvi i drugi nametable su isti i mapiraju se u isti adresni prostor, kao i treći i četvrti
         if(gamepak->mirroring == GamePak::MIRRORING::VERTICAL) {
@@ -155,7 +157,7 @@ uint8_t ppu2C02::readPPUMemory(uint16_t address) {
         else if (address == 0x0014) address = 0x0004;
         else if (address == 0x0018) address = 0x0008;
         else if (address == 0x001C) address = 0x000C;
-        return pallete[address] & unsigned(ppumask.grayscale ? 0x30 : 0x3F);
+        return pallete[address] & (ppumask.grayscale ? 0x30 : 0x3F);
     }
     return data;
 }
@@ -166,7 +168,7 @@ void ppu2C02::writePPUMemory(uint16_t address, uint8_t data) {
     if(gamepak->writePPUMemory(address, data)) {}
     else if(address >= 0x0000 && address <= 0x1FFF) pattern_table[(address & 0x1000u) >> 12u][address & 0x0FFFu] = data;
     else if(address >= 0x2000 && address <= 0x3EFF) {
-        address &= 0xFFFu;
+        address &= 0x0FFFu;
         //ako se koristi vertikalni mirroring prvi i treći nametable su isti, kao i drugi i četvrti
         //ako se koristi horizontalni mirroring prvi i drugi nametable su isti i mapiraju se u isti adresni prostor, kao i treći i četvrti
         if(gamepak->mirroring == GamePak::MIRRORING::VERTICAL) {
@@ -268,8 +270,8 @@ void ppu2C02::clock() {
     }
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
     //std::cout<<int(pixel.r)<<" "<<int(pixel.g)<<" "<<int(pixel.b)<<std::endl;
-    if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240)
-        pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
+    if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240) pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
+
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
@@ -373,7 +375,7 @@ void ppu2C02::updateShiftRegister() {
         shifter_attribute_low <<= 1u;
         shifter_attribute_high <<= 1u;
     }
-    else if(ppumask.sprite_enable && cycles >= 1 && cycles < 258) {
+    if(ppumask.sprite_enable && cycles >= 1 && cycles < 258) {
         for(int i = 0; i < sprite_count; ++i) {
             if(foundSprites[i].index > 0) foundSprites[i].index--;
             else {
@@ -392,7 +394,8 @@ void ppu2C02::fetchNextTile(uint8_t selector) {
             tile_id = readPPUMemory(0x2000u | (vram_address.reg & 0x0FFFu));
             break;
         case 2:
-            address = 0x23C0u | (vram_address.nametable_select_y << 11u) | (vram_address.nametable_select_x << 10u) | ((vram_address.coarse_y >> 2u) << 3u) | (vram_address.coarse_x >> 2u);
+            address = 0x23C0u | (vram_address.nametable_select_y << 11u) | (vram_address.nametable_select_x << 10u)
+                    | ((vram_address.coarse_y >> 2u) << 3u) | (vram_address.coarse_x >> 2u);
             tile_attribute = readPPUMemory(address);
             if(vram_address.coarse_y & 0x02u) tile_attribute >>= 4u;
             if(vram_address.coarse_x & 0x02u) tile_attribute >>= 2u;
@@ -447,7 +450,7 @@ ppu2C02::FinalPalette ppu2C02::getFinalComposition(ppu2C02::Palette palette, ppu
         if(spritePalette.priority) finalPalette = {spritePalette.pixel_id, spritePalette.palette_id};
         else finalPalette = {palette.pixel_id, palette.palette_id};
         if(spriteZero.enabled && spriteZero.rendered && (ppumask.sprite_enable & ppumask.background_enable)) {
-            if(~(ppumask.background_left_column_enable & ppumask.sprite_left_column_enable)) {
+            if(~(ppumask.background_left_column_enable | ppumask.sprite_left_column_enable)) {
                 if(cycles >= 9 && cycles < 258) ppustatus.sprite_zero_hit = 1;
             }
             else {
@@ -465,9 +468,10 @@ void ppu2C02::findSprites() {
         if (diff >= 0 && diff < (ppuctrl.sprite_height ? 16 : 8)) {
             if(sprite_count < 8) {
                 if(i == 0) spriteZero.enabled = true;
-                foundSprites[sprite_count] = OAM[i];
+                //foundSprites[sprite_count] = OAM[i];
+                memcpy(&foundSprites[sprite_count], &OAM[i], sizeof(Sprite));
+                sprite_count++;
             }
-            sprite_count++;
         }
     }
     ppustatus.sprite_overflow = (sprite_count >= 8);
