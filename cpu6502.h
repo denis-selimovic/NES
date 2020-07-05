@@ -43,7 +43,7 @@ private:
     Bus *bus = nullptr;
 
     void setFlag(FLAGS flag, bool value);
-    uint8_t getFlag(FLAGS flag);
+
     void write(uint16_t address, uint8_t data);
     uint8_t read(uint16_t address);
 
@@ -80,6 +80,7 @@ public:
     void nonmaskableInterrupt();
     void testMode();
     std::string getInstructionName();
+    uint8_t getFlag(FLAGS flag);
 };
 
 

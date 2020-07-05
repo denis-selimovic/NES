@@ -129,11 +129,11 @@ uint8_t Operation::BRK(cpu6502 &cpu) {
     //B flag se nakon toga vraća na 0
     cpu.setFlag(cpu6502::B, true);
     cpu.write(0x0100 + cpu.stack_pointer, cpu.status_register);
-    cpu.setFlag(cpu6502::B, false);
     cpu.stack_pointer--;
+    cpu.setFlag(cpu6502::B, false);
 
     //adresa interrupt rutine se dobija sa lokacija 0xFFFF (high byte) i 0xFFFE (low byte)
-    cpu.program_counter = uint16_t(cpu.read(0xFFFE)) | (uint16_t(cpu.read(0xFFFF)) << 8u);
+    cpu.program_counter = (uint16_t(cpu.read(0xFFFE))) | (uint16_t(cpu.read(0xFFFF)) << 8u);
     return 0;
 }
 
@@ -387,31 +387,30 @@ uint8_t Operation::RTI(cpu6502 &cpu) {
     //čitamo statusni registar sa stacka
     cpu.stack_pointer++;
     cpu.status_register = cpu.read(0x0100 + cpu.stack_pointer);
-    cpu.setFlag(cpu6502::U, false);
     cpu.setFlag(cpu6502::B, false);
+    cpu.setFlag(cpu6502::U, false);
 
     //uzimamo 8 najmanje značajnih bita pc-a
     cpu.stack_pointer++;
-    uint16_t low_byte = cpu.read(0x0100 + cpu.stack_pointer);
-    //uzimamo 8 najznačajnijih bita pc-a
+    cpu.program_counter = uint16_t(cpu.read(0x0100 + cpu.stack_pointer));
+
+    //uzimamo high byte programskog brojača
     cpu.stack_pointer++;
-    uint16_t high_byte = cpu.read(0x0100 + cpu.stack_pointer);
-    //ažuriramo pc
-    cpu.program_counter = (high_byte << 8u) | low_byte;
+    cpu.program_counter |= ((uint16_t(cpu.read(0x0100 + cpu.stack_pointer))) << 8u);
     return 0;
 }
 
 uint8_t Operation::RTS(cpu6502 &cpu) {
     //uzimamo low byte programskog brojača
     cpu.stack_pointer++;
-    uint16_t low_byte = cpu.read(0x0100 + cpu.stack_pointer);
+    cpu.program_counter = uint16_t(cpu.read(0x0100 + cpu.stack_pointer));
 
     //uzimamo high byte programskog brojača
     cpu.stack_pointer++;
-    uint16_t high_byte = cpu.read(0x0100 + cpu.stack_pointer);
+    cpu.program_counter |= (uint16_t(cpu.read(0x0100 + cpu.stack_pointer))) << 8u;
 
     //ažuriramo pc
-    cpu.program_counter = (high_byte << 8u) | low_byte;
+    cpu.program_counter++;
     return 0;
 }
 

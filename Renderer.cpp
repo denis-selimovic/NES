@@ -114,6 +114,18 @@ void Renderer::run() {
                     case SDLK_s:
                         bus->joystick[0] |= 0x10u;
                         break;
+                    case SDLK_UP:
+                        bus->joystick[0] |= 0x08u;
+                        break;
+                    case SDLK_DOWN:
+                        bus->joystick[0] |= 0x04u;
+                        break;
+                    case SDLK_LEFT:
+                        bus->joystick[0] |= 0x02u;
+                        break;
+                    case SDLK_RIGHT:
+                        bus->joystick[0] |= 0x01u;
+                        break;
                 }
             }
         }
