@@ -2,6 +2,7 @@
 // Created by denis on 21/02/2020.
 //
 
+#include <iostream>
 #include "cpu6502.h"
 #include "Operation.h"
 #include "AddressingMode.h"
@@ -303,6 +304,7 @@ void cpu6502::clock() {
 
         //ažuriramo novu instrukciju
         instruction = &lookup[opcode];
+        std::cout<<instruction->name<<" "<<int(opcode)<<std::endl;
 
         //ažuriramo broj ciklusa
         cycles = instruction->total_cycles;
@@ -338,11 +340,10 @@ void cpu6502::reset() {
     //adresa sa koje se čita novi pc je 0xFFFC
     absolute_address = 0xFFFC;
     uint16_t low_byte = read(absolute_address);
-    absolute_address++;
-    uint16_t high_byte = read(absolute_address);
+    uint16_t high_byte = read(absolute_address + 1);
 
     //dobijamo novi pc
-    program_counter = unsigned(high_byte) << 8u | low_byte;
+    program_counter = (high_byte << 8u) | low_byte;
 
     //broj ciklusa za reset je 8
     cycles = 8;

@@ -497,5 +497,5 @@ uint8_t Operation::TYA(cpu6502 &cpu) {
 }
 
 uint8_t Operation::XXX(cpu6502 &cpu) {
-    return 0;
+    throw std::logic_error("UNSUPPORTED OPERATION");
 }
