@@ -308,9 +308,9 @@ uint8_t Operation::LDY(cpu6502 &cpu) {
 
 uint8_t Operation::LSR(cpu6502 &cpu) {
     cpu.getMemoryContent();
-    uint16_t result = cpu.memory_content >> 1u;
     cpu.setFlag(cpu6502::C, cpu.memory_content & 0x0001u);
-    cpu.setFlag(cpu6502::N, false);
+    uint16_t result = cpu.memory_content >> 1u;
+    cpu.setFlag(cpu6502::N, result & 0x80u);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
     else cpu.write(cpu.absolute_address, result & 0x00FFu);
@@ -497,5 +497,6 @@ uint8_t Operation::TYA(cpu6502 &cpu) {
 }
 
 uint8_t Operation::XXX(cpu6502 &cpu) {
-    throw std::logic_error("UNSUPPORTED OPERATION");
+    //throw std::logic_error("UNSUPPORTED OPERATION");
+    return 0;
 }

@@ -304,7 +304,7 @@ void cpu6502::clock() {
 
         //ažuriramo novu instrukciju
         instruction = &lookup[opcode];
-        //std::cout<<instruction->name<<" "<<int(opcode)<<std::endl;
+        std::cout<<instruction->name<<" "<<int(opcode)<<std::endl;
 
         //ažuriramo broj ciklusa
         cycles = instruction->total_cycles;
