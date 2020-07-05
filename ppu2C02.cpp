@@ -218,7 +218,7 @@ void ppu2C02::clock() {
         if(cycles == 338 || cycles == 340) tile_id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
         if(scanline == -1 && cycles >= 280 && cycles < 305) transferVertical();
         if(cycles == 257 && scanline >= 0) {
-            std::memset(foundSprites, 0xFF, sizeof(Sprite));
+            std::memset(foundSprites, 0xFF, 8 * sizeof(Sprite));
             sprite_count = 0;
             std::fill_n(sprite_low, 8, 0);
             std::fill_n(sprite_high, 8, 0);
@@ -295,6 +295,8 @@ void ppu2C02::reset() {
     toggle = false;
     fine_x = 0x00;
     cycles = 0;
+    tile_attribute = tile_msb = tile_lsb = tile_id = 0x00;
+    shifter_attribute_low = shifter_attribute_high = shifter_pattern_low = shifter_pattern_high = 0x00;
 }
 
 void ppu2C02::scrollingHorizontal() {

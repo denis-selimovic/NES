@@ -9,6 +9,10 @@ uint8_t Bus::readCPUMemory(uint16_t address) {
     if(gamePak->readCPUMemory(address, data)) {}
     else if(address >= 0x0000 && address <= 0x1FFF) return RAM[address & 0x07FFu];
     else if(address >= 0x2000 && address <= 0x3FFF) return ppu.readCPUMemory(address & 0x0007u);
+    else if (address >= 0x4016 && address <= 0x4017) {
+        data = (joystickCache[address & 0x01u] & 0x80u) > 0;
+        joystickCache[address & 0x01u] <<= 1u;
+    }
     return data;
 }
 
@@ -17,6 +21,7 @@ void Bus::writeCPUMemory(uint16_t address, uint8_t data) {
     else if(address >= 0x0000 && address <= 0x01FF) RAM[address & 0x07FFu] = data;
     else if (address >= 0x2000 && address <= 0x3FFF) ppu.writeCPUMemory(address & 0x0007u, data);
     else if (address == 0x4014) DMA = {data, 0x00, 0x00, true, true};
+    else if (address >= 0x4016 && address <= 0x4017) joystickCache[address & 0x01u] = joystick[address & 0x01u];
 }
 
 Bus::Bus(cpu6502 &cpu, ppu2C02 &ppu) : cpu(cpu), ppu(ppu) {

@@ -55,7 +55,7 @@ class Renderer {
     // rad renderera
     bool running = false;
 public:
-    explicit Renderer(const std::string &test = "../nes/dk.nes");
+    explicit Renderer(const std::string &test = "../nes/nestest.nes");
     ~Renderer();
     Renderer(const Renderer &renderer) = delete;
     Renderer(Renderer &&renderer) = delete;

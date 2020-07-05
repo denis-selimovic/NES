@@ -32,6 +32,8 @@ class Bus {
     GamePak *gamePak = nullptr;
     friend class Debugger;
     friend class Renderer;
+
+    uint8_t joystickCache[2] = {0};
 public:
      Bus(cpu6502 &cpu, ppu2C02 &ppu);
      uint8_t readCPUMemory(uint16_t address);
@@ -39,6 +41,8 @@ public:
      void clock();
      void reset();
      void connectGamepak(GamePak *g);
+
+     uint8_t joystick[2] = {0};
 };
 
 
