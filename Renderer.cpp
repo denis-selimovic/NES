@@ -93,10 +93,30 @@ void Renderer::freeNES() {
 void Renderer::run() {
     running = true;
     bus->reset();
+    SDL_Event e;
     while(running) {
         while(!bus->ppu.rendered) bus->clock();
         bus->ppu.rendered = false;
         render();
+        while(SDL_PollEvent(&e) != 0) {
+            if(e.type == SDL_QUIT) running = false;
+            else if(e.type == SDL_KEYDOWN) {
+                switch (e.key.keysym.sym) {
+                    case SDLK_x:
+                        bus->joystick[0] |= 0x80u;
+                        break;
+                    case SDLK_z:
+                        bus->joystick[0] |= 0x40u;
+                        break;
+                    case SDLK_a:
+                        bus->joystick[0] |= 0x20u;
+                        break;
+                    case SDLK_s:
+                        bus->joystick[0] |= 0x10u;
+                        break;
+                }
+            }
+        }
      }
 }
 
