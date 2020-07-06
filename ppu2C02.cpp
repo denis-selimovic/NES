@@ -3,7 +3,6 @@
 //
 
 #include <cstring>
-#include <iostream>
 #include "ppu2C02.h"
 
 uint8_t ppu2C02::readCPUMemory(uint16_t address) {
@@ -258,21 +257,11 @@ void ppu2C02::clock() {
 
     Palette palette{};
     SpritePalette spritePalette{};
-    if(ppumask.background_enable) {
-        palette = getComposition();
-        //int t1 = palette.pixel_id, t2 = palette.palette_id;
-        //std::cout<<t1<<" "<<t2<<" Background\n";
-    }
-    if(ppumask.sprite_enable) {
-        spritePalette = getSpriteComposition();
-        //int t1 = spritePalette.pixel_id, t2 = spritePalette.palette_id;
-        //std::cout<<t1<<" "<<t2<<" Sprite\n";
-    }
+    if(ppumask.background_enable) palette = getComposition();
+    if(ppumask.sprite_enable) spritePalette = getSpriteComposition();
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
-    //std::cout<<int(pixel.r)<<" "<<int(pixel.g)<<" "<<int(pixel.b)<<std::endl;
-    if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240)  {
-        pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
-    }
+    if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240) pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
+
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
@@ -577,7 +566,6 @@ ppu2C02::ppu2C02() {
 }
 
 ppu2C02::Pixel ppu2C02::getColor(ppu2C02::FinalPalette palette) {
-    //std::cout<<int(palette.pixel_id)<<" "<<int(palette.palette_id)<<std::endl;
     return ppuPalette[readPPUMemory(0x3F00u + (palette.palette_id << 2u) + palette.pixel_id) & 0x3Fu];
 }
 
