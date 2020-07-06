@@ -32,7 +32,7 @@ uint8_t cpu6502::read(uint16_t address) {
 cpu6502::cpu6502(MODE mode) {
     lookup =
             {
-                    Instruction("BRK", &Operation::BRK, &AddressingMode::IMM, 7),
+                    Instruction("BRK", &Operation::BRK, &AddressingMode::IMP, 7),
                     Instruction("ORA", &Operation::ORA, &AddressingMode::IZX, 6),
                     Instruction("???", &Operation::XXX, &AddressingMode::IMP, 2),
                     Instruction("???", &Operation::XXX, &AddressingMode::IMP, 8),

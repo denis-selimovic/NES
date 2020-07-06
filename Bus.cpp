@@ -34,8 +34,10 @@ void Bus::clock() {
     ppu.clock();
     if(cycles % 3 == 0) {
         if(DMA.transfer) {
-            if(DMA.disable && cycles % 2 == 1) DMA.disable = false;
-            else if(!DMA.disable) startDMA();
+            if(DMA.disable) {
+                if(cycles % 2 == 1) DMA.disable = false;
+            }
+            else startDMA();
         }
         else cpu.clock();
     }
