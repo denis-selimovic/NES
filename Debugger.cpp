@@ -170,8 +170,8 @@ void Debugger::drawAllRegisters() {
     drawRegister("PC", bus->cpu.program_counter, {450, 10, 300, 50});
     drawRegister("X", bus->cpu.x_register, {950, 10, 300, 50});
     drawRegister("Y", bus->cpu.y_register, {1450, 10, 300, 50});
-    drawRegister("D1", bus->readCPUMemory(0x02), {450, 70, 300, 50});
-    drawRegister("D2", bus->readCPUMemory(0x03), {950, 70, 300, 50});
+    drawRegister("SP", bus->cpu.stack_pointer, {450, 70, 300, 50});
+    drawRegister("A", bus->cpu.accumulator, {950, 70, 300, 50});
 }
 
 void Debugger::drawRAM(int start) {
