@@ -25,8 +25,7 @@ void cpu6502::write(uint16_t address, uint8_t data) {
 }
 
 uint8_t cpu6502::read(uint16_t address) {
-    memory_content = bus->readCPUMemory(address);
-    return memory_content;
+    return bus->readCPUMemory(address);
 }
 
 cpu6502::cpu6502(MODE mode) {
@@ -319,9 +318,10 @@ void cpu6502::clock() {
         //postavimo U flag uvijek na 1
         setFlag(U, true);
         if(mode == DEBUG) {
-            std::string ins = disassembler->getInstruction(instruction->name, absolute_address);
+            std::string ins = disassembler->getInstruction(instruction->name, opcode);
             disassembler->addInstruction(debugAddress, ins);
         }
+        complete = true;
     }
     //smanjimo broj ciklusa za 1
     cycles--;
@@ -407,15 +407,12 @@ uint8_t cpu6502::getMemoryContent() {
     return memory_content;
 }
 
-std::string cpu6502::getInstructionName() {
-    return instruction->name;
-}
-
 void cpu6502::testMode() {
     accumulator = x_register = y_register = 0x00;
     stack_pointer = 0xFD;
-    status_register = 0x00u | U;
+    status_register = 0x00u | U | I;
     program_counter = 0xC000;
+    debugAddress = program_counter;
 }
 
 void cpu6502::setDisassembler(Disassembler *disassembler) {

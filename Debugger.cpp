@@ -8,11 +8,14 @@
 Debugger::Debugger(const std::string &test, const std::string &font_path) {
     initNES(test);
     initSDL(font_path);
+    out.open("log.txt");
+    if(!out.is_open()) throw "ERROR";
 }
 
 Debugger::~Debugger() {
     freeNES();
     freeSDL();
+    out.close();
 }
 
 void Debugger::logError(std::ostream &os, const std::string &error) {
@@ -24,7 +27,7 @@ void Debugger::createWindow() {
         logError(std::cout, "SDL_INIT");
         throwError("SDL_INIT");
     }
-    window = SDL_CreateWindow("NES", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("NES", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH - 200, WINDOW_HEIGHT / 4, SDL_WINDOW_SHOWN);
     if(window == nullptr) {
         logError(std::cout, "SDL_CreateWindow");
         SDL_Quit();
@@ -102,6 +105,34 @@ void Debugger::run() {
                 }
             }
         }
+        clock();
+        auto toHex = [](int n, uint8_t d) {
+            std::string s(d, '0');
+            for (int i = d - 1; i >= 0; i--, n >>= 4)
+                s[i] = "0123456789ABCDEF"[n & 0xF];
+            return s;
+        };
+        int counter = bus->cpu.debugAddress;
+        int status = bus->cpu.status_register;
+        int acc = bus->cpu.accumulator;
+        int x = bus->cpu.x_register;
+        int y = bus->cpu.y_register;
+        int sp = bus->cpu.stack_pointer;
+        int debug = bus->readCPUMemory(0x07ff);
+        std::string counterString = toHex(counter, 4);
+        std::string statusString = toHex(status, 2);
+        std::string accString = toHex(acc, 2);
+        std::string xS = toHex(x, 2);
+        std::string yS = toHex(y, 2);
+        std::string spS = toHex(sp, 2);
+        std::string debugS = toHex(debug, 2);
+        out << counterString << " " << bus->cpu.disassembler->getInstruction(bus->cpu.debugAddress)
+            << " A: " << accString
+            << " X: " << xS
+            << " Y: " << yS
+            << " S: " << statusString
+            << " SP: " << spS << "\n";
+        render();
     }
 }
 
@@ -139,8 +170,8 @@ void Debugger::drawAllRegisters() {
     drawRegister("PC", bus->cpu.program_counter, {450, 10, 300, 50});
     drawRegister("X", bus->cpu.x_register, {950, 10, 300, 50});
     drawRegister("Y", bus->cpu.y_register, {1450, 10, 300, 50});
-    drawRegister("SP", bus->cpu.stack_pointer, {450, 70, 300, 50});
-    drawRegister("A", bus->cpu.accumulator, {950, 70, 300, 50});
+    drawRegister("D1", bus->readCPUMemory(0x02), {450, 70, 300, 50});
+    drawRegister("D2", bus->readCPUMemory(0x03), {950, 70, 300, 50});
 }
 
 void Debugger::drawRAM(int start) {
@@ -163,7 +194,7 @@ void Debugger::render() {
     SDL_RenderClear(renderer);
     drawStatus();
     drawAllRegisters();
-    (!RAM_bank) ? drawRAM() : drawRAM(32);
+    //(!RAM_bank) ? drawRAM() : drawRAM(32);
     drawInstruction();
     SDL_RenderPresent(renderer);
 }
@@ -175,8 +206,8 @@ void Debugger::initNES(const std::string &test) {
     gamePak = new GamePak(test);
     bus = new Bus(cpu, ppu);
     bus->connectGamepak(gamePak);
-    //bus->cpu.testMode();
-    bus->reset();
+    bus->cpu.testMode();
+    //bus->reset();
 }
 
 void Debugger::initSDL(const std::string &font_path) {
@@ -199,10 +230,8 @@ void Debugger::freeSDL() {
 }
 
 void Debugger::clock() {
-    do {
-        bus->clock();
-    }
-    while(bus->cpu.cycles != 0 || bus->cycles % 3 != 0);
+    while(!bus->cpu.complete) bus->clock();
+    bus->cpu.complete = false;
 }
 
 

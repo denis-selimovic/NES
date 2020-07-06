@@ -220,13 +220,13 @@ void ppu2C02::clock() {
         if(cycles == 338 || cycles == 340) tile_id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
         if(scanline == -1 && cycles >= 280 && cycles < 305) transferVertical();
         if(cycles == 257 && scanline >= 0) {
-            /*std::memset(foundSprites, 0xFF, 8 * sizeof(Sprite));
+            std::memset(foundSprites, 0xFF, 8 * sizeof(Sprite));
             sprite_count = 0;
             std::fill_n(sprite_low, 8, 0);
             std::fill_n(sprite_high, 8, 0);
-            findSprites();*/
+            findSprites();
         }
-        /*if(cycles == 340) {
+        if(cycles == 340) {
             for(uint i = 0; i < sprite_count; ++i) {
                 uint16_t sprite_address_low, sprite_address_high;
                 if(ppuctrl.sprite_height) {
@@ -247,7 +247,7 @@ void ppu2C02::clock() {
                 sprite_high[i] = sprite_high_bytes;
             }
 
-        }*/
+        }
     }
     if(scanline >= 241 && scanline < 261) {
         if(scanline == 241 && cycles == 1) {
@@ -263,11 +263,11 @@ void ppu2C02::clock() {
         //int t1 = palette.pixel_id, t2 = palette.palette_id;
         //std::cout<<t1<<" "<<t2<<" Background\n";
     }
-    /*if(ppumask.sprite_enable) {
+    if(ppumask.sprite_enable) {
         spritePalette = getSpriteComposition();
         //int t1 = spritePalette.pixel_id, t2 = spritePalette.palette_id;
         //std::cout<<t1<<" "<<t2<<" Sprite\n";
-    }*/
+    }
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
     //std::cout<<int(pixel.r)<<" "<<int(pixel.g)<<" "<<int(pixel.b)<<std::endl;
     if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240)  {

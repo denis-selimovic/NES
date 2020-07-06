@@ -7,6 +7,7 @@
 
 
 #include <iostream>
+#include <fstream>
 #include "Bus.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -78,8 +79,11 @@ class Debugger {
     //pomoćni atributi
     bool running = false;
     bool RAM_bank = false;
+
+    // LOG
+    std::ofstream out;
 public:
-    explicit Debugger(const std::string &test = "../nes/super.nes", const std::string & font_path = "../fonts/sans.ttf");
+    explicit Debugger(const std::string &test = "../nes/nestest.nes", const std::string & font_path = "../fonts/sans.ttf");
     ~Debugger();
     Debugger(const Debugger &debugger) = delete;
     Debugger(Debugger &&debugger) = delete;

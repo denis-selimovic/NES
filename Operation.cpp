@@ -10,8 +10,11 @@ uint8_t Operation::ADC(cpu6502 &cpu) {
     uint16_t result = uint16_t(cpu.accumulator) + uint16_t(cpu.memory_content) +uint16_t(cpu.getFlag(cpu6502::C));
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     cpu.setFlag(cpu6502::N, result & 0x0080u);
-    cpu.setFlag(cpu6502::C, result > 255);
-    cpu.setFlag(cpu6502::V, (~((uint16_t)cpu.accumulator ^ (uint16_t)cpu.memory_content) & ((uint16_t)cpu.accumulator ^ (uint16_t)result)) & 0x0080u);
+    cpu.setFlag(cpu6502::C, result & 0xFF00u);
+    //cpu.setFlag(cpu6502::V, (~((uint16_t)cpu.accumulator ^ (uint16_t)cpu.memory_content) & ((uint16_t)cpu.accumulator ^ (uint16_t)result)) & 0x0080u);
+    uint16_t acc_temp = (uint16_t)cpu.accumulator;
+    uint16_t mem_temp = (uint16_t)cpu.memory_content;
+    cpu.setFlag(cpu6502::V, ((~acc_temp) ^ mem_temp) & (result ^ acc_temp) & 0x80u);
     cpu.accumulator = result & 0x00FFu;
     return 1;
 }
@@ -72,9 +75,9 @@ uint8_t Operation::BEQ(cpu6502 &cpu) {
 uint8_t Operation::BIT(cpu6502 &cpu) {
     cpu.getMemoryContent();
     uint16_t result = cpu.accumulator & cpu.memory_content;
-    cpu.setFlag(cpu6502::V, cpu.memory_content & (1u << 6u));
-    cpu.setFlag(cpu6502::N, cpu.memory_content & (1u << 7u));
-    cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x00);
+    cpu.setFlag(cpu6502::V, (cpu.memory_content & 0x00FFu) & 0b01000000u);
+    cpu.setFlag(cpu6502::N, (cpu.memory_content & 0x00FFu) & 0b10000000u);
+    cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     return 0;
 }
 
@@ -94,7 +97,9 @@ uint8_t Operation::BNE(cpu6502 &cpu) {
         cpu.cycles++;
         cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //provjera koji je broj stranica novog pc-a i starog pc-a
-        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
+        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) {
+            cpu.cycles++;
+        }
         cpu.program_counter = cpu.absolute_address;
     }
     return 0;
@@ -143,7 +148,7 @@ uint8_t Operation::BVC(cpu6502 &cpu) {
         cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //ako pc i novi pc nisu na istoj stranici broj ciklusa se povecava
         if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.program_counter;
+        cpu.program_counter = cpu.absolute_address;
     }
     return 0;
 }
@@ -154,7 +159,7 @@ uint8_t Operation::BVS(cpu6502 &cpu) {
         cpu.absolute_address = cpu.program_counter + cpu.relative_address;
         //ako pc i novi pc nisu na istoj stranici broj ciklusa se povecava
         if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.program_counter;
+        cpu.program_counter = cpu.absolute_address;
     }
     return 0;
 }
@@ -363,7 +368,7 @@ uint8_t Operation::PLP(cpu6502 &cpu) {
 
 uint8_t Operation::ROL(cpu6502 &cpu) {
     cpu.getMemoryContent();
-    uint16_t result = uint16_t(cpu.memory_content << 1u) | cpu.getFlag(cpu6502::C);
+    uint16_t result = (uint16_t(cpu.memory_content) << 1u) | cpu.getFlag(cpu6502::C);
     cpu.setFlag(cpu6502::C, result & 0xFF00u);
     cpu.setFlag(cpu6502::N, result & 0x0080u);
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
@@ -421,7 +426,8 @@ uint8_t Operation::SBC(cpu6502 &cpu) {
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     cpu.setFlag(cpu6502::N, (result & 0x00FFu) & 0x0080u);
     cpu.setFlag(cpu6502::C, result & 0xFF00u);
-    cpu.setFlag(cpu6502::V, (result ^ (uint16_t)cpu.accumulator) & (result ^ complement) & 0x0080u);
+    uint16_t acc_temp = cpu.accumulator;
+    cpu.setFlag(cpu6502::V, (acc_temp ^ complement) & (result ^ acc_temp) & 0x0080u);
     cpu.accumulator = result & 0x00FFu;
     return 1;
 }
@@ -498,4 +504,5 @@ uint8_t Operation::TYA(cpu6502 &cpu) {
 
 uint8_t Operation::XXX(cpu6502 &cpu) {
     throw std::logic_error("UNSUPPORTED OPERATION");
+    //return 0;
 }

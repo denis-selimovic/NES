@@ -63,6 +63,8 @@ private:
     //mod emulatora
     MODE mode;
 
+    bool complete = false;
+
     //disassembler
     Disassembler *disassembler = nullptr;
 
@@ -79,7 +81,6 @@ public:
     void interruptRequest();
     void nonmaskableInterrupt();
     void testMode();
-    std::string getInstructionName();
     uint8_t getFlag(FLAGS flag);
 };
 
