@@ -426,8 +426,8 @@ uint8_t Operation::SBC(cpu6502 &cpu) {
     cpu.setFlag(cpu6502::Z, (result & 0x00FFu) == 0x0000);
     cpu.setFlag(cpu6502::N, (result & 0x00FFu) & 0x0080u);
     cpu.setFlag(cpu6502::C, result & 0xFF00u);
-    uint16_t acc_temp = cpu.accumulator;
-    cpu.setFlag(cpu6502::V, (acc_temp ^ complement) & (result ^ acc_temp) & 0x0080u);
+    uint16_t acc_temp = uint16_t(cpu.accumulator);
+    cpu.setFlag(cpu6502::V, (acc_temp ^ result) & (result ^ complement) & 0x0080u);
     cpu.accumulator = result & 0x00FFu;
     return 1;
 }
