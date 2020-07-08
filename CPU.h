@@ -2,8 +2,8 @@
 // Created by denis on 21/02/2020.
 //
 
-#ifndef NES_CPU6502_H
-#define NES_CPU6502_H
+#ifndef NES_CPU_H
+#define NES_CPU_H
 
 #include <cstdint>
 #include <vector>
@@ -19,7 +19,7 @@ class Bus;
 class Disassembler;
 class Renderer;
 
-class cpu6502 {
+class CPU {
 
 public:
     //maske za postavljanje bita u statusnom registru
@@ -35,7 +35,6 @@ private:
     uint8_t status_register = 0x00;
     uint16_t program_counter = 0x0000;
 
-
     //pokazivac na trenutnu instrukciju
     Instruction *instruction = nullptr;
 
@@ -43,6 +42,7 @@ private:
     Bus *bus = nullptr;
 
     void setFlag(FLAGS flag, bool value);
+    uint8_t getFlag(FLAGS flag);
 
     void write(uint16_t address, uint8_t data);
     uint8_t read(uint16_t address);
@@ -57,13 +57,13 @@ private:
     uint16_t relative_address = 0x00;
     uint16_t absolute_address = 0x0000;
     uint16_t debugAddress = 0x0000;
-
-    uint8_t getMemoryContent();
+    void getMemoryContent();
 
     //mod emulatora
     MODE mode;
+    void testMode();
 
-    bool complete = false;
+    bool cycleCompleted = false;
 
     //disassembler
     Disassembler *disassembler = nullptr;
@@ -72,17 +72,34 @@ private:
     friend class AddressingMode;
     friend class Debugger;
     friend class Renderer;
+
+private:
+    // utility funkcije i pomoćne konstante
+    const static uint16_t NMI_VECTOR = 0xFFFA;
+    const static uint16_t RESET_VECTOR = 0xFFFC;
+    const static uint16_t IRQ_VECTOR = 0xFFFE;
+    const static uint16_t STACK_TOP = 0x0100;
+
+    uint16_t formTwoByteAddress(uint16_t msb, uint16_t lsb);
+    uint16_t readVectorPC(uint16_t base);
+
+    void pushToStack(uint8_t data);
+    uint8_t pullFromStack();
+
+    void pushPCToStack(uint16_t data);
+    uint16_t pullPCFromStack();
+
 public:
-    cpu6502(MODE mode = NORMAL);
+    CPU(MODE mode = NORMAL);
+    ~CPU();
+
     void connectToBus(Bus *bus);
     void setDisassembler(Disassembler *disassembler);
     void clock();
     void reset();
     void interruptRequest();
-    void nonmaskableInterrupt();
-    void testMode();
-    uint8_t getFlag(FLAGS flag);
+    void nonMaskableInterrupt();
 };
 
 
-#endif //NES_CPU6502_H
+#endif //NES_CPU_H

@@ -10,7 +10,7 @@
 #include <ostream>
 #include "Bus.h"
 
-class cpu6502;
+class CPU;
 class ppu2C02;
 class Bus;
 
@@ -40,7 +40,7 @@ class Renderer {
     void cleanup(SDL_Texture *t);
 
     // povezivanje na emulator
-    cpu6502 cpu;
+    CPU cpu;
     ppu2C02 ppu;
     Bus *bus = nullptr;
     GamePak *gamePak = nullptr;

@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <array>
 #include "ppu2C02.h"
-#include "cpu6502.h"
+#include "CPU.h"
 #include "Key.h"
 
 class Bus {
@@ -17,7 +17,7 @@ class Bus {
     std::array<uint8_t , 2> joystick{};
 
     ppu2C02 &ppu;
-    cpu6502 &cpu;
+    CPU &cpu;
 
     //broj ciklusa sabirnice
     uint32_t cycles = 0;
@@ -41,7 +41,7 @@ public:
     std::array<uint8_t, 2> joystickBuffer{};
 
 public:
-     Bus(cpu6502 &cpu, ppu2C02 &ppu);
+     Bus(CPU &cpu, ppu2C02 &ppu);
      ~Bus();
      Bus(const Bus &bus) = delete;
      Bus(Bus &&bus) = delete;

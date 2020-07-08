@@ -201,7 +201,7 @@ void Debugger::render() {
 
 void Debugger::initNES(const std::string &test) {
     disassembler = new Disassembler();
-    cpu = cpu6502(cpu6502::DEBUG);
+    cpu = CPU(CPU::DEBUG);
     cpu.setDisassembler(disassembler);
     gamePak = new GamePak(test);
     bus = new Bus(cpu, ppu);
@@ -230,8 +230,8 @@ void Debugger::freeSDL() {
 }
 
 void Debugger::clock() {
-    while(!bus->cpu.complete) bus->clock();
-    bus->cpu.complete = false;
+    while(!bus->cpu.cycleCompleted) bus->clock();
+    bus->cpu.cycleCompleted = false;
 }
 
 

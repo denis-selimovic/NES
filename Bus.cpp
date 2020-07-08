@@ -25,7 +25,7 @@ void Bus::writeCPUMemory(uint16_t address, uint8_t data) {
     else if (address >= 0x4016 && address <= 0x4017) joystick[address & 0x01u] = joystickBuffer[address & 0x01u];
 }
 
-Bus::Bus(cpu6502 &cpu, ppu2C02 &ppu) : cpu(cpu), ppu(ppu) {
+Bus::Bus(CPU &cpu, ppu2C02 &ppu) : cpu(cpu), ppu(ppu) {
     this->cpu.connectToBus(this);
 }
 
@@ -46,7 +46,7 @@ void Bus::clock() {
         else cpu.clock();
     }
     if(ppu.interrupt) {
-        cpu.nonmaskableInterrupt();
+        cpu.nonMaskableInterrupt();
         ppu.interrupt = false;
     }
     cycles++;

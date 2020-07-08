@@ -3,32 +3,31 @@
 //
 
 #include <iostream>
-#include "cpu6502.h"
+#include "CPU.h"
 #include "Operation.h"
 #include "AddressingMode.h"
 
-void cpu6502::setFlag(cpu6502::FLAGS flag, bool value) {
-    if(value) status_register |= flag;
-    else status_register &= ~flag;
+void CPU::setFlag(CPU::FLAGS flag, bool value) {
+    value ? status_register |= flag : status_register &= ~flag;
 }
 
-uint8_t cpu6502::getFlag(cpu6502::FLAGS flag) {
-    return ((status_register & flag) > 0) ? 1 : 0;
+uint8_t CPU::getFlag(CPU::FLAGS flag) {
+    return ((status_register & flag) != 0) ? 1 : 0;
 }
 
-void cpu6502::connectToBus(Bus *bus) {
+void CPU::connectToBus(Bus *bus) {
     this->bus = bus;
 }
 
-void cpu6502::write(uint16_t address, uint8_t data) {
+void CPU::write(uint16_t address, uint8_t data) {
     bus->writeCPUMemory(address, data);
 }
 
-uint8_t cpu6502::read(uint16_t address) {
+uint8_t CPU::read(uint16_t address) {
     return bus->readCPUMemory(address);
 }
 
-cpu6502::cpu6502(MODE mode) {
+CPU::CPU(MODE mode) {
     lookup =
             {
                     Instruction("BRK", &Operation::BRK, &AddressingMode::IMP, 7),
@@ -291,7 +290,13 @@ cpu6502::cpu6502(MODE mode) {
     this->mode = mode;
 }
 
-void cpu6502::clock() {
+CPU::~CPU() {
+    if(!disassembler) return;
+    delete disassembler;
+    disassembler = nullptr;
+}
+
+void CPU::clock() {
     if(cycles == 0) {
         //ako je broj ciklusa 0 prelazimo na sljedeću instrukciju
         //opcode trenutne instrukcije dobijamo preko programskog brojača
@@ -303,17 +308,14 @@ void cpu6502::clock() {
 
         //ažuriramo novu instrukciju
         instruction = &lookup[opcode];
-        //std::cout<<instruction->name<<" "<<int(opcode)<<std::endl;
-
         //ažuriramo broj ciklusa
         cycles = instruction->total_cycles;
 
         //izvršimo adresiranje a zatim operaciju
         uint8_t cycles_addr = instruction->addressing_mode(*this);
         uint8_t cycle_opp = instruction->operation(*this);
-
         //povećamo broj ciklusa ako je ponovo potrebno
-        cycles += (cycles_addr & cycle_opp);
+        cycles += (cycles_addr + cycle_opp);
 
         //postavimo U flag uvijek na 1
         setFlag(U, true);
@@ -321,93 +323,57 @@ void cpu6502::clock() {
             std::string ins = disassembler->getInstruction(instruction->name, opcode);
             disassembler->addInstruction(debugAddress, ins);
         }
-        complete = true;
+        cycleCompleted = true;
     }
-    //smanjimo broj ciklusa za 1
     cycles--;
 }
 
-void cpu6502::reset() {
+void CPU::reset() {
     //ova tri registra se restartuju
     accumulator = x_register = y_register = 0x00;
-
     //stack pointer pokazuje na 0xFD
     stack_pointer = 0xFD;
-
     //svi statusni biti koji se koriste su 0
     status_register = 0x00u | U;
-
     //adresa sa koje se čita novi pc je 0xFFFC
-    absolute_address = 0xFFFC;
-    uint16_t low_byte = read(absolute_address);
-    uint16_t high_byte = read(absolute_address + 1);
-
-    //dobijamo novi pc
-    program_counter = (high_byte << 8u) | low_byte;
-
+    program_counter = readVectorPC(RESET_VECTOR);
     //broj ciklusa za reset je 8
     cycles = 8;
-
     //resetujemo pomoćne varijable
-    absolute_address = relative_address = 0x0000;
-    memory_content = 0x00;
-
+    absolute_address = relative_address = memory_content =  0x0000;
 }
 
-void cpu6502::interruptRequest() {
+void CPU::interruptRequest() {
     if(getFlag(I) == 0) {
         //stavimo pc na stack
-        write(0x0100 + stack_pointer, (program_counter >> 8u) & 0x00FFu);
-        stack_pointer--;
-        write(0x0100 + stack_pointer, program_counter & 0x00FFu);
-        stack_pointer--;
-
+        pushPCToStack(program_counter);
         //stavimo statusni registar na stack
         setFlag(B, 0);
-        write(0x0100 + stack_pointer, status_register | U | I);
-        stack_pointer--;
-
+        pushToStack(status_register);
         //adresa u memoriji za novi pc je 0xFFFE
-        absolute_address = 0xFFFE;
-        uint16_t low_byte = read(absolute_address);
-        uint16_t high_byte = read(absolute_address + 1);
-
-        program_counter = unsigned (high_byte) << 8u | low_byte;
-
+        program_counter = readVectorPC(IRQ_VECTOR);
         //broj ciklusa je 7
         cycles = 7;
     }
 }
 
-void cpu6502::nonmaskableInterrupt() {
+void CPU::nonMaskableInterrupt() {
     //nonmaskable interrupt se dešava uvijek
-
     //stavljamo pc na stack
-    write(0x0100 + stack_pointer, (program_counter >> 8u) & 0x00FFu);
-    stack_pointer--;
-    write(0x0100 + stack_pointer, program_counter & 0x00FFu);
-    stack_pointer--;
-
+    pushPCToStack(program_counter);
     //stavljamo statusni registar na stack
     setFlag(B, 0);
-    write(0x0100 + stack_pointer, status_register | U | I);
-    stack_pointer--;
-
+    pushToStack(status_register);
     //adresa koja se čita je 0xFFFA
-    absolute_address = 0xFFFA;
-    uint16_t low_byte = read(absolute_address);
-    uint16_t high_byte = read(absolute_address + 1);
-
-    program_counter = high_byte << 8u | low_byte;
+    program_counter = readVectorPC(NMI_VECTOR);
     cycles = 8;
 }
 
-uint8_t cpu6502::getMemoryContent() {
+void CPU::getMemoryContent() {
     if(instruction->addressing_mode != &AddressingMode::IMP) memory_content = read(absolute_address);
-    return memory_content;
 }
 
-void cpu6502::testMode() {
+void CPU::testMode() {
     accumulator = x_register = y_register = 0x00;
     stack_pointer = 0xFD;
     status_register = 0x00u | U | I;
@@ -415,9 +381,40 @@ void cpu6502::testMode() {
     debugAddress = program_counter;
 }
 
-void cpu6502::setDisassembler(Disassembler *disassembler) {
+void CPU::setDisassembler(Disassembler *disassembler) {
     this->disassembler = disassembler;
 }
+
+uint16_t CPU::formTwoByteAddress(uint16_t msb, uint16_t lsb) {
+    return (msb << 8u) | lsb;
+}
+
+uint16_t CPU::readVectorPC(uint16_t address) {
+    uint16_t low_byte = read(address);
+    uint16_t high_byte = read(address + 1);
+    return formTwoByteAddress(high_byte, low_byte);
+}
+
+void CPU::pushToStack(uint8_t data) {
+    write(STACK_TOP + stack_pointer, (data & 0x00FFu));
+    stack_pointer--;
+}
+
+uint8_t CPU::pullFromStack() {
+    stack_pointer++;
+    return read(STACK_TOP + stack_pointer);
+}
+
+void CPU::pushPCToStack(uint16_t data) {
+    pushToStack(data >> 8u);
+    pushToStack(data);
+}
+
+uint16_t CPU::pullPCFromStack() {
+    return formTwoByteAddress(pullFromStack(), pullFromStack());
+}
+
+
 
 
 

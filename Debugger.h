@@ -29,7 +29,7 @@ class Debugger {
     const static uint32_t FONT_SIZE = 10;
 
     //NES
-    cpu6502 cpu;
+    CPU cpu;
     ppu2C02 ppu;
     GamePak *gamePak = nullptr;
     Bus *bus = nullptr;
