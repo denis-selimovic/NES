@@ -9,6 +9,7 @@
 #include <array>
 #include "ppu2C02.h"
 #include "cpu6502.h"
+#include "Key.h"
 
 class Bus {
 
@@ -34,6 +35,9 @@ class Bus {
     friend class Renderer;
 
     uint8_t joystickCache[2] = {0};
+
+public:
+    Key X,Z,A,S,UP,DOWN,LEFT,RIGHT;
 public:
      Bus(cpu6502 &cpu, ppu2C02 &ppu);
      uint8_t readCPUMemory(uint16_t address);

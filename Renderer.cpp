@@ -96,29 +96,77 @@ void Renderer::run() {
     bus->reset();
     SDL_Event e;
     while(running) {
-        auto startFrame = std::chrono::system_clock::now();
-        if(sync > 0) sync = sync - frame;
-        else {
-            while(!bus->ppu.rendered) bus->clock();
-            bus->ppu.rendered = false;
-            sync += (1 / 60.0)  - frame;
-        }
-        render();
+        bus->joystick[0] = 0x00;
+        bus->joystick[0] |= bus->X.isHeld() ? 0x80u : 0x00u;
+        bus->joystick[0] |= bus->Z.isHeld() ? 0x40u : 0x00u;
+        bus->joystick[0] |= bus->A.isHeld() ? 0x20u : 0x00u;
+        bus->joystick[0] |= bus->S.isHeld() ? 0x10u : 0x00u;
+        bus->joystick[0] |= bus->UP.isHeld() ? 0x08u : 0x00u;
+        bus->joystick[0] |= bus->DOWN.isHeld() ? 0x04u : 0x00u;
+        bus->joystick[0] |= bus->LEFT.isHeld() ? 0x02u : 0x00u;
+        bus->joystick[0] |= bus->RIGHT.isHeld() ? 0x01u : 0x00u;
         while(SDL_PollEvent(&e) != 0) {
             if(e.type == SDL_QUIT) running = false;
             else if(e.type == SDL_KEYDOWN) {
-                (e.key.keysym.sym == SDLK_k) ? bus->joystick[0] |= 0x80u : bus->joystick[0] |= 0x00u;
-                (e.key.keysym.sym == SDLK_z) ? bus->joystick[0] |= 0x40u : bus->joystick[0] |= 0x00u;
-                (e.key.keysym.sym == SDLK_a) ? bus->joystick[0] |= 0x20u : bus->joystick[0] |= 0x00u;
-                (e.key.keysym.sym == SDLK_s) ? bus->joystick[0] |= 0x10u : bus->joystick[0] |= 0x00u;
-                (e.key.keysym.sym == SDLK_UP) ? bus->joystick[0] |= 0x08u : bus->joystick[0] |= 0x00u;
-                (e.key.keysym.sym == SDLK_DOWN) ? bus->joystick[0] |= 0x04u : bus->joystick[0] |= 0x00u;
-                (e.key.keysym.sym == SDLK_LEFT) ? bus->joystick[0] |= 0x02u : bus->joystick[0] |= 0x00u;
-                (e.key.keysym.sym == SDLK_RIGHT) ? bus->joystick[0] |= 0x01u : bus->joystick[0] |= 0x00u;
+                switch (e.key.keysym.sym) {
+                    case SDLK_x:
+                        bus->X.newState = true;
+                        break;
+                    case SDLK_z:
+                        bus->Z.newState = true;
+                        break;
+                    case SDLK_a:
+                        bus->A.newState = true;
+                        break;
+                    case SDLK_s:
+                        bus->S.newState = true;
+                        break;
+                    case SDLK_UP:
+                        bus->UP.newState = true;
+                        break;
+                    case SDLK_DOWN:
+                        bus->DOWN.newState = true;
+                        break;
+                    case SDLK_LEFT:
+                        bus->LEFT.newState = true;
+                        break;
+                    case SDLK_RIGHT:
+                        bus->RIGHT.newState = true;
+                        break;
+                }
+            }
+            else if(e.type == SDL_KEYUP) {
+                switch (e.key.keysym.sym) {
+                    case SDLK_x:
+                        bus->X.newState = false;
+                        break;
+                    case SDLK_z:
+                        bus->Z.newState = false;
+                        break;
+                    case SDLK_a:
+                        bus->A.newState = false;
+                        break;
+                    case SDLK_s:
+                        bus->S.newState = false;
+                        break;
+                    case SDLK_UP:
+                        bus->UP.newState = false;
+                        break;
+                    case SDLK_DOWN:
+                        bus->DOWN.newState = false;
+                        break;
+                    case SDLK_LEFT:
+                        bus->LEFT.newState = false;
+                        break;
+                    case SDLK_RIGHT:
+                        bus->RIGHT.newState = false;
+                        break;
+                }
             }
         }
-        auto endFrame = std::chrono::system_clock::now();
-        frame = (endFrame - startFrame).count();
+        while(!bus->ppu.rendered) bus->clock();
+        bus->ppu.rendered = false;
+        render();
      }
 }
 

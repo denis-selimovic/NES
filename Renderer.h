@@ -54,10 +54,8 @@ class Renderer {
 
     // rad renderera
     bool running = false;
-    double frame = 0;
-    double sync = 0;
 public:
-    explicit Renderer(const std::string &test = "../nes/smb.nes");
+    explicit Renderer(const std::string &test = "../nes/dk.nes");
     ~Renderer();
     Renderer(const Renderer &renderer) = delete;
     Renderer(Renderer &&renderer) = delete;
