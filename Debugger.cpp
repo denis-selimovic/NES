@@ -205,7 +205,7 @@ void Debugger::initNES(const std::string &test) {
     cpu.setDisassembler(disassembler);
     gamePak = new GamePak(test);
     bus = new Bus(cpu, ppu);
-    bus->connectGamepak(gamePak);
+    bus->connectGamePak(gamePak);
     bus->cpu.testMode();
     //bus->reset();
 }

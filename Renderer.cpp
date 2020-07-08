@@ -83,7 +83,7 @@ Renderer::~Renderer() {
 void Renderer::initNES(const std::string &nes) {
     bus = new Bus(cpu, ppu);
     gamePak = new GamePak(nes);
-    bus->connectGamepak(gamePak);
+    bus->connectGamePak(gamePak);
 }
 
 void Renderer::freeNES() {
@@ -96,15 +96,15 @@ void Renderer::run() {
     bus->reset();
     SDL_Event e;
     while(running) {
-        bus->joystick[0] = 0x00;
-        bus->joystick[0] |= bus->X.isHeld() ? 0x80u : 0x00u;
-        bus->joystick[0] |= bus->Z.isHeld() ? 0x40u : 0x00u;
-        bus->joystick[0] |= bus->A.isHeld() ? 0x20u : 0x00u;
-        bus->joystick[0] |= bus->S.isHeld() ? 0x10u : 0x00u;
-        bus->joystick[0] |= bus->UP.isHeld() ? 0x08u : 0x00u;
-        bus->joystick[0] |= bus->DOWN.isHeld() ? 0x04u : 0x00u;
-        bus->joystick[0] |= bus->LEFT.isHeld() ? 0x02u : 0x00u;
-        bus->joystick[0] |= bus->RIGHT.isHeld() ? 0x01u : 0x00u;
+        bus->joystickBuffer[0] = 0x00;
+        bus->joystickBuffer[0] |= bus->X.isHeld() ? 0x80u : 0x00u;
+        bus->joystickBuffer[0] |= bus->Z.isHeld() ? 0x40u : 0x00u;
+        bus->joystickBuffer[0] |= bus->A.isHeld() ? 0x20u : 0x00u;
+        bus->joystickBuffer[0] |= bus->S.isHeld() ? 0x10u : 0x00u;
+        bus->joystickBuffer[0] |= bus->UP.isHeld() ? 0x08u : 0x00u;
+        bus->joystickBuffer[0] |= bus->DOWN.isHeld() ? 0x04u : 0x00u;
+        bus->joystickBuffer[0] |= bus->LEFT.isHeld() ? 0x02u : 0x00u;
+        bus->joystickBuffer[0] |= bus->RIGHT.isHeld() ? 0x01u : 0x00u;
         while(SDL_PollEvent(&e) != 0) {
             if(e.type == SDL_QUIT) running = false;
             else if(e.type == SDL_KEYDOWN) {
