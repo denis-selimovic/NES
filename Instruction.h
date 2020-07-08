@@ -16,8 +16,7 @@ public:
     uint8_t total_cycles;
     uint8_t (*operation) (CPU &cpu);
     uint8_t (*addressing_mode) (CPU &cpu);
-    Instruction(std::string name, uint8_t (*opp) (CPU &cpu) = nullptr, uint8_t (*addrmode) (CPU &cpu) = nullptr, uint8_t cycles = 0);
-    Instruction();
+    Instruction(std::string name = "XXX", uint8_t (*opp) (CPU &cpu) = nullptr, uint8_t (*addrmode) (CPU &cpu) = nullptr, uint8_t cycles = 0);
 };
 
 

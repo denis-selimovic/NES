@@ -12,10 +12,3 @@ Instruction::Instruction(std::string name, uint8_t (*opp)(CPU &cpu), uint8_t (*a
     this->operation = opp;
     this->addressing_mode = addrmode;
 }
-
-Instruction::Instruction() {
-    this->name = "XXX";
-    this->total_cycles = 0;
-    this->operation = nullptr;
-    this->addressing_mode = nullptr;
-}
