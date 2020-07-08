@@ -257,8 +257,8 @@ void ppu2C02::clock() {
 
     Palette palette{};
     SpritePalette spritePalette{};
-    if(ppumask.background_enable) palette = getComposition();
-    if(ppumask.sprite_enable) spritePalette = getSpriteComposition();
+    if(ppumask.background_enable && (ppumask.background_left_column_enable || cycles >= 9)) palette = getComposition();
+    if(ppumask.sprite_enable && (ppumask.sprite_left_column_enable || cycles >= 9)) spritePalette = getSpriteComposition();
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
     if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240) pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
 

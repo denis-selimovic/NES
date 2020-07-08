@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <chrono>
 #include "Renderer.h"
 
 
@@ -95,40 +96,29 @@ void Renderer::run() {
     bus->reset();
     SDL_Event e;
     while(running) {
-        while(!bus->ppu.rendered) bus->clock();
-        bus->ppu.rendered = false;
+        auto startFrame = std::chrono::system_clock::now();
+        if(sync > 0) sync = sync - frame;
+        else {
+            while(!bus->ppu.rendered) bus->clock();
+            bus->ppu.rendered = false;
+            sync += (1 / 60.0)  - frame;
+        }
         render();
         while(SDL_PollEvent(&e) != 0) {
             if(e.type == SDL_QUIT) running = false;
             else if(e.type == SDL_KEYDOWN) {
-                switch (e.key.keysym.sym) {
-                    case SDLK_x:
-                        bus->joystick[0] |= 0x80u;
-                        break;
-                    case SDLK_z:
-                        bus->joystick[0] |= 0x40u;
-                        break;
-                    case SDLK_a:
-                        bus->joystick[0] |= 0x20u;
-                        break;
-                    case SDLK_s:
-                        bus->joystick[0] |= 0x10u;
-                        break;
-                    case SDLK_UP:
-                        bus->joystick[0] |= 0x08u;
-                        break;
-                    case SDLK_DOWN:
-                        bus->joystick[0] |= 0x04u;
-                        break;
-                    case SDLK_LEFT:
-                        bus->joystick[0] |= 0x02u;
-                        break;
-                    case SDLK_RIGHT:
-                        bus->joystick[0] |= 0x01u;
-                        break;
-                }
+                (e.key.keysym.sym == SDLK_k) ? bus->joystick[0] |= 0x80u : bus->joystick[0] |= 0x00u;
+                (e.key.keysym.sym == SDLK_z) ? bus->joystick[0] |= 0x40u : bus->joystick[0] |= 0x00u;
+                (e.key.keysym.sym == SDLK_a) ? bus->joystick[0] |= 0x20u : bus->joystick[0] |= 0x00u;
+                (e.key.keysym.sym == SDLK_s) ? bus->joystick[0] |= 0x10u : bus->joystick[0] |= 0x00u;
+                (e.key.keysym.sym == SDLK_UP) ? bus->joystick[0] |= 0x08u : bus->joystick[0] |= 0x00u;
+                (e.key.keysym.sym == SDLK_DOWN) ? bus->joystick[0] |= 0x04u : bus->joystick[0] |= 0x00u;
+                (e.key.keysym.sym == SDLK_LEFT) ? bus->joystick[0] |= 0x02u : bus->joystick[0] |= 0x00u;
+                (e.key.keysym.sym == SDLK_RIGHT) ? bus->joystick[0] |= 0x01u : bus->joystick[0] |= 0x00u;
             }
         }
+        auto endFrame = std::chrono::system_clock::now();
+        frame = (endFrame - startFrame).count();
      }
 }
 
