@@ -16,9 +16,8 @@ public:
 private:
     //GamePak se sastoji PRG (programske memorije PRG-ROM) i CHR(memorija sprite-ova CHR-ROM)
     //njih učitamo iz .nes datoteke
-    std::vector<uint8_t> PRG;
-    std::vector<uint8_t> CHR;
-
+    std::vector<uint8_t> PRG_ROM;
+    std::vector<uint8_t> CHR_ROM;
 
     //pomoćna struktura za učitavanje header-a .nes fajla
     //na osnovu ovoga saznajemo informacije o vrsti .nes fajla
@@ -37,12 +36,11 @@ private:
 
     //pokazivač na mapper koji se koristi za mapiranje adresa
     Mapper *mapper = nullptr;
-
     //funkcija za određivanje koji mapper se koristi
     static Mapper *setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_banks);
 
 public:
-    GamePak(const std::string &game);
+    explicit GamePak(const std::string &game);
     ~GamePak();
     bool readCPUMemory(uint16_t address, uint8_t &data);
     bool writeCPUMemory(uint16_t address, uint8_t data);
