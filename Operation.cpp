@@ -141,11 +141,7 @@ uint8_t Operation::CPY(CPU &cpu) {
 }
 
 uint8_t Operation::DEC(CPU &cpu) {
-    cpu.getMemoryContent();
-    uint16_t result = cpu.memory_content - 1;
-    cpu.write(cpu.absolute_address, result & 0x00FFu);
-    cpu.setFlag(CPU::N, result & 0x0080u);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
+    updateMem(cpu, -1);
     return 0;
 }
 
@@ -167,11 +163,7 @@ uint8_t Operation::EOR(CPU &cpu) {
 }
 
 uint8_t Operation::INC(CPU &cpu) {
-    cpu.getMemoryContent();
-    uint16_t result = cpu.memory_content + 1;
-    cpu.write(cpu.absolute_address, result & 0x00FFu);
-    cpu.setFlag(CPU::N, result & 0x0080u);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
+    updateMem(cpu, 1);
     return 0;
 }
 
@@ -483,6 +475,13 @@ void Operation::compare(CPU &cpu, uint16_t reg) {
 
 void Operation::updateXY(const std::function<void()> &func) {
     func();
+}
+
+void Operation::updateMem(CPU &cpu, const uint8_t &value) {
+    cpu.getMemoryContent();
+    uint16_t result = cpu.memory_content + value;
+    cpu.write(cpu.absolute_address, result & 0x00FFu);
+    setZN(cpu, result);
 }
 
 
