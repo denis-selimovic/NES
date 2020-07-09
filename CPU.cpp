@@ -298,73 +298,47 @@ CPU::~CPU() {
 
 void CPU::clock() {
     if(cycles == 0) {
-        //ako je broj ciklusa 0 prelazimo na sljedeću instrukciju
-        //opcode trenutne instrukcije dobijamo preko programskog brojača
         uint8_t opcode = read(program_counter);
-        //za DEBUG mode
-        debugAddress = program_counter;
-        //povećamo programski brojač
+        if(mode == DEBUG) debugAddress = program_counter;
         program_counter++;
-
-        //ažuriramo novu instrukciju
         instruction = &lookup[opcode];
-        //ažuriramo broj ciklusa
         cycles = instruction->total_cycles;
-
-        //izvršimo adresiranje a zatim operaciju
         uint8_t cycles_addr = instruction->addressing_mode(*this);
         uint8_t cycle_opp = instruction->operation(*this);
-        //povećamo broj ciklusa ako je ponovo potrebno
         cycles += (cycles_addr + cycle_opp);
-
-        //postavimo U flag uvijek na 1
         setFlag(U, true);
+        cycleCompleted = true;
         if(mode == DEBUG) {
             std::string ins = disassembler->getInstruction(instruction->name, opcode);
             disassembler->addInstruction(debugAddress, ins);
         }
-        cycleCompleted = true;
     }
     cycles--;
 }
 
 void CPU::reset() {
-    //ova tri registra se restartuju
     accumulator = x_register = y_register = 0x00;
-    //stack pointer pokazuje na 0xFD
     stack_pointer = 0xFD;
-    //svi statusni biti koji se koriste su 0
     status_register = 0x00u | U;
-    //adresa sa koje se čita novi pc je 0xFFFC
     program_counter = readVectorPC(RESET_VECTOR);
-    //broj ciklusa za reset je 8
     cycles = 8;
-    //resetujemo pomoćne varijable
     absolute_address = relative_address = memory_content =  0x0000;
 }
 
 void CPU::interruptRequest() {
     if(getFlag(I) == 0) {
-        //stavimo pc na stack
         pushPCToStack(program_counter);
-        //stavimo statusni registar na stack
         setFlag(B, 0);
         pushToStack(status_register);
-        //adresa u memoriji za novi pc je 0xFFFE
         program_counter = readVectorPC(IRQ_VECTOR);
-        //broj ciklusa je 7
         cycles = 7;
     }
 }
 
 void CPU::nonMaskableInterrupt() {
-    //nonmaskable interrupt se dešava uvijek
-    //stavljamo pc na stack
     pushPCToStack(program_counter);
-    //stavljamo statusni registar na stack
     setFlag(B, 0);
     pushToStack(status_register);
-    //adresa koja se čita je 0xFFFA
     program_counter = readVectorPC(NMI_VECTOR);
     cycles = 8;
 }
@@ -395,23 +369,14 @@ uint16_t CPU::readVectorPC(uint16_t address) {
     return formTwoByteAddress(high_byte, low_byte);
 }
 
-void CPU::pushToStack(uint8_t data) {
+void CPU::pushToStack(uint16_t data) {
     write(STACK_TOP + stack_pointer, (data & 0x00FFu));
     stack_pointer--;
-}
-
-uint8_t CPU::pullFromStack() {
-    stack_pointer++;
-    return read(STACK_TOP + stack_pointer);
 }
 
 void CPU::pushPCToStack(uint16_t data) {
     pushToStack(data >> 8u);
     pushToStack(data);
-}
-
-uint16_t CPU::pullPCFromStack() {
-    return formTwoByteAddress(pullFromStack(), pullFromStack());
 }
 
 

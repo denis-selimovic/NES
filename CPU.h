@@ -26,6 +26,7 @@ public:
     //redom CARRY, ZERO, INTERRUPT, DECIMAL, BREAK, UNUSED, OVERFLOW, NEGATIVE
     enum FLAGS {C = (1 << 0), Z = (1 << 1), I = (1 << 2), D = (1 << 3), B = (1 << 4), U = (1 << 5), V = (1 << 6), N = (1 << 7)};
     enum MODE {NORMAL, DEBUG};
+
 private:
     //cpu ima 6 registara opce namjene
     uint8_t accumulator = 0x00;
@@ -83,16 +84,12 @@ private:
     uint16_t formTwoByteAddress(uint16_t msb, uint16_t lsb);
     uint16_t readVectorPC(uint16_t base);
 
-    void pushToStack(uint8_t data);
-    uint8_t pullFromStack();
-
+    void pushToStack(uint16_t data);
     void pushPCToStack(uint16_t data);
-    uint16_t pullPCFromStack();
 
 public:
     CPU(MODE mode = NORMAL);
     ~CPU();
-
     void connectToBus(Bus *bus);
     void setDisassembler(Disassembler *disassembler);
     void clock();
