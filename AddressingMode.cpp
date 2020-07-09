@@ -44,15 +44,13 @@ uint8_t AddressingMode::ABS(CPU &cpu) {
 
 uint8_t AddressingMode::ABX(CPU &cpu) {
     uint16_t oldAddress = cpu.absolute_address;
-    cpu.absolute_address = formAbsoluteAddress(cpu);
-    cpu.absolute_address += cpu.x_register;
+    absolute(cpu, cpu.x_register);
     return samePage(oldAddress, cpu.absolute_address) ? 0 : 1;
 }
 
 uint8_t AddressingMode::ABY(CPU &cpu) {
     uint16_t oldAddress = cpu.absolute_address;
-    cpu.absolute_address = formAbsoluteAddress(cpu);
-    cpu.absolute_address += cpu.y_register;
+    absolute(cpu, cpu.y_register);
     return samePage(oldAddress, cpu.absolute_address) ? 0 : 1;
 }
 
@@ -113,8 +111,11 @@ uint16_t AddressingMode::zeroPaged(CPU &cpu, const uint8_t &offset) {
     return 0;
 }
 
+uint16_t AddressingMode::absolute(CPU &cpu, const uint8_t &offset) {
+    cpu.absolute_address = formAbsoluteAddress(cpu);
+    cpu.absolute_address += offset;
+}
+
 bool AddressingMode::samePage(uint16_t oldAddress, uint16_t newAddress) {
     return (oldAddress & 0xFF00u) == (newAddress & 0xFF00u);
 }
-
-

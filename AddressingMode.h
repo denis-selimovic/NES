@@ -17,6 +17,7 @@ class AddressingMode {
     static uint16_t formZeroPagedAddress(uint16_t address);
 
     static uint16_t zeroPaged(CPU &cpu, const uint8_t &offset = 0);
+    static uint16_t absolute(CPU &cpu, const uint8_t &offset = 0);
     static bool samePage(uint16_t oldAddress, uint16_t newAddress);
 public:
     static uint8_t IMP(CPU &cpu);
