@@ -50,7 +50,7 @@ uint8_t Operation::BIT(CPU &cpu) {
     uint16_t result = cpu.accumulator & cpu.memory_content;
     cpu.setFlag(CPU::V, (cpu.memory_content & 0x00FFu) & 0b01000000u);
     cpu.setFlag(CPU::N, (cpu.memory_content & 0x00FFu) & 0b10000000u);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
+    cpu.setFlag(CPU::Z, setZ(result));
     return 0;
 }
 
