@@ -23,6 +23,7 @@ class Operation {
     static void updateXY(const std::function<void()> &func);
     static void updateMem(CPU &cpu, const uint8_t &value);
     static void load(CPU &cpu, uint8_t &reg);
+    static void transfer(CPU &cpu, uint8_t &dest, uint8_t &source);
 
     static void pushToStack(CPU &cpu, uint16_t data);
     static uint8_t pullFromStack(CPU &cpu);
@@ -34,7 +35,7 @@ class Operation {
     static bool setN(uint16_t data);
     static bool setC(uint16_t data);
     static bool setC(uint16_t data, uint16_t cmp);
-    static bool setAddV(uint16_t acc, uint16_t mem, uint16_t data);
+    static bool setV(uint16_t first, uint16_t second, uint16_t third, uint16_t fourth);
     static bool samePage(uint16_t oldAddress, uint16_t newAddress);
 public:
     static uint8_t ADC(CPU &cpu);

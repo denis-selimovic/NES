@@ -9,7 +9,7 @@ uint8_t Operation::ADC(CPU &cpu) {
     cpu.getMemoryContent();
     uint16_t result = uint16_t(cpu.accumulator) + uint16_t(cpu.memory_content) + uint16_t(cpu.getFlag(CPU::C));
     setZNC(cpu, result);
-    cpu.setFlag(CPU::V, setAddV(cpu.accumulator, cpu.memory_content, result));
+    cpu.setFlag(CPU::V, setV(cpu.accumulator, cpu.memory_content, result, cpu.accumulator));
     cpu.accumulator = result & 0x00FFu;
     return 1;
 }
@@ -300,11 +300,8 @@ uint8_t Operation::SBC(CPU &cpu) {
     cpu.getMemoryContent();
     uint16_t complement = uint16_t(cpu.memory_content) ^ 0x00FFu;
     uint16_t result = uint16_t(cpu.accumulator) + complement + cpu.getFlag(CPU::C);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
-    cpu.setFlag(CPU::N, (result & 0x00FFu) & 0x0080u);
-    cpu.setFlag(CPU::C, result & 0xFF00u);
-    uint16_t acc_temp = uint16_t(cpu.accumulator);
-    cpu.setFlag(CPU::V, (acc_temp ^ result) & (result ^ complement) & 0x0080u);
+    setZNC(cpu, result);
+    cpu.setFlag(CPU::V, setV(~result, cpu.accumulator, complement, result));
     cpu.accumulator = result & 0x00FFu;
     return 1;
 }
@@ -340,30 +337,22 @@ uint8_t Operation::STY(CPU &cpu) {
 }
 
 uint8_t Operation::TAX(CPU &cpu) {
-    cpu.x_register = cpu.accumulator;
-    cpu.setFlag(CPU::N, cpu.x_register & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.x_register == 0x00);
+    transfer(cpu, cpu.x_register, cpu.accumulator);
     return 0;
 }
 
 uint8_t Operation::TAY(CPU &cpu) {
-    cpu.y_register = cpu.accumulator;
-    cpu.setFlag(CPU::N, cpu.y_register & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.y_register == 0x00);
+    transfer(cpu, cpu.y_register, cpu.accumulator);
     return 0;
 }
 
 uint8_t Operation::TSX(CPU &cpu) {
-    cpu.x_register = cpu.stack_pointer;
-    cpu.setFlag(CPU::N, cpu.x_register & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.x_register == 0x00);
+    transfer(cpu, cpu.x_register, cpu.stack_pointer);
     return 0;
 }
 
 uint8_t Operation::TXA(CPU &cpu) {
-    cpu.accumulator = cpu.x_register;
-    cpu.setFlag(CPU::N, cpu.accumulator & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.accumulator == 0x00);
+    transfer(cpu, cpu.accumulator, cpu.x_register);
     return 0;
 }
 
@@ -373,15 +362,12 @@ uint8_t Operation::TXS(CPU &cpu) {
 }
 
 uint8_t Operation::TYA(CPU &cpu) {
-    cpu.accumulator = cpu.y_register;
-    cpu.setFlag(CPU::N, cpu.accumulator & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.accumulator == 0x00);
+    transfer(cpu, cpu.accumulator, cpu.y_register);
     return 0;
 }
 
 uint8_t Operation::XXX(CPU &cpu) {
     throw std::logic_error("UNSUPPORTED OPERATION");
-    //return 0;
 }
 
 void Operation::branch(CPU &cpu) {
@@ -411,8 +397,8 @@ bool Operation::setC(uint16_t data, uint16_t cmp) {
     return data >= cmp;
 }
 
-bool Operation::setAddV(uint16_t acc, uint16_t mem, uint16_t data) {
-    return (~acc ^ mem) & (data ^ acc) & 0x80u;
+bool Operation::setV(uint16_t first, uint16_t second, uint16_t third, uint16_t fourth) {
+    return (~first ^ second) & (third ^ fourth) & 0x80u;
 }
 
 void Operation::setZN(CPU &cpu, uint16_t data) {
@@ -459,6 +445,11 @@ void Operation::load(CPU &cpu, uint8_t &reg) {
     setZN(cpu, reg);
 }
 
+void Operation::transfer(CPU &cpu, uint8_t &dest, uint8_t &source) {
+    dest = source;
+    setZN(cpu, dest);
+}
+
 void Operation::pushToStack(CPU &cpu, uint16_t data) {
     cpu.write(STACK_TOP + cpu.stack_pointer, data & 0x00FFu);
     cpu.stack_pointer--;
@@ -483,7 +474,3 @@ uint16_t Operation::pull2BFromStack(CPU &cpu) {
 uint16_t Operation::mergeBytes(uint16_t high, uint16_t low) {
     return (high << 8u) | low;
 }
-
-
-
-
