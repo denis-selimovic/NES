@@ -73,25 +73,11 @@ uint8_t Operation::BRK(CPU &cpu) {
     // BRK ima dvobajtni opcode
     // zbog se sljedeća vrijednost pc-a ignoriše nakon što je pročitan prvi bajt opcode-a za BRK -> inkrementirano pc
     cpu.program_counter++;
-    //postavimo I flag na 1
-    cpu.setFlag(CPU::I, true);
-    //programski brojač stavimo na stack
-    //na stack prvo ide prvih 8 bita pc-a (najznačajnijih)
-    cpu.write(0x0100 + cpu.stack_pointer, (cpu.program_counter  >> 8u) & 0x00FFu);
-    cpu.stack_pointer--;
-    //zatim na stack ide 8 najmanje značajnih bita
-    cpu.write(0x0100 + cpu.stack_pointer, cpu.program_counter & 0x00FFu);
-    cpu.stack_pointer--;
-
-    //nakon ovog na stack se stavlja sadržaj statusnog registra sa B flagom postavljenim na 1
-    //B flag se nakon toga vraća na 0
-    cpu.setFlag(CPU::B, true);
-    cpu.write(0x0100 + cpu.stack_pointer, cpu.status_register);
-    cpu.stack_pointer--;
-    cpu.setFlag(CPU::B, false);
-
-    //adresa interrupt rutine se dobija sa lokacija 0xFFFF (high byte) i 0xFFFE (low byte)
-    cpu.program_counter = (uint16_t(cpu.read(0xFFFE))) | (uint16_t(cpu.read(0xFFFF)) << 8u);
+    cpu.status_register |= CPU::I | CPU::B;
+    push2BToStack(cpu, cpu.program_counter);
+    pushToStack(cpu, cpu.status_register);
+    cpu.status_register &= ~CPU::B;
+    cpu.program_counter = mergeBytes(cpu.read(BRK_VECTOR + 1), cpu.read(BRK_VECTOR));
     return 0;
 }
 

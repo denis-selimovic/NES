@@ -12,6 +12,7 @@
 
 class Operation {
     const static uint16_t STACK_TOP = 0x0100;
+    const static uint16_t BRK_VECTOR = 0xFFFE;
 
     static void branch(CPU &cpu);
     static void setZN(CPU &cpu, uint16_t data);
