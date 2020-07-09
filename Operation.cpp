@@ -247,17 +247,14 @@ uint8_t Operation::PHP(CPU &cpu) {
 }
 
 uint8_t Operation::PLA(CPU &cpu) {
-    cpu.stack_pointer++;
-    cpu.accumulator = cpu.read(0x0100 + cpu.stack_pointer);
-    cpu.setFlag(CPU::N, cpu.accumulator & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.accumulator == 0x00);
+    cpu.accumulator = pullFromStack(cpu);
+    setZN(cpu, cpu.accumulator);
     return 0;
 }
 
 uint8_t Operation::PLP(CPU &cpu) {
-    cpu.stack_pointer++;
-    cpu.status_register = cpu.read(0x0100 + cpu.stack_pointer);
-    cpu.setFlag(CPU::U, true);
+    cpu.status_register = pullFromStack(cpu);
+    cpu.status_register |= CPU::B;
     return 0;
 }
 
