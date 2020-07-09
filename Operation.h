@@ -19,6 +19,7 @@ class Operation {
     static void compare(CPU &cpu, uint16_t reg);
     static void updateXY(const std::function<void()> &func);
     static void updateMem(CPU &cpu, const uint8_t &value);
+    static void load(CPU &cpu, uint8_t &reg);
 
     static bool setZ(uint16_t data);
     static bool setN(uint16_t data);

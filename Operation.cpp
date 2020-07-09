@@ -200,26 +200,17 @@ uint8_t Operation::JSR(CPU &cpu) {
 }
 
 uint8_t Operation::LDA(CPU &cpu) {
-    cpu.getMemoryContent();
-    cpu.accumulator = cpu.memory_content;
-    cpu.setFlag(CPU::N, cpu.accumulator & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.accumulator == 0x00);
+    load(cpu, cpu.accumulator);
     return 1;
 }
 
 uint8_t Operation::LDX(CPU &cpu) {
-    cpu.getMemoryContent();
-    cpu.x_register = cpu.memory_content;
-    cpu.setFlag(CPU::N, cpu.x_register & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.x_register == 0x00);
+    load(cpu, cpu.x_register);
     return 1;
 }
 
 uint8_t Operation::LDY(CPU &cpu) {
-    cpu.getMemoryContent();
-    cpu.y_register = cpu.memory_content;
-    cpu.setFlag(CPU::N, cpu.y_register & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.y_register == 0x00);
+    load(cpu, cpu.y_register);
     return 1;
 }
 
@@ -482,6 +473,12 @@ void Operation::updateMem(CPU &cpu, const uint8_t &value) {
     uint16_t result = cpu.memory_content + value;
     cpu.write(cpu.absolute_address, result & 0x00FFu);
     setZN(cpu, result);
+}
+
+void Operation::load(CPU &cpu, uint8_t &reg) {
+    cpu.getMemoryContent();
+    reg = cpu.memory_content;
+    setZN(cpu, reg);
 }
 
 
