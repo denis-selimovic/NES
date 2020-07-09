@@ -19,7 +19,6 @@ class Bus {
     ppu2C02 &ppu;
     CPU &cpu;
 
-    //broj ciklusa sabirnice
     uint32_t cycles = 0;
 
     struct DirectMemoryAccess {
@@ -31,8 +30,8 @@ class Bus {
     void readDMA();
     void writeDMA();
 
-    //pokazivač na gamepak
     GamePak *gamePak = nullptr;
+
     friend class Debugger;
     friend class Renderer;
 

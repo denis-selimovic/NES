@@ -35,8 +35,6 @@ Bus::~Bus() {
 }
 
 void Bus::clock() {
-    //svaki signal sata pozivamo funkciju clock iz klase ppu
-    //jedan ciklus sata cpu se dešava na svaka tri ciklusa sata ppu
     ppu.clock();
     if(cycles % 3 == 0) {
         if(DMA.transfer) {
@@ -53,7 +51,6 @@ void Bus::clock() {
 }
 
 void Bus::reset() {
-    //resetujemo cpu i ppu
     ppu.reset();
     cpu.reset();
     gamePak->reset();
