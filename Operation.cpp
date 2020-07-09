@@ -22,11 +22,8 @@ uint8_t Operation::AND(CPU &cpu) {
 uint8_t Operation::ASL(CPU &cpu) {
     cpu.getMemoryContent();
     uint16_t shifted_value = (uint16_t(cpu.memory_content) << 1u);
-    cpu.setFlag(CPU::C, (shifted_value & 0xFF00u) > 0);
-    cpu.setFlag(CPU::Z, (shifted_value & 0x00FFu) == 0x0000);
-    cpu.setFlag(CPU::N, shifted_value & 0x80u);
-    if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = shifted_value & 0x00FFu;
-    else cpu.write(cpu.absolute_address, shifted_value & 0x00FFu);
+    cpu.setFlag(CPU::C, setC(shifted_value));
+    shift(cpu, shifted_value);
     return 0;
 }
 
@@ -70,8 +67,6 @@ uint8_t Operation::BPL(CPU &cpu) {
 }
 
 uint8_t Operation::BRK(CPU &cpu) {
-    // BRK ima dvobajtni opcode
-    // zbog se sljedeća vrijednost pc-a ignoriše nakon što je pročitan prvi bajt opcode-a za BRK -> inkrementirano pc
     cpu.program_counter++;
     cpu.status_register |= CPU::I | CPU::B;
     push2BToStack(cpu, cpu.program_counter);
@@ -194,12 +189,9 @@ uint8_t Operation::LDY(CPU &cpu) {
 
 uint8_t Operation::LSR(CPU &cpu) {
     cpu.getMemoryContent();
-    cpu.setFlag(CPU::C, cpu.memory_content & 0x0001u);
-    uint16_t result = cpu.memory_content >> 1u;
-    cpu.setFlag(CPU::N, result & 0x80u);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
-    if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
-    else cpu.write(cpu.absolute_address, result & 0x00FFu);
+    cpu.setFlag(CPU::C, cpu.memory_content & 0x1u);
+    uint16_t shifted_value = cpu.memory_content >> 1u;
+    shift(cpu, shifted_value);
     return 0;
 }
 
@@ -259,7 +251,6 @@ uint8_t Operation::ROR(CPU &cpu) {
 }
 
 uint8_t Operation::RTI(CPU &cpu) {
-    //čitamo statusni registar sa stacka
     cpu.status_register = pullFromStack(cpu);
     cpu.status_register &= ~CPU::B & ~CPU::U;
     //čitamp pc sa stacka
@@ -268,7 +259,6 @@ uint8_t Operation::RTI(CPU &cpu) {
 }
 
 uint8_t Operation::RTS(CPU &cpu) {
-    //uzimamo pc sa stacka pa ažuriramo isti
     cpu.program_counter = pull2BFromStack(cpu);
     cpu.program_counter++;
     return 0;
@@ -428,6 +418,12 @@ void Operation::transfer(CPU &cpu, uint8_t &dest, uint8_t &source) {
     setZN(cpu, dest);
 }
 
+void Operation::shift(CPU &cpu, uint16_t shifted_value) {
+    setZN(cpu, shifted_value);
+    if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = shifted_value & 0x00FFu;
+    else cpu.write(cpu.absolute_address, shifted_value & 0x00FFu);
+}
+
 void Operation::pushToStack(CPU &cpu, uint16_t data) {
     cpu.write(STACK_TOP + cpu.stack_pointer, data & 0x00FFu);
     cpu.stack_pointer--;
@@ -452,3 +448,5 @@ uint16_t Operation::pull2BFromStack(CPU &cpu) {
 uint16_t Operation::mergeBytes(uint16_t high, uint16_t low) {
     return (high << 8u) | low;
 }
+
+

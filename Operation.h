@@ -25,6 +25,7 @@ class Operation {
     static void updateMem(CPU &cpu, const uint8_t &value);
     static void load(CPU &cpu, uint8_t &reg);
     static void transfer(CPU &cpu, uint8_t &dest, uint8_t &source);
+    static void shift(CPU &cpu, uint16_t shifted_value);
 
     static void pushToStack(CPU &cpu, uint16_t data);
     static uint8_t pullFromStack(CPU &cpu);
