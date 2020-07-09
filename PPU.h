@@ -7,27 +7,19 @@
 
 
 #include <cstdint>
+#include <array>
 #include "GamePak.h"
 
 class PPU {
 
-    //broj ciklusa sata
     uint16_t cycles = 0;
 
     //Memorijska mapa ppu
     //ppu ima svoj memorijski prostor odvojen od cpu
     //2KB RAM-a je odvojeno za PPU na NES platformi
-
-    //na adresama 0x0000 do 0x1FFF je za dvije tabele paterna
-    uint8_t pattern_table[2][4096] = {0};
-    //na adresama 0x2000 do 0x3EFF se nalaze 4 tabele imena
-    //pošto NES ima samo 2KB VRAM-a 4 tabele se koristeći mirroring pamte kao dvije tabele
-    uint8_t nametable[2][1024] = {0};
-    //na adresama 0x3F00 do 0x3FFF su palete
-    //i ovdje se koristi mirroring
-    uint8_t pallete[32];
-
-    //PPU registri
+    std::array<std::array<uint8_t, 4096>, 2> patternTable{};
+    std::array<std::array<uint8_t, 1024>, 2> nameTable{};
+    std::array<uint8_t, 32> palette{};
 
     //prvi registar je PPUCTRL koji sadrži 8 bita
     //koristimo union da bi mogli individualno da postavljamo bite
@@ -122,7 +114,7 @@ class PPU {
     //ako je adresa >= 0x3F00 buffer nije potreban
     uint8_t ppudata_buffer = 0x00;
 
-    GamePak *gamepak;
+    GamePak *gamePak;
 
 private:
     // pomoćne varijable za background rendering
@@ -200,12 +192,6 @@ private:
     unsigned int getColorCode(Pixel pixel);
 
 public:
-    struct RenderingInfo {
-        int x = 0, y = 0;
-        int r = 0, g = 0, b = 0;
-    };
-
-public:
     bool interrupt = false;
     bool rendered = false;
     int scanline = -1;
@@ -213,19 +199,17 @@ public:
     unsigned int *pixels = new unsigned int[256 * 240];
 
 public:
-    uint8_t readCPUMemory(uint16_t address);
-    void writeCPUMemory(uint16_t address, uint8_t data);
-    uint8_t readPPUMemory(uint16_t address);
-    void writePPUMemory(uint16_t address, uint8_t data);
-
-    void clock();
-    void reset();
-    void connectGamePak(GamePak *gamePak);
-
     PPU();
     ~PPU();
     PPU(const PPU &ppu) = delete;
     PPU(PPU &&ppu) = delete;
+    void clock();
+    void reset();
+    void connectGamePak(GamePak *gamePak);
+    uint8_t readCPUMemory(uint16_t address);
+    void writeCPUMemory(uint16_t address, uint8_t data);
+    uint8_t readPPUMemory(uint16_t address);
+    void writePPUMemory(uint16_t address, uint8_t data);
 };
 
 
