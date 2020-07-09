@@ -17,6 +17,7 @@ class Operation {
     static void setZNC(CPU &cpu, uint16_t data, uint16_t reg, uint16_t cmp);
     static void logical(CPU &cpu, std::function<uint16_t(uint16_t, uint16_t)> func);
     static void compare(CPU &cpu, uint16_t reg);
+    static void updateXY(const std::function<void()> &func);
 
     static bool setZ(uint16_t data);
     static bool setN(uint16_t data);

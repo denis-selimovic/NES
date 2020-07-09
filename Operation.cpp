@@ -150,16 +150,14 @@ uint8_t Operation::DEC(CPU &cpu) {
 }
 
 uint8_t Operation::DEX(CPU &cpu) {
-    cpu.x_register--;
-    cpu.setFlag(CPU::N, cpu.x_register & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.x_register == 0x00);
+    updateXY([&cpu](){ cpu.x_register--;});
+    setZN(cpu, cpu.x_register);
     return 0;
 }
 
 uint8_t Operation::DEY(CPU &cpu) {
-    cpu.y_register--;
-    cpu.setFlag(CPU::N, cpu.y_register & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.y_register == 0x00);
+    updateXY([&cpu](){ cpu.y_register--;});
+    setZN(cpu, cpu.y_register);
     return 0;
 }
 
@@ -178,16 +176,14 @@ uint8_t Operation::INC(CPU &cpu) {
 }
 
 uint8_t Operation::INX(CPU &cpu) {
-    cpu.x_register++;
-    cpu.setFlag(CPU::N, cpu.x_register & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.x_register == 0x00);
+    updateXY([&cpu](){ cpu.x_register++;});
+    setZN(cpu, cpu.x_register);
     return 0;
 }
 
 uint8_t Operation::INY(CPU &cpu) {
-    cpu.y_register++;
-    cpu.setFlag(CPU::N, cpu.y_register & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.y_register == 0x00);
+    updateXY([&cpu](){ cpu.y_register++;});
+    setZN(cpu, cpu.y_register);
     return 0;
 }
 
@@ -483,6 +479,10 @@ void Operation::compare(CPU &cpu, uint16_t reg) {
     cpu.getMemoryContent();
     uint16_t result = reg - uint16_t(cpu.memory_content);
     setZNC(cpu, result, reg, cpu.memory_content);
+}
+
+void Operation::updateXY(const std::function<void()> &func) {
+    func();
 }
 
 
