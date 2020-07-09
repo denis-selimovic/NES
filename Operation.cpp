@@ -189,8 +189,8 @@ uint8_t Operation::LDY(CPU &cpu) {
 
 uint8_t Operation::LSR(CPU &cpu) {
     cpu.getMemoryContent();
-    cpu.setFlag(CPU::C, cpu.memory_content & 0x1u);
     uint16_t shifted_value = cpu.memory_content >> 1u;
+    cpu.setFlag(CPU::C, cpu.memory_content & 0x1u);
     shift(cpu, shifted_value);
     return 0;
 }
@@ -230,30 +230,23 @@ uint8_t Operation::PLP(CPU &cpu) {
 
 uint8_t Operation::ROL(CPU &cpu) {
     cpu.getMemoryContent();
-    uint16_t result = (uint16_t(cpu.memory_content) << 1u) | cpu.getFlag(CPU::C);
-    cpu.setFlag(CPU::C, result & 0xFF00u);
-    cpu.setFlag(CPU::N, result & 0x0080u);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
-    if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
-    else cpu.write(cpu.absolute_address, result & 0x00FFu);
+    auto result = (uint16_t(cpu.memory_content) << 1u) | cpu.getFlag(CPU::C);
+    cpu.setFlag(CPU::C, setC(result));
+    shift(cpu, result);
     return 0;
 }
 
 uint8_t Operation::ROR(CPU &cpu) {
     cpu.getMemoryContent();
     auto result = uint16_t((cpu.getFlag(CPU::C) << 7u) | (cpu.memory_content >> 1u));
-    cpu.setFlag(CPU::C, cpu.memory_content & 0x01u);
-    cpu.setFlag(CPU::N, result & 0x0080u);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
-    if(cpu.instruction->addressing_mode == &AddressingMode::IMP) cpu.accumulator = result & 0x00FFu;
-    else cpu.write(cpu.absolute_address, result & 0x00FFu);
+    cpu.setFlag(CPU::C, cpu.memory_content & 0x1u);
+    shift(cpu, result);
     return 0;
 }
 
 uint8_t Operation::RTI(CPU &cpu) {
     cpu.status_register = pullFromStack(cpu);
     cpu.status_register &= ~CPU::B & ~CPU::U;
-    //čitamp pc sa stacka
     cpu.program_counter = pull2BFromStack(cpu);
     return 0;
 }
