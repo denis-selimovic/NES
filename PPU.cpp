@@ -565,7 +565,7 @@ PPU::Pixel PPU::getColor(PPU::FinalPalette palette) {
 }
 
 unsigned int PPU::getColorCode(PPU::Pixel pixel) {
-    return (0xff << 24u) | ((pixel.b & 0xffu) << 16u) | ((pixel.g & 0xffu) << 8u) | (pixel.r & 0xffu);
+    return (0xff << 24u) | ((pixel.r & 0xffu) << 16u) | ((pixel.g & 0xffu) << 8u) | (pixel.b & 0xffu);
 }
 
 
