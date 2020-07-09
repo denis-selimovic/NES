@@ -171,16 +171,8 @@ uint8_t Operation::JMP(CPU &cpu) {
 }
 
 uint8_t Operation::JSR(CPU &cpu) {
-    //cuvamo mjesto povratka tj pc--
     cpu.program_counter--;
-
-    //stavimo pc na stek
-    cpu.write(0x0100 + cpu.stack_pointer, (cpu.program_counter >> 8u) & 0x00FFu);
-    cpu.stack_pointer--;
-    cpu.write(0x0100 + cpu.stack_pointer, cpu.program_counter & 0x00FFu);
-    cpu.stack_pointer--;
-
-    //mijenjamo pc
+    push2BToStack(cpu, cpu.program_counter);
     cpu.program_counter = cpu.absolute_address;
     return 0;
 }
