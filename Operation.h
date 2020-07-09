@@ -11,6 +11,13 @@
 
 class Operation {
     static void branch(CPU &cpu);
+    static void setZN(CPU &cpu, uint16_t data);
+    static void setZNC(CPU &cpu, uint16_t data);
+
+    static bool setZ(uint16_t data);
+    static bool setN(uint16_t data);
+    static bool setC(uint16_t data);
+    static bool setAddV(uint16_t acc, uint16_t mem, uint16_t data);
     static bool samePage(uint16_t oldAddress, uint16_t newAddress);
 public:
     static uint8_t ADC(CPU &cpu);

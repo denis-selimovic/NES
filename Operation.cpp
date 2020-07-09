@@ -8,13 +8,8 @@
 uint8_t Operation::ADC(CPU &cpu) {
     cpu.getMemoryContent();
     uint16_t result = uint16_t(cpu.accumulator) + uint16_t(cpu.memory_content) +uint16_t(cpu.getFlag(CPU::C));
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
-    cpu.setFlag(CPU::N, result & 0x0080u);
-    cpu.setFlag(CPU::C, result & 0xFF00u);
-    //cpu.setFlag(cpu6502::V, (~((uint16_t)cpu.accumulator ^ (uint16_t)cpu.memory_content) & ((uint16_t)cpu.accumulator ^ (uint16_t)result)) & 0x0080u);
-    uint16_t acc_temp = (uint16_t)cpu.accumulator;
-    uint16_t mem_temp = (uint16_t)cpu.memory_content;
-    cpu.setFlag(CPU::V, ((~acc_temp) ^ mem_temp) & (result ^ acc_temp) & 0x80u);
+    setZNC(cpu, result);
+    cpu.setFlag(CPU::V, setAddV(cpu.accumulator, cpu.memory_content, result));
     cpu.accumulator = result & 0x00FFu;
     return 1;
 }
@@ -465,4 +460,30 @@ void Operation::branch(CPU &cpu) {
 
 bool Operation::samePage(uint16_t oldAddress, uint16_t newAddress) {
     return (oldAddress & 0xFF00u) == (newAddress & 0xFF00u);
+}
+
+bool Operation::setZ(uint16_t data) {
+    return (data & 0x00FFu) == 0x0000;
+}
+
+bool Operation::setN(uint16_t data) {
+    return data & 0x0080u;
+}
+
+bool Operation::setC(uint16_t data) {
+    return data & 0xFF00u;
+}
+
+void Operation::setZN(CPU &cpu, uint16_t data) {
+    cpu.setFlag(CPU::Z, setZ(data));
+    cpu.setFlag(CPU::N, setN(data));
+}
+
+void Operation::setZNC(CPU &cpu, uint16_t data) {
+    setZN(cpu, data);
+    cpu.setFlag(CPU::C, setC(data));
+}
+
+bool Operation::setAddV(uint16_t acc, uint16_t mem, uint16_t data) {
+    return (~acc ^ mem) & (data ^ acc) & 0x80u;
 }
