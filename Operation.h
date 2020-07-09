@@ -7,12 +7,14 @@
 
 
 #include <cstdint>
+#include <functional>
 #include "CPU.h"
 
 class Operation {
     static void branch(CPU &cpu);
     static void setZN(CPU &cpu, uint16_t data);
     static void setZNC(CPU &cpu, uint16_t data);
+    static void logical(CPU &cpu, std::function<uint16_t(uint16_t, uint16_t)> func);
 
     static bool setZ(uint16_t data);
     static bool setN(uint16_t data);

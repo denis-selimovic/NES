@@ -7,7 +7,7 @@
 
 uint8_t Operation::ADC(CPU &cpu) {
     cpu.getMemoryContent();
-    uint16_t result = uint16_t(cpu.accumulator) + uint16_t(cpu.memory_content) +uint16_t(cpu.getFlag(CPU::C));
+    uint16_t result = uint16_t(cpu.accumulator) + uint16_t(cpu.memory_content) + uint16_t(cpu.getFlag(CPU::C));
     setZNC(cpu, result);
     cpu.setFlag(CPU::V, setAddV(cpu.accumulator, cpu.memory_content, result));
     cpu.accumulator = result & 0x00FFu;
@@ -15,9 +15,7 @@ uint8_t Operation::ADC(CPU &cpu) {
 }
 
 uint8_t Operation::AND(CPU &cpu) {
-    cpu.getMemoryContent();
-    cpu.accumulator &= cpu.memory_content;
-    setZN(cpu, cpu.accumulator);
+    logical(cpu, [](uint16_t x, uint16_t y) {return x & y;});
     return 1;
 }
 
@@ -181,10 +179,7 @@ uint8_t Operation::DEY(CPU &cpu) {
 }
 
 uint8_t Operation::EOR(CPU &cpu) {
-    cpu.getMemoryContent();
-    cpu.accumulator = cpu.accumulator ^ cpu.memory_content;
-    cpu.setFlag(CPU::N, cpu.accumulator & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.accumulator == 0x00);
+    logical(cpu, [](uint16_t x, uint16_t y) {return x ^ y;});
     return 1;
 }
 
@@ -271,10 +266,7 @@ uint8_t Operation::NOP(CPU &cpu) {
 }
 
 uint8_t Operation::ORA(CPU &cpu) {
-    cpu.getMemoryContent();
-    cpu.accumulator = cpu.accumulator | cpu.memory_content;
-    cpu.setFlag(CPU::N, cpu.accumulator & 0x80u);
-    cpu.setFlag(CPU::Z, cpu.accumulator == 0x00);
+    logical(cpu, [](uint16_t x, uint16_t y) {return x | y;});
     return 1;
 }
 
@@ -485,4 +477,10 @@ void Operation::setZNC(CPU &cpu, uint16_t data) {
 
 bool Operation::setAddV(uint16_t acc, uint16_t mem, uint16_t data) {
     return (~acc ^ mem) & (data ^ acc) & 0x80u;
+}
+
+void Operation::logical(CPU &cpu, std::function<uint16_t(uint16_t, uint16_t)> func) {
+    cpu.getMemoryContent();
+    cpu.accumulator = func(cpu.accumulator, cpu.memory_content);
+    setZN(cpu, cpu.accumulator);
 }
