@@ -16,23 +16,17 @@ uint8_t AddressingMode::IMP(CPU &cpu) {
 }
 
 uint8_t AddressingMode::ZP0(CPU &cpu) {
-    cpu.absolute_address = cpu.read(cpu.program_counter);
-    cpu.program_counter++;
-    cpu.absolute_address = zeroPaged(cpu.absolute_address);
+    zeroPaged(cpu);
     return 0;
 }
 
 uint8_t AddressingMode::ZPX(CPU &cpu) {
-    cpu.absolute_address = cpu.read(cpu.program_counter) + cpu.x_register;
-    cpu.program_counter++;
-    cpu.absolute_address = zeroPaged(cpu.absolute_address);
+    zeroPaged(cpu, cpu.x_register);
     return 0;
 }
 
 uint8_t AddressingMode::ZPY(CPU &cpu) {
-    cpu.absolute_address = cpu.read(cpu.program_counter) + cpu.y_register;
-    cpu.program_counter++;
-    cpu.absolute_address = zeroPaged(cpu.absolute_address);
+    zeroPaged(cpu, cpu.y_register);
     return 0;
 }
 
@@ -94,7 +88,7 @@ uint16_t AddressingMode::formAddress(uint8_t high_nibble, uint8_t low_nibble) {
     return (high_nibble << 8u) | low_nibble;
 }
 
-uint16_t AddressingMode::zeroPaged(uint16_t address) {
+uint16_t AddressingMode::formZeroPagedAddress(uint16_t address) {
     return address & 0x00FFu;
 }
 
@@ -112,6 +106,15 @@ uint16_t AddressingMode::formIndexedAddress(CPU &cpu, uint8_t address) {
     return formAddress(high_byte, low_byte);
 }
 
+uint16_t AddressingMode::zeroPaged(CPU &cpu, const uint8_t &offset) {
+    cpu.absolute_address = cpu.read(cpu.program_counter) + offset;
+    cpu.program_counter++;
+    cpu.absolute_address = formZeroPagedAddress(cpu.absolute_address);
+    return 0;
+}
+
 bool AddressingMode::samePage(uint16_t oldAddress, uint16_t newAddress) {
     return (oldAddress & 0xFF00u) == (newAddress & 0xFF00u);
 }
+
+
