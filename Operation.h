@@ -24,8 +24,11 @@ class Operation {
     static void updateMem(CPU &cpu, const uint8_t &value);
     static void load(CPU &cpu, uint8_t &reg);
 
-    static void pushToStack(CPU &cpu, uint8_t data);
+    static void pushToStack(CPU &cpu, uint16_t data);
     static uint8_t pullFromStack(CPU &cpu);
+    static void push2BToStack(CPU &cpu, uint16_t data);
+    static uint16_t pull2BFromStack(CPU &cpu);
+    static uint16_t mergeBytes(uint16_t high, uint16_t low);
 
     static bool setZ(uint16_t data);
     static bool setN(uint16_t data);

@@ -282,31 +282,16 @@ uint8_t Operation::ROR(CPU &cpu) {
 
 uint8_t Operation::RTI(CPU &cpu) {
     //čitamo statusni registar sa stacka
-    cpu.stack_pointer++;
-    cpu.status_register = cpu.read(0x0100 + cpu.stack_pointer);
-    cpu.status_register &= ~CPU::B;
-    cpu.status_register &= ~CPU::U;
-
-    //uzimamo 8 najmanje značajnih bita pc-a
-    cpu.stack_pointer++;
-    cpu.program_counter = uint16_t(cpu.read(0x0100 + cpu.stack_pointer));
-
-    //uzimamo high byte programskog brojača
-    cpu.stack_pointer++;
-    cpu.program_counter |= ((uint16_t(cpu.read(0x0100 + cpu.stack_pointer))) << 8u);
+    cpu.status_register = pullFromStack(cpu);
+    cpu.status_register &= ~CPU::B & ~CPU::U;
+    //čitamp pc sa stacka
+    cpu.program_counter = pull2BFromStack(cpu);
     return 0;
 }
 
 uint8_t Operation::RTS(CPU &cpu) {
-    //uzimamo low byte programskog brojača
-    cpu.stack_pointer++;
-    cpu.program_counter = uint16_t(cpu.read(0x0100 + cpu.stack_pointer));
-
-    //uzimamo high byte programskog brojača
-    cpu.stack_pointer++;
-    cpu.program_counter |= (uint16_t(cpu.read(0x0100 + cpu.stack_pointer))) << 8u;
-
-    //ažuriramo pc
+    //uzimamo pc sa stacka pa ažuriramo isti
+    cpu.program_counter = pull2BFromStack(cpu);
     cpu.program_counter++;
     return 0;
 }
@@ -474,14 +459,29 @@ void Operation::load(CPU &cpu, uint8_t &reg) {
     setZN(cpu, reg);
 }
 
-void Operation::pushToStack(CPU &cpu, uint8_t data) {
-    cpu.write(STACK_TOP + cpu.stack_pointer, data);
+void Operation::pushToStack(CPU &cpu, uint16_t data) {
+    cpu.write(STACK_TOP + cpu.stack_pointer, data & 0x00FFu);
     cpu.stack_pointer--;
 }
 
 uint8_t Operation::pullFromStack(CPU &cpu) {
     cpu.stack_pointer++;
     return cpu.read(STACK_TOP + cpu.stack_pointer);
+}
+
+void Operation::push2BToStack(CPU &cpu, uint16_t data) {
+    pushToStack(cpu, (data >> 8u));
+    pushToStack(cpu, data);
+}
+
+uint16_t Operation::pull2BFromStack(CPU &cpu) {
+    uint16_t low_byte = pullFromStack(cpu);
+    uint16_t high_byte = pullFromStack(cpu);
+    return mergeBytes(high_byte, low_byte);
+}
+
+uint16_t Operation::mergeBytes(uint16_t high, uint16_t low) {
+    return (high << 8u) | low;
 }
 
 
