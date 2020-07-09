@@ -126,32 +126,17 @@ uint8_t Operation::CLV(CPU &cpu) {
 }
 
 uint8_t Operation::CMP(CPU &cpu) {
-    cpu.getMemoryContent();
-    uint16_t result = uint16_t(cpu.accumulator) - uint16_t(cpu.memory_content);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
-    cpu.setFlag(CPU::N, result & 0x0080u);
-    //C flag se postavlja ako je accumulator >= memory
-    cpu.setFlag(CPU::C, cpu.accumulator >= cpu.memory_content);
+    compare(cpu, cpu.accumulator);
     return 1;
 }
 
 uint8_t Operation::CPX(CPU &cpu) {
-    cpu.getMemoryContent();
-    uint16_t result = uint16_t(cpu.x_register) - uint16_t(cpu.memory_content);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
-    cpu.setFlag(CPU::N, result & 0x0080u);
-    //C flag se postavlja ako x >= memory
-    cpu.setFlag(CPU::C, cpu.x_register >= cpu.memory_content);
+    compare(cpu, cpu.x_register);
     return 0;
 }
 
 uint8_t Operation::CPY(CPU &cpu) {
-    cpu.getMemoryContent();
-    uint16_t result = uint16_t(cpu.y_register) - uint16_t(cpu.memory_content);
-    cpu.setFlag(CPU::Z, (result & 0x00FFu) == 0x0000);
-    cpu.setFlag(CPU::N, result & 0x0080u);
-    //C flag se postavlja ako je y >= memory
-    cpu.setFlag(CPU::C, cpu.y_register >= cpu.memory_content);
+    compare(cpu, cpu.y_register);
     return 0;
 }
 
@@ -465,6 +450,14 @@ bool Operation::setC(uint16_t data) {
     return data & 0xFF00u;
 }
 
+bool Operation::setC(uint16_t data, uint16_t cmp) {
+    return data >= cmp;
+}
+
+bool Operation::setAddV(uint16_t acc, uint16_t mem, uint16_t data) {
+    return (~acc ^ mem) & (data ^ acc) & 0x80u;
+}
+
 void Operation::setZN(CPU &cpu, uint16_t data) {
     cpu.setFlag(CPU::Z, setZ(data));
     cpu.setFlag(CPU::N, setN(data));
@@ -475,8 +468,9 @@ void Operation::setZNC(CPU &cpu, uint16_t data) {
     cpu.setFlag(CPU::C, setC(data));
 }
 
-bool Operation::setAddV(uint16_t acc, uint16_t mem, uint16_t data) {
-    return (~acc ^ mem) & (data ^ acc) & 0x80u;
+void Operation::setZNC(CPU &cpu, uint16_t data, uint16_t reg, uint16_t cmp) {
+    setZN(cpu, data);
+    cpu.setFlag(CPU::C, setC(reg, cmp));
 }
 
 void Operation::logical(CPU &cpu, std::function<uint16_t(uint16_t, uint16_t)> func) {
@@ -484,3 +478,13 @@ void Operation::logical(CPU &cpu, std::function<uint16_t(uint16_t, uint16_t)> fu
     cpu.accumulator = func(cpu.accumulator, cpu.memory_content);
     setZN(cpu, cpu.accumulator);
 }
+
+void Operation::compare(CPU &cpu, uint16_t reg) {
+    cpu.getMemoryContent();
+    uint16_t result = reg - uint16_t(cpu.memory_content);
+    setZNC(cpu, result, reg, cpu.memory_content);
+}
+
+
+
+

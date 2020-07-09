@@ -14,11 +14,14 @@ class Operation {
     static void branch(CPU &cpu);
     static void setZN(CPU &cpu, uint16_t data);
     static void setZNC(CPU &cpu, uint16_t data);
+    static void setZNC(CPU &cpu, uint16_t data, uint16_t reg, uint16_t cmp);
     static void logical(CPU &cpu, std::function<uint16_t(uint16_t, uint16_t)> func);
+    static void compare(CPU &cpu, uint16_t reg);
 
     static bool setZ(uint16_t data);
     static bool setN(uint16_t data);
     static bool setC(uint16_t data);
+    static bool setC(uint16_t data, uint16_t cmp);
     static bool setAddV(uint16_t acc, uint16_t mem, uint16_t data);
     static bool samePage(uint16_t oldAddress, uint16_t newAddress);
 public:
