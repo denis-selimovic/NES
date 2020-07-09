@@ -441,5 +441,3 @@ uint16_t Operation::pull2BFromStack(CPU &cpu) {
 uint16_t Operation::mergeBytes(uint16_t high, uint16_t low) {
     return (high << 8u) | low;
 }
-
-
