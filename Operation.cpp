@@ -39,36 +39,17 @@ uint8_t Operation::ASL(CPU &cpu) {
 }
 
 uint8_t Operation::BCC(CPU &cpu) {
-    if(cpu.getFlag(CPU::C) == 0) {
-        cpu.cycles++;
-        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
-        //Ako je dodavanje relativnog skoka promijenilo stranicu u memoriju broj ciklusa se ponovo povecava
-        //Ovo provjeravamo poredeći broj stranice pc-a i nove apsolutne adrese
-        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_address;
-    }
+    if(cpu.getFlag(CPU::C) == 0) branch(cpu);
     return 0;
 }
 
 uint8_t Operation::BCS(CPU &cpu) {
-    if(cpu.getFlag(CPU::C) == 1) {
-        cpu.cycles++;
-        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
-        //ako je promijenjen broj stranice povećavamo broj ciklusa za 1
-        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_address;
-    }
+    if(cpu.getFlag(CPU::C) == 1) branch(cpu);
     return 0;
 }
 
 uint8_t Operation::BEQ(CPU &cpu) {
-    if(cpu.getFlag(CPU::Z) == 1) {
-        cpu.cycles++;
-        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
-        //ako pc i apsolutna adresa nisu na istoj stranici povecavamo broj ciklusa za 1
-        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_address;
-    }
+    if(cpu.getFlag(CPU::Z) == 1) branch(cpu);
     return 0;
 }
 
@@ -82,37 +63,17 @@ uint8_t Operation::BIT(CPU &cpu) {
 }
 
 uint8_t Operation::BMI(CPU &cpu) {
-    if(cpu.getFlag(CPU::N) == 1) {
-        cpu.cycles++;
-        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
-        //provjera da li su novi pc i stari pc na istoj stranici u memoriji
-        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_address;
-    }
+    if(cpu.getFlag(CPU::N) == 1) branch(cpu);
     return 0;
 }
 
 uint8_t Operation::BNE(CPU &cpu) {
-    if(cpu.getFlag(CPU::Z) == 0) {
-        cpu.cycles++;
-        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
-        //provjera koji je broj stranica novog pc-a i starog pc-a
-        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) {
-            cpu.cycles++;
-        }
-        cpu.program_counter = cpu.absolute_address;
-    }
+    if(cpu.getFlag(CPU::Z) == 0) branch(cpu);
     return 0;
 }
 
 uint8_t Operation::BPL(CPU &cpu) {
-    if(cpu.getFlag(CPU::N) == 0) {
-        cpu.cycles++;
-        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
-        //provjera stranice
-        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_address;
-    }
+    if(cpu.getFlag(CPU::N) == 0) branch(cpu);
     return 0;
 }
 
@@ -143,24 +104,12 @@ uint8_t Operation::BRK(CPU &cpu) {
 }
 
 uint8_t Operation::BVC(CPU &cpu) {
-    if(cpu.getFlag(CPU::V) == 0) {
-        cpu.cycles++;
-        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
-        //ako pc i novi pc nisu na istoj stranici broj ciklusa se povecava
-        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_address;
-    }
+    if(cpu.getFlag(CPU::V) == 0) branch(cpu);
     return 0;
 }
 
 uint8_t Operation::BVS(CPU &cpu) {
-    if(cpu.getFlag(CPU::V) == 1) {
-        cpu.cycles++;
-        cpu.absolute_address = cpu.program_counter + cpu.relative_address;
-        //ako pc i novi pc nisu na istoj stranici broj ciklusa se povecava
-        if((cpu.absolute_address & 0xFF00u) != (cpu.program_counter & 0xFF00u)) cpu.cycles++;
-        cpu.program_counter = cpu.absolute_address;
-    }
+    if(cpu.getFlag(CPU::V) == 1) branch(cpu);
     return 0;
 }
 
@@ -505,4 +454,15 @@ uint8_t Operation::TYA(CPU &cpu) {
 uint8_t Operation::XXX(CPU &cpu) {
     throw std::logic_error("UNSUPPORTED OPERATION");
     //return 0;
+}
+
+void Operation::branch(CPU &cpu) {
+    cpu.cycles++;
+    cpu.absolute_address = cpu.program_counter + cpu.relative_address;
+    if(!samePage(cpu.absolute_address, cpu.program_counter)) cpu.cycles++;
+    cpu.program_counter = cpu.absolute_address;
+}
+
+bool Operation::samePage(uint16_t oldAddress, uint16_t newAddress) {
+    return (oldAddress & 0xFF00u) == (newAddress & 0xFF00u);
 }

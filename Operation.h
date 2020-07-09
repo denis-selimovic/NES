@@ -10,7 +10,8 @@
 #include "CPU.h"
 
 class Operation {
-    //implementacije instrukcija su u ovoj klasi
+    static void branch(CPU &cpu);
+    static bool samePage(uint16_t oldAddress, uint16_t newAddress);
 public:
     static uint8_t ADC(CPU &cpu);
     static uint8_t AND(CPU &cpu);
