@@ -11,14 +11,14 @@
 class CPU;
 
 class AddressingMode {
-    static uint16_t formAddress(uint8_t high_nibble, uint8_t low_nibble);
+    static uint16_t formAddress(uint16_t high_nibble, uint16_t low_nibble);
     static uint16_t formAbsoluteAddress(CPU &cpu);
     static uint16_t formIndexedAddress(CPU &cpu, uint8_t offset);
     static uint16_t formZeroPagedAddress(uint16_t address);
-
     static uint16_t zeroPaged(CPU &cpu, const uint8_t &offset = 0);
     static uint16_t absolute(CPU &cpu, const uint8_t &offset = 0);
     static bool samePage(uint16_t oldAddress, uint16_t newAddress);
+    static bool checkBug(uint16_t indirectAddress);
 public:
     static uint8_t IMP(CPU &cpu);
     static uint8_t IMM(CPU &cpu);

@@ -56,13 +56,11 @@ uint8_t AddressingMode::ABY(CPU &cpu) {
 
 uint8_t AddressingMode::IND(CPU &cpu) {
     uint16_t indirect_address = formAbsoluteAddress(cpu);
-    if((indirect_address & 0x00FFu) == 0x00FF) cpu.absolute_address = (cpu.read(indirect_address & 0xFF00u) << 8u) | cpu.read(indirect_address);
-    else cpu.absolute_address = (cpu.read(indirect_address + 1u) << 8u) | cpu.read(indirect_address);
+    cpu.absolute_address = (checkBug(indirect_address)) ? formAddress(cpu.read(indirect_address & 0xFF00u),cpu.read(indirect_address)) : formAddress(cpu.read(indirect_address + 1u), cpu.read(indirect_address));
     return 0;
 }
 
 uint8_t AddressingMode::IZX(CPU &cpu) {
-    // sadržaj x registr se koristi kao offset pročitanoj adresi
     uint16_t address = cpu.read(cpu.program_counter);
     cpu.program_counter++;
     address += uint16_t(cpu.x_register);
@@ -71,9 +69,6 @@ uint8_t AddressingMode::IZX(CPU &cpu) {
 }
 
 uint8_t AddressingMode::IZY(CPU &cpu) {
-    // čita se zero page adresa sa lokacije na koju pokazuje pc
-    // na dobijenu absolutnu adresu doda se sadržaj y registra
-    // ako se stranica promijeni dodatni ciklus
     uint16_t oldAddress = cpu.absolute_address;
     uint16_t address = cpu.read(cpu.program_counter);
     cpu.program_counter++;
@@ -82,7 +77,7 @@ uint8_t AddressingMode::IZY(CPU &cpu) {
     return samePage(oldAddress, cpu.absolute_address) ? 0 : 1;
 }
 
-uint16_t AddressingMode::formAddress(uint8_t high_nibble, uint8_t low_nibble) {
+uint16_t AddressingMode::formAddress(uint16_t high_nibble, uint16_t low_nibble) {
     return (high_nibble << 8u) | low_nibble;
 }
 
@@ -119,3 +114,8 @@ uint16_t AddressingMode::absolute(CPU &cpu, const uint8_t &offset) {
 bool AddressingMode::samePage(uint16_t oldAddress, uint16_t newAddress) {
     return (oldAddress & 0xFF00u) == (newAddress & 0xFF00u);
 }
+
+bool AddressingMode::checkBug(uint16_t indirectAddress) {
+    return (indirectAddress & 0x00FFu) == 0x00FF;
+}
+
