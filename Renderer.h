@@ -11,7 +11,7 @@
 #include "Bus.h"
 
 class CPU;
-class ppu2C02;
+class PPU;
 class Bus;
 
 class Renderer {
@@ -41,7 +41,7 @@ class Renderer {
 
     // povezivanje na emulator
     CPU cpu;
-    ppu2C02 ppu;
+    PPU ppu;
     Bus *bus = nullptr;
     GamePak *gamePak = nullptr;
 
@@ -55,7 +55,7 @@ class Renderer {
     // rad renderera
     bool running = false;
 public:
-    explicit Renderer(const std::string &test = "../nes/nestest.nes");
+    explicit Renderer(const std::string &test = "../nes/smb.nes");
     ~Renderer();
     Renderer(const Renderer &renderer) = delete;
     Renderer(Renderer &&renderer) = delete;

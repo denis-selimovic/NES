@@ -30,7 +30,7 @@ class Debugger {
 
     //NES
     CPU cpu;
-    ppu2C02 ppu;
+    PPU ppu;
     GamePak *gamePak = nullptr;
     Bus *bus = nullptr;
     Disassembler *disassembler = nullptr;

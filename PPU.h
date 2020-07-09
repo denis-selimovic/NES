@@ -2,14 +2,14 @@
 // Created by denis on 24/02/2020.
 //
 
-#ifndef NES_PPU2C02_H
-#define NES_PPU2C02_H
+#ifndef NES_PPU_H
+#define NES_PPU_H
 
 
 #include <cstdint>
 #include "GamePak.h"
 
-class ppu2C02 {
+class PPU {
 
     //broj ciklusa sata
     uint16_t cycles = 0;
@@ -222,11 +222,11 @@ public:
     void reset();
     void connectGamePak(GamePak *gamePak);
 
-    ppu2C02();
-    ~ppu2C02();
-    ppu2C02(const ppu2C02 &ppu) = delete;
-    ppu2C02(ppu2C02 &&ppu) = delete;
+    PPU();
+    ~PPU();
+    PPU(const PPU &ppu) = delete;
+    PPU(PPU &&ppu) = delete;
 };
 
 
-#endif //NES_PPU2C02_H
+#endif //NES_PPU_H

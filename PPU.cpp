@@ -3,9 +3,9 @@
 //
 
 #include <cstring>
-#include "ppu2C02.h"
+#include "PPU.h"
 
-uint8_t ppu2C02::readCPUMemory(uint16_t address) {
+uint8_t PPU::readCPUMemory(uint16_t address) {
     uint8_t data = 0x00;
     switch(address) {
         case 0x0000:
@@ -54,7 +54,7 @@ uint8_t ppu2C02::readCPUMemory(uint16_t address) {
     return data;
 }
 
-void ppu2C02::writeCPUMemory(uint16_t address, uint8_t data) {
+void PPU::writeCPUMemory(uint16_t address, uint8_t data) {
     switch(address) {
         case 0x0000:
             //upis u ovaj registar je moguć
@@ -128,7 +128,7 @@ void ppu2C02::writeCPUMemory(uint16_t address, uint8_t data) {
     }
 }
 
-uint8_t ppu2C02::readPPUMemory(uint16_t address) {
+uint8_t PPU::readPPUMemory(uint16_t address) {
     //mapiramo adresu na opseg 0x0000 do 0x3fff
     uint8_t data = 0x00;
     address &= 0x3FFFu;
@@ -161,7 +161,7 @@ uint8_t ppu2C02::readPPUMemory(uint16_t address) {
     return data;
 }
 
-void ppu2C02::writePPUMemory(uint16_t address, uint8_t data) {
+void PPU::writePPUMemory(uint16_t address, uint8_t data) {
     //mapiramo adresu na opseg 0x0000 do 0x3fff
     address &= 0x3FFFu;
     if(gamepak->writePPUMemory(address, data)) {}
@@ -192,11 +192,11 @@ void ppu2C02::writePPUMemory(uint16_t address, uint8_t data) {
     }
 }
 
-void ppu2C02::connectGamePak(GamePak *gamePak){
+void PPU::connectGamePak(GamePak *gamePak){
     this->gamepak = gamePak;
 }
 
-void ppu2C02::clock() {
+void PPU::clock() {
     if(scanline >= -1 && scanline < 240) {
         if(scanline == 0 && cycles == 0) cycles = 1;
         if(scanline == -1 && cycles == 1) {
@@ -273,11 +273,11 @@ void ppu2C02::clock() {
     }
 }
 
-ppu2C02::~ppu2C02() {
+PPU::~PPU() {
     delete[] pixels;
 }
 
-void ppu2C02::reset() {
+void PPU::reset() {
     ppustatus.reg = 0x00;
     ppumask.reg = 0x00;
     ppuctrl.reg = 0x00;
@@ -291,24 +291,19 @@ void ppu2C02::reset() {
     shifter_attribute_low = shifter_attribute_high = shifter_pattern_low = shifter_pattern_high = 0x00;
 }
 
-void ppu2C02::scrollingHorizontal() {
+void PPU::scrollingHorizontal() {
     // Ako su biti za rendering pozadine ili sprite-a postavljeni može se izvršiti scroll horizontalno
     if(ppumask.background_enable || ppumask.sprite_enable) {
         // prilikom skrolanja možemo preći u sljedeći nametable
         // ukoliko se to desi moramo ažurirati bit koji označava sljedeći nametable
         // u suprotnom samo povećamo adresu sa koje se čita sljedeći bajt
         // jedan nametable ima 32x30 pločica, nakon što naiđemo na 31. pločicu u redu prelazimo na sljedeći nametable
-        if(vram_address.coarse_x == 31) {
-            vram_address.coarse_x = 0;
-            vram_address.nametable_select_x = ~vram_address.nametable_select_x;
-        }
-        else {
-            vram_address.coarse_x++;
-        }
+        vram_address.nametable_select_x = (vram_address.coarse_x != 31) ? vram_address.nametable_select_x : ~vram_address.nametable_select_x;
+        vram_address.coarse_x = (vram_address.coarse_x + 1) % 32;
     }
 }
 
-void ppu2C02::scrollingVertical() {
+void PPU::scrollingVertical() {
     // scroll vertikalno je isto moguć samo kad su biti za rendering omogućeni
     if(ppumask.background_enable || ppumask.sprite_enable) {
         // scroll vertikalno ne ide na svakih 8 piksela (kolika je visina jedne pločice)
@@ -330,7 +325,7 @@ void ppu2C02::scrollingVertical() {
     }
 }
 
-void ppu2C02::transferHorizontal() {
+void PPU::transferHorizontal() {
     if(ppumask.sprite_enable || ppumask.background_enable) {
         vram_address.coarse_x = t_address.coarse_x;
         vram_address.nametable_select_x = t_address.nametable_select_x;
@@ -338,7 +333,7 @@ void ppu2C02::transferHorizontal() {
 
 }
 
-void ppu2C02::transferVertical() {
+void PPU::transferVertical() {
     if(ppumask.sprite_enable || ppumask.background_enable) {
         vram_address.coarse_y = t_address.coarse_y;
         vram_address.nametable_select_y = t_address.nametable_select_y;
@@ -346,7 +341,7 @@ void ppu2C02::transferVertical() {
     }
 }
 
-void ppu2C02::loadPixel() {
+void PPU::loadPixel() {
     // PPU ima 16-bitni shift registar
     // prvih 8 najznačajnijih bita predstavljaju piksel koji se crta
     // sljedeći piksel koji će se crtati u novom ciklusu je u donjih 8 bita registra
@@ -357,7 +352,7 @@ void ppu2C02::loadPixel() {
     shifter_attribute_high = ((shifter_attribute_high & 0xFF00u) | ((tile_attribute & 0b10u) ? 0xFF : 0x00));
 }
 
-void ppu2C02::updateShiftRegister() {
+void PPU::updateShiftRegister() {
     // ažurira shift registre za svaki ciklus PPU
     if(ppumask.background_enable) {
         shifter_pattern_low <<= 1u;
@@ -376,7 +371,7 @@ void ppu2C02::updateShiftRegister() {
     }
 }
 
-void ppu2C02::fetchNextTile(uint8_t selector) {
+void PPU::fetchNextTile(uint8_t selector) {
     uint16_t address = 0x0000, lsb_address = 0x0000, msb_address = 0x0000;
     switch (selector) {
         case 0:
@@ -407,14 +402,14 @@ void ppu2C02::fetchNextTile(uint8_t selector) {
     }
 }
 
-ppu2C02::Palette ppu2C02::getComposition() {
+PPU::Palette PPU::getComposition() {
     uint16_t selector = (0x8000u >> fine_x);
     uint8_t pixel_id = (((shifter_pattern_high & selector) > 0) << 1u) | ((shifter_pattern_low & selector) > 0);
     uint8_t palette_id = (((shifter_attribute_high & selector) > 0) << 1u) | ((shifter_attribute_low & selector) > 0);
     return {pixel_id, palette_id};
 }
 
-ppu2C02::SpritePalette ppu2C02::getSpriteComposition() {
+PPU::SpritePalette PPU::getSpriteComposition() {
     spriteZero.rendered = false;
     SpritePalette spritePalette{};
     for(uint i = 0; i < sprite_count; ++i) {
@@ -431,7 +426,7 @@ ppu2C02::SpritePalette ppu2C02::getSpriteComposition() {
     return spritePalette;
 }
 
-ppu2C02::FinalPalette ppu2C02::getFinalComposition(ppu2C02::Palette palette, ppu2C02::SpritePalette spritePalette) {
+PPU::FinalPalette PPU::getFinalComposition(PPU::Palette palette, PPU::SpritePalette spritePalette) {
     FinalPalette finalPalette{};
     if(palette.pixel_id == 0 && spritePalette.pixel_id == 0) finalPalette = {0x00, 0x00};
     else if(palette.pixel_id > 0 && spritePalette.pixel_id == 0) finalPalette = {palette.pixel_id, palette.palette_id};
@@ -451,7 +446,7 @@ ppu2C02::FinalPalette ppu2C02::getFinalComposition(ppu2C02::Palette palette, ppu
     return finalPalette;
 }
 
-void ppu2C02::findSprites() {
+void PPU::findSprites() {
     spriteZero.enabled = false;
     for(int i = 0; i < 64 && sprite_count <= 8; ++i) {
         int32_t diff = int16_t(scanline) - int16_t(OAM[i].y_position);
@@ -467,38 +462,38 @@ void ppu2C02::findSprites() {
     ppustatus.sprite_overflow = (sprite_count >= 8);
 }
 
-uint16_t ppu2C02::sprite8x8(uint8_t i) {
+uint16_t PPU::sprite8x8(uint8_t i) {
     return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tile_index << 4u) | (scanline - foundSprites[i].y_position);
 }
 
-uint16_t ppu2C02::sprite8x8Flipped(uint8_t i) {
+uint16_t PPU::sprite8x8Flipped(uint8_t i) {
     return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tile_index << 4u) |  (7 - (scanline - foundSprites[i].y_position));
 }
 
-uint16_t ppu2C02::sprite8x16(uint8_t i) {
+uint16_t PPU::sprite8x16(uint8_t i) {
     return (scanline - foundSprites[i].y_position < 8) ? sprite8x16Helper(i, 0) : sprite8x16Helper(i, 1);
 }
 
-uint16_t ppu2C02::sprite8x16Flipped(uint8_t i) {
+uint16_t PPU::sprite8x16Flipped(uint8_t i) {
     return (scanline - foundSprites[i].y_position < 8) ? sprite8x16FlippedHelper(i, 1) : sprite8x16FlippedHelper(i, 0);
 }
 
-uint16_t ppu2C02::sprite8x16Helper(uint8_t i, uint8_t temp) {
+uint16_t PPU::sprite8x16Helper(uint8_t i, uint8_t temp) {
     return ((foundSprites[i].tile_index & 0x01) << 12u) | (((foundSprites[i].tile_index & 0xFEu) + temp) << 4u) | ((scanline - foundSprites[i].y_position) & 0x07u);
 }
 
-uint16_t ppu2C02::sprite8x16FlippedHelper(uint8_t i, uint8_t temp) {
+uint16_t PPU::sprite8x16FlippedHelper(uint8_t i, uint8_t temp) {
     return ((foundSprites[i].tile_index & 0x01) << 12u) | (((foundSprites[i].tile_index & 0xFEu) + temp) << 4u) |  ((7 - (scanline - foundSprites[i].y_position)) & 0x07u);
 }
 
-uint8_t ppu2C02::flipBytes(uint8_t bytes) {
+uint8_t PPU::flipBytes(uint8_t bytes) {
     bytes = (bytes & 0xF0) >> 4 | (bytes & 0x0F) << 4;
     bytes = (bytes & 0xCC) >> 2 | (bytes & 0x33) << 2;
     bytes = (bytes & 0xAA) >> 1 | (bytes & 0x55) << 1;
     return bytes;
 }
 
-ppu2C02::ppu2C02() {
+PPU::PPU() {
     ppuPalette.push_back({84,84, 84});
     ppuPalette.push_back({0, 30, 116});
     ppuPalette.push_back({8, 16, 144});
@@ -565,11 +560,11 @@ ppu2C02::ppu2C02() {
     ppuPalette.push_back({0, 0, 0});
 }
 
-ppu2C02::Pixel ppu2C02::getColor(ppu2C02::FinalPalette palette) {
+PPU::Pixel PPU::getColor(PPU::FinalPalette palette) {
     return ppuPalette[readPPUMemory(0x3F00u + (palette.palette_id << 2u) + palette.pixel_id) & 0x3Fu];
 }
 
-unsigned int ppu2C02::getColorCode(ppu2C02::Pixel pixel) {
+unsigned int PPU::getColorCode(PPU::Pixel pixel) {
     return (0xff << 24u) | ((pixel.b & 0xffu) << 16u) | ((pixel.g & 0xffu) << 8u) | (pixel.r & 0xffu);
 }
 

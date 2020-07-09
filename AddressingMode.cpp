@@ -109,6 +109,7 @@ uint16_t AddressingMode::zeroPaged(CPU &cpu, const uint8_t &offset) {
 uint16_t AddressingMode::absolute(CPU &cpu, const uint8_t &offset) {
     cpu.absolute_address = formAbsoluteAddress(cpu);
     cpu.absolute_address += offset;
+    return cpu.absolute_address;
 }
 
 bool AddressingMode::samePage(uint16_t oldAddress, uint16_t newAddress) {
