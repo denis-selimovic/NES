@@ -235,18 +235,14 @@ uint8_t Operation::ORA(CPU &cpu) {
 }
 
 uint8_t Operation::PHA(CPU &cpu) {
-    cpu.write(0x0100 + cpu.stack_pointer, cpu.accumulator);
-    cpu.stack_pointer--;
+    pushToStack(cpu, cpu.accumulator);
     return 0;
 }
 
 uint8_t Operation::PHP(CPU &cpu) {
-    cpu.setFlag(CPU::B, true);
-    cpu.setFlag(CPU::U, true);
-    cpu.write(0x0100 + cpu.stack_pointer, cpu.status_register);
-    cpu.stack_pointer--;
-    cpu.setFlag(CPU::B, false);
-    cpu.setFlag(CPU::U, false);
+    cpu.status_register |= CPU::B | CPU::U;
+    pushToStack(cpu, cpu.status_register);
+    cpu.status_register &= ~CPU::B & ~CPU::U;
     return 0;
 }
 
@@ -479,6 +475,16 @@ void Operation::load(CPU &cpu, uint8_t &reg) {
     cpu.getMemoryContent();
     reg = cpu.memory_content;
     setZN(cpu, reg);
+}
+
+void Operation::pushToStack(CPU &cpu, uint8_t data) {
+    cpu.write(STACK_TOP + cpu.stack_pointer, data);
+    cpu.stack_pointer--;
+}
+
+uint8_t Operation::pullFromStack(CPU &cpu) {
+    cpu.stack_pointer++;
+    return cpu.read(STACK_TOP + cpu.stack_pointer);
 }
 
 

@@ -11,15 +11,21 @@
 #include "CPU.h"
 
 class Operation {
+    const static uint16_t STACK_TOP = 0x0100;
+
     static void branch(CPU &cpu);
     static void setZN(CPU &cpu, uint16_t data);
     static void setZNC(CPU &cpu, uint16_t data);
     static void setZNC(CPU &cpu, uint16_t data, uint16_t reg, uint16_t cmp);
+
     static void logical(CPU &cpu, std::function<uint16_t(uint16_t, uint16_t)> func);
     static void compare(CPU &cpu, uint16_t reg);
     static void updateXY(const std::function<void()> &func);
     static void updateMem(CPU &cpu, const uint8_t &value);
     static void load(CPU &cpu, uint8_t &reg);
+
+    static void pushToStack(CPU &cpu, uint8_t data);
+    static uint8_t pullFromStack(CPU &cpu);
 
     static bool setZ(uint16_t data);
     static bool setN(uint16_t data);
