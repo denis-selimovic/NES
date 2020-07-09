@@ -5,7 +5,7 @@
 #include <fstream>
 #include <stdexcept>
 #include "GamePak.h"
-#include "Mapper000.h"
+#include "NROMMapper.h"
 
 GamePak::GamePak(const std::string &game) {
     // .nes fajl ima sljedeću strukturu
@@ -96,7 +96,7 @@ bool GamePak::writePPUMemory(uint16_t address, uint8_t data) {
 }
 
 Mapper *GamePak::setMapper(uint8_t mapperID, uint8_t prg_banks, uint8_t chr_banks) {
-    if(mapperID == 0) return new Mapper000(prg_banks, chr_banks);
+    if(mapperID == 0) return new NROMMapper(prg_banks, chr_banks);
     throw std::logic_error("UNSUPPORTED MAPPER!");
 }
 

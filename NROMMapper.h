@@ -2,16 +2,16 @@
 // Created by denis on 26/02/2020.
 //
 
-#ifndef NES_MAPPER000_H
-#define NES_MAPPER000_H
+#ifndef NES_NROMMAPPER_H
+#define NES_NROMMAPPER_H
 
 
 #include "Mapper.h"
 
-class Mapper000: public Mapper{
+class NROMMapper: public Mapper{
 
 public:
-    Mapper000(uint8_t pgr_banks, uint8_t chr_banks);
+    NROMMapper(uint8_t pgr_banks, uint8_t chr_banks);
     void reset() override;
     bool writeCPUMemory(uint16_t address, uint32_t &mapped_address) override;
     bool readCPUMemory(uint16_t address, uint32_t &mapped_address) override;
@@ -20,4 +20,4 @@ public:
 };
 
 
-#endif //NES_MAPPER000_H
+#endif //NES_NROMMAPPER_H

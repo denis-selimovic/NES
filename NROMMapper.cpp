@@ -2,15 +2,15 @@
 // Created by denis on 26/02/2020.
 //
 
-#include "Mapper000.h"
+#include "NROMMapper.h"
 
-Mapper000::Mapper000(uint8_t pgr_banks, uint8_t chr_banks) : Mapper(pgr_banks, chr_banks) {}
+NROMMapper::NROMMapper(uint8_t pgr_banks, uint8_t chr_banks) : Mapper(pgr_banks, chr_banks) {}
 
-void Mapper000::reset() {
+void NROMMapper::reset() {
     // ovaj mapper ne radi ništa u reset funkciji
 }
 
-bool Mapper000::writeCPUMemory(uint16_t address, uint32_t &mapped_address) {
+bool NROMMapper::writeCPUMemory(uint16_t address, uint32_t &mapped_address) {
     // ova funkcija mapira adresu sa CPU sabirnice u adresu koja postoji na GamePak-u
     // na sabirnici za CPU adrese od 0x8000 do 0xFFFF su rezervisane za pristup GamePak-u
     // te adrese se onda preko mapera mapiraju u opseg adresa koje obuhvata PRG-ROM
@@ -23,7 +23,7 @@ bool Mapper000::writeCPUMemory(uint16_t address, uint32_t &mapped_address) {
     return false;
 }
 
-bool Mapper000::readCPUMemory(uint16_t address, uint32_t &mapped_address) {
+bool NROMMapper::readCPUMemory(uint16_t address, uint32_t &mapped_address) {
     // ova funkcija mapira adresu sa CPU sabirnice u adresu koja postoji na GamePak-u
     // na sabirnici za CPU adrese od 0x8000 do 0xFFFF su rezervisane za pristup GamePak-u
     // te adrese se onda preko mapera mapiraju u opseg adresa koje obuhvata PRG-ROM
@@ -36,7 +36,7 @@ bool Mapper000::readCPUMemory(uint16_t address, uint32_t &mapped_address) {
     return false;
 }
 
-bool Mapper000::writePPUMemory(uint16_t address, uint32_t &mapped_address) {
+bool NROMMapper::writePPUMemory(uint16_t address, uint32_t &mapped_address) {
     // što se tiče ppu sabirnice adresa je što se ovog mappera tiče samo proslijeđena tj nema mapiranja
     // opseg sa ppu sabirnice od 0x0000 do 0x1FFF se mapira u isti taj opseg
     // pošto se radi o CHR-ROM upis nije moguć pa nema ni mapiranja
@@ -48,7 +48,7 @@ bool Mapper000::writePPUMemory(uint16_t address, uint32_t &mapped_address) {
     return false;
 }
 
-bool Mapper000::readPPUMemory(uint16_t address, uint32_t &mapped_address) {
+bool NROMMapper::readPPUMemory(uint16_t address, uint32_t &mapped_address) {
     // što se tiče ppu sabirnice adresa je što se ovog mappera tiče samo proslijeđena tj nema mapiranja
     // opseg sa ppu sabirnice od 0x0000 do 0x1FFF se mapira u isti taj opseg
     if(address >= 0x0000 && address <= 0x1FFF) {
