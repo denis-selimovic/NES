@@ -17,8 +17,7 @@ uint8_t Operation::ADC(CPU &cpu) {
 uint8_t Operation::AND(CPU &cpu) {
     cpu.getMemoryContent();
     cpu.accumulator &= cpu.memory_content;
-    cpu.setFlag(CPU::Z, cpu.accumulator == 0x00);
-    cpu.setFlag(CPU::N, cpu.accumulator & 0x80u);
+    setZN(cpu, cpu.accumulator);
     return 1;
 }
 
