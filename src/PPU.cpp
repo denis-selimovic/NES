@@ -221,28 +221,7 @@ void PPU::clock() {
             spriteRenderer.reset();
             findSprites();
         }
-        if(cycles == 340) {
-            for(uint i = 0; i < spriteCount; ++i) {
-                uint16_t sprite_address_low, sprite_address_high;
-                if(ppuctrl.sprite_height) {
-                    if(!(sprites[i].attributes & 0x80u)) sprite_address_low = sprite8x16(i);
-                    else sprite_address_low = sprite8x16Flipped(i);
-                }
-                else {
-                    if(!(sprites[i].attributes & 0x80u)) sprite_address_low = sprite8x8(i);
-                    else sprite_address_low = sprite8x8Flipped(i);
-                }
-                sprite_address_high = sprite_address_low + 8;
-                uint8_t sprite_low_bytes = readPPUMemory(sprite_address_low), sprite_high_bytes = readPPUMemory(sprite_address_high);
-                if(sprites[i].attributes & 0x40u) {
-                    sprite_low_bytes = flipBytes(sprite_low_bytes);
-                    sprite_high_bytes = flipBytes(sprite_high_bytes);
-                }
-                sprite_low[i] = sprite_low_bytes;
-                sprite_high[i] = sprite_high_bytes;
-            }
-
-        }
+        if(cycles == 340) spriteRenderer.getSpriteToRender(ppuctrl.sprite_height, ppuctrl.sprite_tile_select, scanline, [this](uint16_t address){return readPPUMemory(address);});
     }
     if(scanline >= 241 && scanline < 261) {
         if(scanline == 241 && cycles == 1) {

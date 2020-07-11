@@ -33,3 +33,8 @@ uint16_t Shifter::getHighByte() const {
 void Shifter::reset() {
     lowByte = highByte = 0x0000u;
 }
+
+void Shifter::setBytes(uint8_t low, uint8_t high) {
+    lowByte = low;
+    highByte = high;
+}

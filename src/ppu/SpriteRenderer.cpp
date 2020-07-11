@@ -75,3 +75,24 @@ void SpriteRenderer::shift() {
     }
 }
 
+void SpriteRenderer::getSpriteToRender(uint8_t spriteHeight, uint8_t tileSelect, int scanLine, std::function<uint8_t(uint16_t)> func) {
+    for(uint i = 0; i < spriteCount; ++i) {
+        uint16_t spriteAddressLowByte, spriteAddressHighByte;
+        if(spriteHeight) {
+            if(!(sprites[i].attributes & 0x80u)) spriteAddressLowByte = sprite8x16(i, scanLine);
+            else spriteAddressLowByte = sprite8x16Flipped(i, scanLine);
+        }
+        else {
+            if(!(sprites[i].attributes & 0x80u)) spriteAddressLowByte = sprite8x8(i, scanLine, tileSelect);
+            else spriteAddressLowByte = sprite8x8Flipped(i, scanLine, tileSelect);
+        }
+        spriteAddressHighByte = spriteAddressLowByte + 8;
+        uint8_t spriteLowByte = func(spriteAddressLowByte), spriteHighByte = func(spriteAddressHighByte);
+        if(sprites[i].attributes & 0x40u) {
+            spriteLowByte = flipByte(spriteLowByte);
+            spriteHighByte = flipByte(spriteHighByte);
+        }
+        shifters[i].setBytes(spriteLowByte, spriteHighByte);
+    }
+}
+
