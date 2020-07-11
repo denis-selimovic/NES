@@ -17,8 +17,8 @@ class Bus;
 class Renderer {
 
     // window size
-    const static uint32_t WINDOW_WIDTH = 1024;
-    const static uint32_t WINDOW_HEIGHT = 960;
+    const static uint32_t WINDOW_WIDTH = 1536;
+    const static uint32_t WINDOW_HEIGHT = 1440;
 
     // SDL utility
     void initSDL();
