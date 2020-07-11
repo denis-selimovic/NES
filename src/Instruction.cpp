@@ -2,7 +2,7 @@
 // Created by denis on 21/02/2020.
 //
 
-#include "Instruction.h"
+#include "../include/Instruction.h"
 
 #include <utility>
 

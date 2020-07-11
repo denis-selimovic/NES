@@ -3,7 +3,7 @@
 //
 
 #include <sstream>
-#include "Debugger.h"
+#include "../include/Debugger.h"
 
 Debugger::Debugger(const std::string &test, const std::string &font_path) {
     initNES(test);

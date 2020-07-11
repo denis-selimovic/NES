@@ -1,5 +1,5 @@
-#include "Debugger.h"
-#include "Renderer.h"
+#include "include/Debugger.h"
+#include "include/Renderer.h"
 
 
 int main() {

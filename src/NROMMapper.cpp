@@ -2,7 +2,7 @@
 // Created by denis on 26/02/2020.
 //
 
-#include "NROMMapper.h"
+#include "../include/NROMMapper.h"
 
 NROMMapper::NROMMapper(uint8_t pgr_banks, uint8_t chr_banks) : Mapper(pgr_banks, chr_banks) {}
 

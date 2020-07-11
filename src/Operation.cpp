@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "Operation.h"
+#include "../include/Operation.h"
 
 uint8_t Operation::ADC(CPU &cpu) {
     cpu.getMemoryContent();

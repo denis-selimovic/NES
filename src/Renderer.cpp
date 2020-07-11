@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <chrono>
-#include "Renderer.h"
+#include "../include/Renderer.h"
 
 
 void Renderer::initSDL() {

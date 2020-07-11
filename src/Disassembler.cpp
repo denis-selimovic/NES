@@ -3,7 +3,7 @@
 //
 
 #include <sstream>
-#include "Disassembler.h"
+#include "../include/Disassembler.h"
 
 std::string Disassembler::toHex(int number, uint8_t length) {
     std::stringstream hex;

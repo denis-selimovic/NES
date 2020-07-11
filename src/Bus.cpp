@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "Bus.h"
+#include "../include/Bus.h"
 
 uint8_t Bus::readCPUMemory(uint16_t address) {
     uint8_t data = 0x00;

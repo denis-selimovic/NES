@@ -3,7 +3,7 @@
 //
 
 #include <cstring>
-#include "PPU.h"
+#include "../include/PPU.h"
 
 uint8_t PPU::readCPUMemory(uint16_t address) {
     uint8_t data = 0x00;

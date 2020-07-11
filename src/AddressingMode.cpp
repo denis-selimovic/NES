@@ -2,7 +2,7 @@
 // Created by denis on 21/02/2020.
 //
 
-#include "AddressingMode.h"
+#include "../include/AddressingMode.h"
 
 uint8_t AddressingMode::IMM(CPU &cpu) {
     cpu.absolute_address = cpu.program_counter;

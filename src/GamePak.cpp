@@ -4,8 +4,8 @@
 
 #include <fstream>
 #include <stdexcept>
-#include "GamePak.h"
-#include "NROMMapper.h"
+#include "../include/GamePak.h"
+#include "../include/NROMMapper.h"
 
 GamePak::GamePak(const std::string &game) {
     // .nes fajl ima sljedeću strukturu

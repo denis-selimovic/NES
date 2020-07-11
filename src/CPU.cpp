@@ -3,9 +3,9 @@
 //
 
 #include <iostream>
-#include "CPU.h"
-#include "Operation.h"
-#include "AddressingMode.h"
+#include "../include/CPU.h"
+#include "../include/Operation.h"
+#include "../include/AddressingMode.h"
 
 void CPU::setFlag(CPU::FLAGS flag, bool value) {
     value ? status_register |= flag : status_register &= ~flag;
