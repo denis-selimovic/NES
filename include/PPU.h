@@ -11,6 +11,7 @@
 #include "GamePak.h"
 #include "ppu/Tile.h"
 #include "ppu/Shifter.h"
+#include "ppu/Sprite.h"
 
 class PPU {
 
@@ -72,12 +73,7 @@ class PPU {
     //interna memorija koja čuva do 64 spirte-a svaki sprite se sastoji od 4 bajta
     //peti registar neće biti implementiran
     //njemu pristupamo preko adrese koja je u OAM_address
-    struct Sprite{
-        uint8_t y_position;
-        uint8_t tile_index;
-        uint8_t attributes;
-        uint8_t index;
-    } OAM[64];
+    Sprite OAM[64];
 
 
     //šesti registar je PPUSCROLL, a sedmi je adresa u VRAM-u

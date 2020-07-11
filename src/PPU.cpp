@@ -441,7 +441,7 @@ PPU::FinalPalette PPU::getFinalComposition(PPU::Palette palette, PPU::SpritePale
 void PPU::findSprites() {
     spriteZero.enabled = false;
     for(int i = 0; i < 64 && sprite_count <= 8; ++i) {
-        int32_t diff = int16_t(scanline) - int16_t(OAM[i].y_position);
+        int32_t diff = int16_t(scanline) - int16_t(OAM[i].yPosition);
         if (diff >= 0 && diff < (ppuctrl.sprite_height ? 16 : 8)) {
             if(sprite_count < 8) {
                 if(i == 0) spriteZero.enabled = true;
@@ -455,27 +455,27 @@ void PPU::findSprites() {
 }
 
 uint16_t PPU::sprite8x8(uint8_t i) {
-    return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tile_index << 4u) | (scanline - foundSprites[i].y_position);
+    return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tileIndex << 4u) | (scanline - foundSprites[i].yPosition);
 }
 
 uint16_t PPU::sprite8x8Flipped(uint8_t i) {
-    return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tile_index << 4u) |  (7 - (scanline - foundSprites[i].y_position));
+    return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tileIndex << 4u) |  (7 - (scanline - foundSprites[i].yPosition));
 }
 
 uint16_t PPU::sprite8x16(uint8_t i) {
-    return (scanline - foundSprites[i].y_position < 8) ? sprite8x16Helper(i, 0) : sprite8x16Helper(i, 1);
+    return (scanline - foundSprites[i].yPosition < 8) ? sprite8x16Helper(i, 0) : sprite8x16Helper(i, 1);
 }
 
 uint16_t PPU::sprite8x16Flipped(uint8_t i) {
-    return (scanline - foundSprites[i].y_position < 8) ? sprite8x16FlippedHelper(i, 1) : sprite8x16FlippedHelper(i, 0);
+    return (scanline - foundSprites[i].yPosition < 8) ? sprite8x16FlippedHelper(i, 1) : sprite8x16FlippedHelper(i, 0);
 }
 
 uint16_t PPU::sprite8x16Helper(uint8_t i, uint8_t temp) {
-    return ((foundSprites[i].tile_index & 0x01) << 12u) | (((foundSprites[i].tile_index & 0xFEu) + temp) << 4u) | ((scanline - foundSprites[i].y_position) & 0x07u);
+    return ((foundSprites[i].tileIndex & 0x01) << 12u) | (((foundSprites[i].tileIndex & 0xFEu) + temp) << 4u) | ((scanline - foundSprites[i].yPosition) & 0x07u);
 }
 
 uint16_t PPU::sprite8x16FlippedHelper(uint8_t i, uint8_t temp) {
-    return ((foundSprites[i].tile_index & 0x01) << 12u) | (((foundSprites[i].tile_index & 0xFEu) + temp) << 4u) |  ((7 - (scanline - foundSprites[i].y_position)) & 0x07u);
+    return ((foundSprites[i].tileIndex & 0x01) << 12u) | (((foundSprites[i].tileIndex & 0xFEu) + temp) << 4u) |  ((7 - (scanline - foundSprites[i].yPosition)) & 0x07u);
 }
 
 uint8_t PPU::flipBytes(uint8_t bytes) {
