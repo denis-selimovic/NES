@@ -25,6 +25,7 @@ class Renderer {
     void freeSDL();
     void createWindow();
     void createRenderer();
+    void createTexture();
     void logError(std::ostream &os, const std::string &error);
     void throwError(const std::string &error);
 

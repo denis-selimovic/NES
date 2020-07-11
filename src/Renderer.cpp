@@ -10,6 +10,7 @@
 void Renderer::initSDL() {
     createWindow();
     createRenderer();
+    createTexture();
 }
 
 void Renderer::freeSDL() {
@@ -38,7 +39,16 @@ void Renderer::createRenderer() {
         SDL_Quit();
         throwError("SDL_CreateRenderer");
     }
+}
+
+void Renderer::createTexture() {
     texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, WINDOW_WIDTH / 6, WINDOW_HEIGHT / 6);
+    if(texture == nullptr) {
+        logError(std::cout, "SDL_CreateTexture");
+        cleanup(window, renderer);
+        SDL_Quit();
+        throwError("SDL_CreateTexture");
+    }
 }
 
 void Renderer::logError(std::ostream &os, const std::string &error) {
@@ -176,6 +186,8 @@ void Renderer::render() {
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
 }
+
+
 
 
 
