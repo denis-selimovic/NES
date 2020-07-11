@@ -22,14 +22,14 @@ uint8_t SpriteRenderer::getSpriteCount() const {
     return spriteCount;
 }
 
-bool SpriteRenderer::findSprites(Sprite *oam, int scanLine, uint8_t spriteHeight) {
+bool SpriteRenderer::findSprites(int scanLine, uint8_t spriteHeight, const std::function<int16_t(uint8_t)>& yPosFunc, const std::function<Sprite(uint8_t)>& spriteFunc) {
     bool spriteZeroEnabled = false;
     for(int i = 0; i < 64 && spriteCount <= 8; ++i) {
-        int32_t diff = int16_t(scanLine) - int16_t(oam[i].yPosition);
+        int32_t diff = int16_t(scanLine) - yPosFunc(i);
         if (diff >= 0 && diff < (spriteHeight ? 16 : 8)) {
             if(spriteCount < 8) {
                 if(i == 0) spriteZeroEnabled = true;
-                sprites[spriteCount] = oam[i];
+                sprites[spriteCount] = spriteFunc(i);
             }
             spriteCount++;
         }

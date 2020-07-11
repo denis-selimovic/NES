@@ -31,7 +31,7 @@ public:
     void reset();
     void shift();
     void getSpriteToRender(uint8_t spriteHeight, uint8_t tileSelect, int scanLine, const std::function<uint8_t(uint16_t)>& func);
-    bool findSprites(Sprite *oam, int scanLine, uint8_t spriteHeight);
+    bool findSprites(int scanLine, uint8_t spriteHeight, const std::function<int16_t(uint8_t)>& yPosFunc, const std::function<Sprite(uint8_t)>& spriteFunc);
     std::tuple<uint8_t, uint8_t, uint8_t, bool> findNextSprite();
     uint8_t getSpriteCount() const;
 };

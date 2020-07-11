@@ -395,7 +395,7 @@ PPU::Palette PPU::getComposition(PPU::Palette backgroundPalette, Palette spriteP
 }
 
 void PPU::findSprites() {
-    spriteZero.enabled = spriteRenderer.findSprites(OAM, scanLine, ppuctrl.sprite_height);
+    spriteZero.enabled = spriteRenderer.findSprites(scanLine, ppuctrl.sprite_height, [this](uint8_t i){return OAM[i].yPosition;}, [this](uint8_t i){return OAM[i];});
     ppustatus.sprite_overflow = (spriteRenderer.getSpriteCount() > 8);
 }
 
