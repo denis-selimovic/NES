@@ -9,7 +9,7 @@ void SpriteRenderer::resetShifters() {
 }
 
 void SpriteRenderer::resetSprites() {
-    for(auto &spirte: sprites) spirte.reset();
+    for(auto &sprite: sprites) sprite.reset();
     spriteCount = 0;
 }
 
@@ -46,11 +46,11 @@ uint16_t SpriteRenderer::sprite8x8Flipped(uint8_t i, int scanLine, uint8_t tileS
 }
 
 uint16_t SpriteRenderer::sprite8x16(uint8_t i, int scanLine) {
-    return (scanLine - sprites[i].yPosition < 8) ? sprite8x16Helper(i, 0) : sprite8x16Helper(i, 1);
+    return (scanLine - sprites[i].yPosition < 8) ? sprite8x16Helper(i, 0, scanLine) : sprite8x16Helper(i, 1, scanLine);
 }
 
 uint16_t SpriteRenderer::sprite8x16Flipped(uint8_t i, int scanLine) {
-    return (scanLine - sprites[i].yPosition < 8) ? sprite8x16FlippedHelper(i, 1) : sprite8x16FlippedHelper(i, 0);
+    return (scanLine - sprites[i].yPosition < 8) ? sprite8x16FlippedHelper(i, 1, scanLine) : sprite8x16FlippedHelper(i, 0, scanLine);
 }
 
 uint16_t SpriteRenderer::sprite8x16Helper(uint8_t i, uint8_t temp, int scanLine) {
@@ -75,7 +75,7 @@ void SpriteRenderer::shift() {
     }
 }
 
-void SpriteRenderer::getSpriteToRender(uint8_t spriteHeight, uint8_t tileSelect, int scanLine, std::function<uint8_t(uint16_t)> func) {
+void SpriteRenderer::getSpriteToRender(uint8_t spriteHeight, uint8_t tileSelect, int scanLine, const std::function<uint8_t(uint16_t)>& func) {
     for(uint i = 0; i < spriteCount; ++i) {
         uint16_t spriteAddressLowByte, spriteAddressHighByte;
         if(spriteHeight) {
@@ -94,5 +94,22 @@ void SpriteRenderer::getSpriteToRender(uint8_t spriteHeight, uint8_t tileSelect,
         }
         shifters[i].setBytes(spriteLowByte, spriteHighByte);
     }
+}
+
+std::tuple<uint8_t, uint8_t, uint8_t, bool> SpriteRenderer::findNextSprite() {
+    std::tuple<uint8_t, uint8_t, uint8_t, bool> tuple;
+    std::get<3>(tuple) = false;
+    for(uint i = 0; i < spriteCount; ++i) {
+        if(sprites[i].index == 0) {
+            std::get<0>(tuple) = (((shifters[i].getHighByte() & 0x80u) > 0) << 1u) | ((shifters[i].getLowByte() & 0x80u) > 0);
+            std::get<1>(tuple) = (sprites[i].attributes & 0x03u) + 0x04;
+            std::get<2>(tuple) = ((sprites[i].attributes & 0x20u) == 0);
+            if(std::get<0>(tuple)!= 0) {
+                if(i == 0) std::get<3>(tuple) = true;
+                break;
+            }
+        }
+    }
+    return tuple;
 }
 

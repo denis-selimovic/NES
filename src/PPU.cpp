@@ -230,11 +230,11 @@ void PPU::clock() {
         }
     }
 
-    Palette palette{};
-    SpritePalette spritePalette{};
-    if(ppumask.background_enable && (ppumask.background_left_column_enable || cycles >= 9)) palette = getComposition();
+    Palette backgroundPalette{};
+    Palette spritePalette{};
+    if(ppumask.background_enable && (ppumask.background_left_column_enable || cycles >= 9)) backgroundPalette = getBackgroundComposition();
     if(ppumask.sprite_enable && (ppumask.sprite_left_column_enable || cycles >= 9)) spritePalette = getSpriteComposition();
-    Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
+    Pixel pixel = getColor(getComposition(backgroundPalette, spritePalette));
     if(256 * scanLine + cycles - 1 >= 0 && 256 * scanLine + cycles - 1 < 256 * 240) pixels[256 * scanLine + (cycles - 1)] = getColorCode(pixel);
 
     cycles++;
@@ -361,38 +361,27 @@ void PPU::fetchNextTile(uint8_t selector) {
     }
 }
 
-PPU::Palette PPU::getComposition() {
+PPU::Palette PPU::getBackgroundComposition() {
     uint16_t selector = (0x8000u >> fine_x);
     uint8_t pixel_id = (((pattern.getHighByte() & selector) > 0) << 1u) | ((pattern.getLowByte() & selector) > 0);
     uint8_t palette_id = (((attribute.getHighByte() & selector) > 0) << 1u) | ((attribute.getLowByte() & selector) > 0);
-    return {pixel_id, palette_id};
+    return {pixel_id, palette_id, 0x00};
 }
 
-PPU::SpritePalette PPU::getSpriteComposition() {
-    spriteZero.rendered = false;
-    SpritePalette spritePalette{};
-    for(uint i = 0; i < spriteCount; ++i) {
-        if(sprites[i].index == 0) {
-            spritePalette.pixel_id = (((sprite_high[i] & 0x80u) > 0) << 1u) | ((sprite_low[i] & 0x80u) > 0);
-            spritePalette.palette_id = (sprites[i].attributes & 0x03u) + 0x04;
-            spritePalette.priority = ((sprites[i].attributes & 0x20u) == 0);
-            if(spritePalette.pixel_id != 0) {
-                if(i == 0) spriteZero.rendered = true;
-                break;
-            }
-        }
-    }
-    return spritePalette;
+PPU::Palette PPU::getSpriteComposition() {
+    auto tuple = spriteRenderer.findNextSprite();
+    spriteZero.rendered = std::get<3>(tuple);
+    return {std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple)};
 }
 
-PPU::FinalPalette PPU::getFinalComposition(PPU::Palette palette, PPU::SpritePalette spritePalette) {
-    FinalPalette finalPalette{};
-    if(palette.pixel_id == 0 && spritePalette.pixel_id == 0) finalPalette = {0x00, 0x00};
-    else if(palette.pixel_id > 0 && spritePalette.pixel_id == 0) finalPalette = {palette.pixel_id, palette.palette_id};
-    else if(palette.pixel_id == 0 && spritePalette.pixel_id > 0) finalPalette = {spritePalette.pixel_id, spritePalette.palette_id};
-    else if (palette.pixel_id > 0 && spritePalette.pixel_id > 0) {
+PPU::Palette PPU::getComposition(PPU::Palette backgroundPalette, Palette spritePalette) {
+    Palette finalPalette{};
+    if(backgroundPalette.pixel_id == 0 && spritePalette.pixel_id == 0) finalPalette = {0x00, 0x00};
+    else if(backgroundPalette.pixel_id > 0 && spritePalette.pixel_id == 0) finalPalette = {backgroundPalette.pixel_id, backgroundPalette.palette_id};
+    else if(backgroundPalette.pixel_id == 0 && spritePalette.pixel_id > 0) finalPalette = {spritePalette.pixel_id, spritePalette.palette_id};
+    else if (backgroundPalette.pixel_id > 0 && spritePalette.pixel_id > 0) {
         if(spritePalette.priority) finalPalette = {spritePalette.pixel_id, spritePalette.palette_id};
-        else finalPalette = {palette.pixel_id, palette.palette_id};
+        else finalPalette = {backgroundPalette.pixel_id, backgroundPalette.palette_id};
         if(spriteZero.enabled && spriteZero.rendered && (ppumask.sprite_enable & ppumask.background_enable)) {
             if(~(ppumask.background_left_column_enable | ppumask.sprite_left_column_enable)) {
                 if(cycles >= 9 && cycles < 258) ppustatus.sprite_zero_hit = 1;
@@ -409,8 +398,6 @@ void PPU::findSprites() {
     spriteZero.enabled = spriteRenderer.findSprites(OAM, scanLine, ppuctrl.sprite_height);
     ppustatus.sprite_overflow = (spriteRenderer.getSpriteCount() > 8);
 }
-
-
 
 PPU::PPU() {
     ppuPalette.push_back({84,84, 84});
@@ -479,7 +466,7 @@ PPU::PPU() {
     ppuPalette.push_back({0, 0, 0});
 }
 
-PPU::Pixel PPU::getColor(PPU::FinalPalette palette) {
+PPU::Pixel PPU::getColor(PPU::Palette palette) {
     return ppuPalette[readPPUMemory(0x3F00u + (palette.palette_id << 2u) + palette.pixel_id) & 0x3Fu];
 }
 

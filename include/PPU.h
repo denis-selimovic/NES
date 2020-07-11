@@ -125,23 +125,11 @@ private:
 private:
     // struktura za identifikaciju piksela i palete pozadine
     struct Palette {
-        uint8_t pixel_id = 0x00, palette_id = 0x00;
-    };
-    Palette getComposition();
-
-private:
-    // struktura za identifikaciju piksela i pozadine sprite-a
-    struct SpritePalette {
         uint8_t pixel_id = 0x00, palette_id = 0x00, priority = 0x00;
     };
-    SpritePalette getSpriteComposition();
-
-private:
-    // struktura koja čuva rezultirajuću paletu
-    struct FinalPalette {
-        uint8_t pixel_id = 0x00, palette_id = 0x00;
-    };
-    FinalPalette getFinalComposition(Palette palette, SpritePalette spritePalette);
+    Palette getBackgroundComposition();
+    Palette getSpriteComposition();
+    Palette getComposition(Palette palette, Palette spritePalette);
 
 private:
     void scrollingHorizontal();
@@ -167,7 +155,7 @@ private:
         int r = 0,g = 0,b = 0;
     };
     std::vector<Pixel> ppuPalette;
-    Pixel getColor(FinalPalette palette);
+    Pixel getColor(Palette palette);
     unsigned int getColorCode(Pixel pixel);
 
 public:

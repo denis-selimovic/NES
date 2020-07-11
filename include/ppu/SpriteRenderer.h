@@ -8,6 +8,7 @@
 
 #include <array>
 #include <functional>
+#include <tuple>
 #include "Sprite.h"
 #include "Shifter.h"
 
@@ -29,8 +30,9 @@ public:
     void resetSprites();
     void reset();
     void shift();
-    void getSpriteToRender(uint8_t spriteHeight, uint8_t tileSelect, int scanLine, std::function<uint8_t(uint16_t)> func);
+    void getSpriteToRender(uint8_t spriteHeight, uint8_t tileSelect, int scanLine, const std::function<uint8_t(uint16_t)>& func);
     bool findSprites(Sprite *oam, int scanLine, uint8_t spriteHeight);
+    std::tuple<uint8_t, uint8_t, uint8_t, bool> findNextSprite();
     uint8_t getSpriteCount() const;
 };
 
