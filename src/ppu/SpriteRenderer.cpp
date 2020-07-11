@@ -97,19 +97,19 @@ void SpriteRenderer::getSpriteToRender(uint8_t spriteHeight, uint8_t tileSelect,
 }
 
 std::tuple<uint8_t, uint8_t, uint8_t, bool> SpriteRenderer::findNextSprite() {
-    std::tuple<uint8_t, uint8_t, uint8_t, bool> tuple;
-    std::get<3>(tuple) = false;
+    uint8_t id = 0, palette = 0, priority = 0;
+    bool zeroRendered = false;
     for(uint i = 0; i < spriteCount; ++i) {
         if(sprites[i].index == 0) {
-            std::get<0>(tuple) = (((shifters[i].getHighByte() & 0x80u) > 0) << 1u) | ((shifters[i].getLowByte() & 0x80u) > 0);
-            std::get<1>(tuple) = (sprites[i].attributes & 0x03u) + 0x04;
-            std::get<2>(tuple) = ((sprites[i].attributes & 0x20u) == 0);
-            if(std::get<0>(tuple) != 0) {
-                if(i == 0) std::get<3>(tuple) = true;
+            id = (((shifters[i].getHighByte() & 0x80u) > 0) << 1u) | ((shifters[i].getLowByte() & 0x80u) > 0);
+            palette = (sprites[i].attributes & 0x03u) + 0x04;
+            priority = ((sprites[i].attributes & 0x20u) == 0);
+            if(id != 0) {
+                if(i == 0) zeroRendered = true;
                 break;
             }
         }
     }
-    return tuple;
+    return std::tuple<uint8_t, uint8_t, uint8_t, bool>(id, palette, priority, zeroRendered);
 }
 
