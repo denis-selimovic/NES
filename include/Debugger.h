@@ -83,7 +83,7 @@ class Debugger {
     // LOG
     std::ofstream out;
 public:
-    explicit Debugger(const std::string &test = "../nes/nestest.nes", const std::string & font_path = "../fonts/sans.ttf");
+    explicit Debugger(const std::string &test = "../resources/roms/nestest.nes", const std::string & font_path = "../resources/fonts/sans.ttf");
     ~Debugger();
     Debugger(const Debugger &debugger) = delete;
     Debugger(Debugger &&debugger) = delete;
