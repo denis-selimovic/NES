@@ -216,7 +216,7 @@ void PPU::clock() {
             loadPixel();
             transferHorizontal();
         }
-        if(cycles == 338 || cycles == 340) tile_id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
+        if(cycles == 338 || cycles == 340) tile.id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
         if(scanline == -1 && cycles >= 280 && cycles < 305) transferVertical();
         if(cycles == 257 && scanline >= 0) {
             std::memset(foundSprites, 0xFF, 8 * sizeof(Sprite));
@@ -287,7 +287,7 @@ void PPU::reset() {
     toggle = false;
     fine_x = 0x00;
     cycles = 0;
-    tile_attribute = tile_msb = tile_lsb = tile_id = 0x00;
+    tile.reset();
     shifter_attribute_low = shifter_attribute_high = shifter_pattern_low = shifter_pattern_high = 0x00;
 }
 
@@ -346,10 +346,10 @@ void PPU::loadPixel() {
     // prvih 8 najznačajnijih bita predstavljaju piksel koji se crta
     // sljedeći piksel koji će se crtati u novom ciklusu je u donjih 8 bita registra
     // ova funkcija ažurira donjih 8 bita shift registra
-    shifter_pattern_low = ((shifter_pattern_low & 0xFF00u) | tile_lsb);
-    shifter_pattern_high = ((shifter_pattern_high & 0xFF00u) | tile_msb);
-    shifter_attribute_low = ((shifter_attribute_low & 0xFF00u) | ((tile_attribute & 0b01u) ? 0xFF : 0x00));
-    shifter_attribute_high = ((shifter_attribute_high & 0xFF00u) | ((tile_attribute & 0b10u) ? 0xFF : 0x00));
+    shifter_pattern_low = ((shifter_pattern_low & 0xFF00u) | tile.lsb);
+    shifter_pattern_high = ((shifter_pattern_high & 0xFF00u) | tile.msb);
+    shifter_attribute_low = ((shifter_attribute_low & 0xFF00u) | ((tile.attribute & 0b01u) ? 0xFF : 0x00));
+    shifter_attribute_high = ((shifter_attribute_high & 0xFF00u) | ((tile.attribute & 0b10u) ? 0xFF : 0x00));
 }
 
 void PPU::updateShiftRegister() {
@@ -376,23 +376,23 @@ void PPU::fetchNextTile(uint8_t selector) {
     switch (selector) {
         case 0:
             loadPixel();
-            tile_id = readPPUMemory(0x2000u | (vram_address.reg & 0x0FFFu));
+            tile.id = readPPUMemory(0x2000u | (vram_address.reg & 0x0FFFu));
             break;
         case 2:
             address = 0x23C0u | (vram_address.nametable_select_y << 11u) | (vram_address.nametable_select_x << 10u)
                     | ((vram_address.coarse_y >> 2u) << 3u) | (vram_address.coarse_x >> 2u);
-            tile_attribute = readPPUMemory(address);
-            if(vram_address.coarse_y & 0x02u) tile_attribute >>= 4u;
-            if(vram_address.coarse_x & 0x02u) tile_attribute >>= 2u;
-            tile_attribute &= 0x03u;
+            tile.attribute = readPPUMemory(address);
+            if(vram_address.coarse_y & 0x02u) tile.attribute >>= 4u;
+            if(vram_address.coarse_x & 0x02u) tile.attribute >>= 2u;
+            tile.attribute &= 0x03u;
             break;
         case 4:
-            lsb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile_id) << 4u) + vram_address.fine_y;
-            tile_lsb = readPPUMemory(lsb_address);
+            lsb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile.id) << 4u) + vram_address.fine_y;
+            tile.lsb = readPPUMemory(lsb_address);
             break;
         case 6:
-            msb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile_id) << 4u) + vram_address.fine_y + 8;
-            tile_msb = readPPUMemory(msb_address);
+            msb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile.id) << 4u) + vram_address.fine_y + 8;
+            tile.msb = readPPUMemory(msb_address);
             break;
         case 7:
             scrollingHorizontal();

@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <array>
 #include "GamePak.h"
+#include "ppu/Tile.h"
 
 class PPU {
 
@@ -117,11 +118,7 @@ class PPU {
     GamePak *gamePak;
 
 private:
-    // pomoćne varijable za background rendering
-    uint8_t tile_id = 0x00;
-    uint8_t tile_attribute = 0x00;
-    uint8_t tile_lsb = 0x00;
-    uint8_t tile_msb = 0x00;
+    Tile tile;
 
 private:
     // pomoćne varijable koje modeliraju shift registre
