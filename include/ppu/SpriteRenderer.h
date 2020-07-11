@@ -14,9 +14,13 @@ class SpriteRenderer {
 
     uint8_t spriteCount = 0;
     std::array<Sprite, 8> sprites{};
-    std::array<Shifter, 8> lowBytes{};
-    std::array<Shifter, 8> highBytes{};
+    std::array<Shifter, 8> shifters;
 public:
+    void resetShifters();
+    void resetSprites();
+    void reset();
+    bool findSprites(Sprite *oam, int scanLine, uint8_t spriteHeight);
+    uint8_t getSpriteCount() const;
 };
 
 

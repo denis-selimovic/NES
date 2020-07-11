@@ -203,8 +203,7 @@ void PPU::clock() {
             ppustatus.vblank = 0;
             ppustatus.sprite_overflow = 0;
             ppustatus.sprite_zero_hit = 0;
-            std::fill_n(sprite_low, 8, 0);
-            std::fill_n(sprite_high, 8, 0);
+            spriteRenderer.resetShifters();
         }
         if((cycles >= 2 && cycles < 258) || (cycles >= 321 && cycles < 338)) {
             updateShiftRegister();
@@ -219,10 +218,7 @@ void PPU::clock() {
         if(cycles == 338 || cycles == 340) tile.id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
         if(scanline == -1 && cycles >= 280 && cycles < 305) transferVertical();
         if(cycles == 257 && scanline >= 0) {
-            std::memset(sprites, 0xFF, 8 * sizeof(Sprite));
-            spriteCount = 0;
-            std::fill_n(sprite_low, 8, 0);
-            std::fill_n(sprite_high, 8, 0);
+            spriteRenderer.reset();
             findSprites();
         }
         if(cycles == 340) {
@@ -439,19 +435,8 @@ PPU::FinalPalette PPU::getFinalComposition(PPU::Palette palette, PPU::SpritePale
 }
 
 void PPU::findSprites() {
-    spriteZero.enabled = false;
-    for(int i = 0; i < 64 && spriteCount <= 8; ++i) {
-        int32_t diff = int16_t(scanline) - int16_t(OAM[i].yPosition);
-        if (diff >= 0 && diff < (ppuctrl.sprite_height ? 16 : 8)) {
-            if(spriteCount < 8) {
-                if(i == 0) spriteZero.enabled = true;
-                //foundSprites[sprite_count] = OAM[i];
-                memcpy(&sprites[spriteCount], &OAM[i], sizeof(Sprite));
-                spriteCount++;
-            }
-        }
-    }
-    ppustatus.sprite_overflow = (spriteCount >= 8);
+    spriteZero.enabled = spriteRenderer.findSprites(OAM, scanline, ppuctrl.sprite_height);
+    ppustatus.sprite_overflow = (spriteRenderer.getSpriteCount() > 8);
 }
 
 uint16_t PPU::sprite8x8(uint8_t i) {
