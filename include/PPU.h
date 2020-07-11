@@ -173,7 +173,7 @@ private:
 public:
     bool interrupt = false;
     bool rendered = false;
-    int scanline = -1;
+    int scanLine = -1;
     uint8_t *oam_memory = (uint8_t*)OAM;
     unsigned int *pixels = new unsigned int[256 * 240];
 

@@ -197,9 +197,9 @@ void PPU::connectGamePak(GamePak *gamePak){
 }
 
 void PPU::clock() {
-    if(scanline >= -1 && scanline < 240) {
-        if(scanline == 0 && cycles == 0) cycles = 1;
-        if(scanline == -1 && cycles == 1) {
+    if(scanLine >= -1 && scanLine < 240) {
+        if(scanLine == 0 && cycles == 0) cycles = 1;
+        if(scanLine == -1 && cycles == 1) {
             ppustatus.vblank = 0;
             ppustatus.sprite_overflow = 0;
             ppustatus.sprite_zero_hit = 0;
@@ -216,15 +216,15 @@ void PPU::clock() {
             transferHorizontal();
         }
         if(cycles == 338 || cycles == 340) tile.id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
-        if(scanline == -1 && cycles >= 280 && cycles < 305) transferVertical();
-        if(cycles == 257 && scanline >= 0) {
+        if(scanLine == -1 && cycles >= 280 && cycles < 305) transferVertical();
+        if(cycles == 257 && scanLine >= 0) {
             spriteRenderer.reset();
             findSprites();
         }
-        if(cycles == 340) spriteRenderer.getSpriteToRender(ppuctrl.sprite_height, ppuctrl.sprite_tile_select, scanline, [this](uint16_t address){return readPPUMemory(address);});
+        if(cycles == 340) spriteRenderer.getSpriteToRender(ppuctrl.sprite_height, ppuctrl.sprite_tile_select, scanLine, [this](uint16_t address){return readPPUMemory(address);});
     }
-    if(scanline >= 241 && scanline < 261) {
-        if(scanline == 241 && cycles == 1) {
+    if(scanLine >= 241 && scanLine < 261) {
+        if(scanLine == 241 && cycles == 1) {
             ppustatus.vblank = 1;
             if(ppuctrl.nmi_enable) interrupt = true;
         }
@@ -235,15 +235,15 @@ void PPU::clock() {
     if(ppumask.background_enable && (ppumask.background_left_column_enable || cycles >= 9)) palette = getComposition();
     if(ppumask.sprite_enable && (ppumask.sprite_left_column_enable || cycles >= 9)) spritePalette = getSpriteComposition();
     Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
-    if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240) pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
+    if(256 * scanLine + cycles - 1 >= 0 && 256 * scanLine + cycles - 1 < 256 * 240) pixels[256 * scanLine + (cycles - 1)] = getColorCode(pixel);
 
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
-        scanline++;
-        if(scanline >= 261) {
+        scanLine++;
+        if(scanLine >= 261) {
             rendered = true;
-            scanline = -1;
+            scanLine = -1;
         }
     }
 }
@@ -406,7 +406,7 @@ PPU::FinalPalette PPU::getFinalComposition(PPU::Palette palette, PPU::SpritePale
 }
 
 void PPU::findSprites() {
-    spriteZero.enabled = spriteRenderer.findSprites(OAM, scanline, ppuctrl.sprite_height);
+    spriteZero.enabled = spriteRenderer.findSprites(OAM, scanLine, ppuctrl.sprite_height);
     ppustatus.sprite_overflow = (spriteRenderer.getSpriteCount() > 8);
 }
 
