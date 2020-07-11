@@ -106,73 +106,11 @@ void Renderer::run() {
     bus->reset();
     SDL_Event e;
     while(running) {
-        bus->joystickBuffer[0] = 0x00;
-        bus->joystickBuffer[0] |= bus->X.isHeld() ? 0x80u : 0x00u;
-        bus->joystickBuffer[0] |= bus->Z.isHeld() ? 0x40u : 0x00u;
-        bus->joystickBuffer[0] |= bus->A.isHeld() ? 0x20u : 0x00u;
-        bus->joystickBuffer[0] |= bus->S.isHeld() ? 0x10u : 0x00u;
-        bus->joystickBuffer[0] |= bus->UP.isHeld() ? 0x08u : 0x00u;
-        bus->joystickBuffer[0] |= bus->DOWN.isHeld() ? 0x04u : 0x00u;
-        bus->joystickBuffer[0] |= bus->LEFT.isHeld() ? 0x02u : 0x00u;
-        bus->joystickBuffer[0] |= bus->RIGHT.isHeld() ? 0x01u : 0x00u;
+        bus->joystickController.updateState(0);
         while(SDL_PollEvent(&e) != 0) {
             if(e.type == SDL_QUIT) running = false;
-            else if(e.type == SDL_KEYDOWN) {
-                switch (e.key.keysym.sym) {
-                    case SDLK_x:
-                        bus->X.newState = true;
-                        break;
-                    case SDLK_z:
-                        bus->Z.newState = true;
-                        break;
-                    case SDLK_a:
-                        bus->A.newState = true;
-                        break;
-                    case SDLK_s:
-                        bus->S.newState = true;
-                        break;
-                    case SDLK_UP:
-                        bus->UP.newState = true;
-                        break;
-                    case SDLK_DOWN:
-                        bus->DOWN.newState = true;
-                        break;
-                    case SDLK_LEFT:
-                        bus->LEFT.newState = true;
-                        break;
-                    case SDLK_RIGHT:
-                        bus->RIGHT.newState = true;
-                        break;
-                }
-            }
-            else if(e.type == SDL_KEYUP) {
-                switch (e.key.keysym.sym) {
-                    case SDLK_x:
-                        bus->X.newState = false;
-                        break;
-                    case SDLK_z:
-                        bus->Z.newState = false;
-                        break;
-                    case SDLK_a:
-                        bus->A.newState = false;
-                        break;
-                    case SDLK_s:
-                        bus->S.newState = false;
-                        break;
-                    case SDLK_UP:
-                        bus->UP.newState = false;
-                        break;
-                    case SDLK_DOWN:
-                        bus->DOWN.newState = false;
-                        break;
-                    case SDLK_LEFT:
-                        bus->LEFT.newState = false;
-                        break;
-                    case SDLK_RIGHT:
-                        bus->RIGHT.newState = false;
-                        break;
-                }
-            }
+            else if(e.type == SDL_KEYDOWN) bus->joystickController.writeState(e.key.keysym.sym, true);
+            else if(e.type == SDL_KEYUP) bus->joystickController.writeState(e.key.keysym.sym, false);
         }
         while(!bus->ppu.rendered) bus->clock();
         bus->ppu.rendered = false;
@@ -186,8 +124,3 @@ void Renderer::render() {
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
 }
-
-
-
-
-

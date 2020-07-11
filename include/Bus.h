@@ -9,15 +9,16 @@
 #include <array>
 #include "PPU.h"
 #include "CPU.h"
-#include "Key.h"
+#include "Joystick.h"
 
 class Bus {
 
     std::array<uint8_t, 2048> RAM{};
-    std::array<uint8_t , 2> joystick{};
+    std::array<uint8_t , 2> joystickRegister{};
 
     PPU &ppu;
     CPU &cpu;
+    Joystick joystickController;
 
     uint32_t cycles = 0;
 
@@ -34,10 +35,6 @@ class Bus {
 
     friend class Debugger;
     friend class Renderer;
-
-public:
-    Key X,Z,A,S,UP,DOWN,LEFT,RIGHT;
-    std::array<uint8_t, 2> joystickBuffer{};
 
 public:
      Bus(CPU &cpu, PPU &ppu);
