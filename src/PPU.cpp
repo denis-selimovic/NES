@@ -288,7 +288,8 @@ void PPU::reset() {
     fine_x = 0x00;
     cycles = 0;
     tile.reset();
-    shifter_attribute_low = shifter_attribute_high = shifter_pattern_low = shifter_pattern_high = 0x00;
+    pattern.reset();
+    attribute.reset();
 }
 
 void PPU::scrollingHorizontal() {
@@ -342,23 +343,14 @@ void PPU::transferVertical() {
 }
 
 void PPU::loadPixel() {
-    // PPU ima 16-bitni shift registar
-    // prvih 8 najznačajnijih bita predstavljaju piksel koji se crta
-    // sljedeći piksel koji će se crtati u novom ciklusu je u donjih 8 bita registra
-    // ova funkcija ažurira donjih 8 bita shift registra
-    shifter_pattern_low = ((shifter_pattern_low & 0xFF00u) | tile.lsb);
-    shifter_pattern_high = ((shifter_pattern_high & 0xFF00u) | tile.msb);
-    shifter_attribute_low = ((shifter_attribute_low & 0xFF00u) | ((tile.attribute & 0b01u) ? 0xFF : 0x00));
-    shifter_attribute_high = ((shifter_attribute_high & 0xFF00u) | ((tile.attribute & 0b10u) ? 0xFF : 0x00));
+    pattern.pack(tile.lsb, tile.msb);
+    attribute.pack(tile.getPackingByte(0b01u), tile.getPackingByte(0b10u));
 }
 
 void PPU::updateShiftRegister() {
-    // ažurira shift registre za svaki ciklus PPU
     if(ppumask.background_enable) {
-        shifter_pattern_low <<= 1u;
-        shifter_pattern_high <<= 1u;
-        shifter_attribute_low <<= 1u;
-        shifter_attribute_high <<= 1u;
+        pattern.shift();
+        attribute.shift();
     }
     if(ppumask.sprite_enable && cycles >= 1 && cycles < 258) {
         for(int i = 0; i < sprite_count; ++i) {
@@ -404,8 +396,8 @@ void PPU::fetchNextTile(uint8_t selector) {
 
 PPU::Palette PPU::getComposition() {
     uint16_t selector = (0x8000u >> fine_x);
-    uint8_t pixel_id = (((shifter_pattern_high & selector) > 0) << 1u) | ((shifter_pattern_low & selector) > 0);
-    uint8_t palette_id = (((shifter_attribute_high & selector) > 0) << 1u) | ((shifter_attribute_low & selector) > 0);
+    uint8_t pixel_id = (((pattern.getHighByte() & selector) > 0) << 1u) | ((pattern.getLowByte() & selector) > 0);
+    uint8_t palette_id = (((attribute.getHighByte() & selector) > 0) << 1u) | ((attribute.getLowByte() & selector) > 0);
     return {pixel_id, palette_id};
 }
 

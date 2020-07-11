@@ -10,6 +10,7 @@
 #include <array>
 #include "GamePak.h"
 #include "ppu/Tile.h"
+#include "ppu/Shifter.h"
 
 class PPU {
 
@@ -122,10 +123,7 @@ private:
 
 private:
     // pomoćne varijable koje modeliraju shift registre
-    uint16_t shifter_attribute_low = 0x0000;
-    uint16_t shifter_attribute_high = 0x0000;
-    uint16_t shifter_pattern_low = 0x0000;
-    uint16_t shifter_pattern_high = 0x0000;
+    Shifter pattern, attribute;
 
 private:
     // struktura za identifikaciju piksela i palete pozadine
