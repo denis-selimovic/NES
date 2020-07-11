@@ -153,22 +153,8 @@ private:
     void fetchNextTile(uint8_t selector);
 
 private:
-    // pomoćne varijable i funkcije za pronalaženje sprite-ova
-    /*Sprite sprites[8];
-    uint8_t spriteCount = 0;
-    // 8 shift registra koje čuvaju 8 najznačijih bita sprite-a i 8 shift registra koji čuvaju 8 najmanje značajnih bita sprite-a
-    uint8_t sprite_low[8] = {0};
-    uint8_t sprite_high[8] = {0};*/
     SpriteRenderer spriteRenderer;
     void findSprites();
-    // funkcije za određivanje adrese sprite-a
-    uint16_t sprite8x8(uint8_t i);
-    uint16_t sprite8x8Flipped(uint8_t i);
-    uint16_t sprite8x16(uint8_t i);
-    uint16_t sprite8x16Flipped(uint8_t i);
-    uint16_t sprite8x16Helper(uint8_t i, uint8_t temp);
-    uint16_t sprite8x16FlippedHelper(uint8_t i, uint8_t temp);
-    uint8_t flipBytes(uint8_t bytes);
 
 private:
     // sprite zero pomoćne varijable

@@ -348,15 +348,7 @@ void PPU::updateShiftRegister() {
         pattern.shift();
         attribute.shift();
     }
-    if(ppumask.sprite_enable && cycles >= 1 && cycles < 258) {
-        for(int i = 0; i < spriteCount; ++i) {
-            if(sprites[i].index > 0) sprites[i].index--;
-            else {
-                sprite_low[i] <<= 1u;
-                sprite_high[i] <<= 1u;
-            }
-        }
-    }
+    if(ppumask.sprite_enable && cycles >= 1 && cycles < 258) spriteRenderer.shift();
 }
 
 void PPU::fetchNextTile(uint8_t selector) {
@@ -439,36 +431,7 @@ void PPU::findSprites() {
     ppustatus.sprite_overflow = (spriteRenderer.getSpriteCount() > 8);
 }
 
-uint16_t PPU::sprite8x8(uint8_t i) {
-    return (ppuctrl.sprite_tile_select << 12u) | (sprites[i].tileIndex << 4u) | (scanline - sprites[i].yPosition);
-}
 
-uint16_t PPU::sprite8x8Flipped(uint8_t i) {
-    return (ppuctrl.sprite_tile_select << 12u) | (sprites[i].tileIndex << 4u) | (7 - (scanline - sprites[i].yPosition));
-}
-
-uint16_t PPU::sprite8x16(uint8_t i) {
-    return (scanline - sprites[i].yPosition < 8) ? sprite8x16Helper(i, 0) : sprite8x16Helper(i, 1);
-}
-
-uint16_t PPU::sprite8x16Flipped(uint8_t i) {
-    return (scanline - sprites[i].yPosition < 8) ? sprite8x16FlippedHelper(i, 1) : sprite8x16FlippedHelper(i, 0);
-}
-
-uint16_t PPU::sprite8x16Helper(uint8_t i, uint8_t temp) {
-    return ((sprites[i].tileIndex & 0x01) << 12u) | (((sprites[i].tileIndex & 0xFEu) + temp) << 4u) | ((scanline - sprites[i].yPosition) & 0x07u);
-}
-
-uint16_t PPU::sprite8x16FlippedHelper(uint8_t i, uint8_t temp) {
-    return ((sprites[i].tileIndex & 0x01) << 12u) | (((sprites[i].tileIndex & 0xFEu) + temp) << 4u) | ((7 - (scanline - sprites[i].yPosition)) & 0x07u);
-}
-
-uint8_t PPU::flipBytes(uint8_t bytes) {
-    bytes = (bytes & 0xF0) >> 4 | (bytes & 0x0F) << 4;
-    bytes = (bytes & 0xCC) >> 2 | (bytes & 0x33) << 2;
-    bytes = (bytes & 0xAA) >> 1 | (bytes & 0x55) << 1;
-    return bytes;
-}
 
 PPU::PPU() {
     ppuPalette.push_back({84,84, 84});
