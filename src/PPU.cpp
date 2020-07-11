@@ -220,13 +220,13 @@ void PPU::clock() {
         if(scanline == -1 && cycles >= 280 && cycles < 305) transferVertical();
         if(cycles == 257 && scanline >= 0) {
             std::memset(sprites, 0xFF, 8 * sizeof(Sprite));
-            sprite_count = 0;
+            spriteCount = 0;
             std::fill_n(sprite_low, 8, 0);
             std::fill_n(sprite_high, 8, 0);
             findSprites();
         }
         if(cycles == 340) {
-            for(uint i = 0; i < sprite_count; ++i) {
+            for(uint i = 0; i < spriteCount; ++i) {
                 uint16_t sprite_address_low, sprite_address_high;
                 if(ppuctrl.sprite_height) {
                     if(!(sprites[i].attributes & 0x80u)) sprite_address_low = sprite8x16(i);
@@ -353,7 +353,7 @@ void PPU::updateShiftRegister() {
         attribute.shift();
     }
     if(ppumask.sprite_enable && cycles >= 1 && cycles < 258) {
-        for(int i = 0; i < sprite_count; ++i) {
+        for(int i = 0; i < spriteCount; ++i) {
             if(sprites[i].index > 0) sprites[i].index--;
             else {
                 sprite_low[i] <<= 1u;
@@ -404,7 +404,7 @@ PPU::Palette PPU::getComposition() {
 PPU::SpritePalette PPU::getSpriteComposition() {
     spriteZero.rendered = false;
     SpritePalette spritePalette{};
-    for(uint i = 0; i < sprite_count; ++i) {
+    for(uint i = 0; i < spriteCount; ++i) {
         if(sprites[i].index == 0) {
             spritePalette.pixel_id = (((sprite_high[i] & 0x80u) > 0) << 1u) | ((sprite_low[i] & 0x80u) > 0);
             spritePalette.palette_id = (sprites[i].attributes & 0x03u) + 0x04;
@@ -440,18 +440,18 @@ PPU::FinalPalette PPU::getFinalComposition(PPU::Palette palette, PPU::SpritePale
 
 void PPU::findSprites() {
     spriteZero.enabled = false;
-    for(int i = 0; i < 64 && sprite_count <= 8; ++i) {
+    for(int i = 0; i < 64 && spriteCount <= 8; ++i) {
         int32_t diff = int16_t(scanline) - int16_t(OAM[i].yPosition);
         if (diff >= 0 && diff < (ppuctrl.sprite_height ? 16 : 8)) {
-            if(sprite_count < 8) {
+            if(spriteCount < 8) {
                 if(i == 0) spriteZero.enabled = true;
                 //foundSprites[sprite_count] = OAM[i];
-                memcpy(&sprites[sprite_count], &OAM[i], sizeof(Sprite));
-                sprite_count++;
+                memcpy(&sprites[spriteCount], &OAM[i], sizeof(Sprite));
+                spriteCount++;
             }
         }
     }
-    ppustatus.sprite_overflow = (sprite_count >= 8);
+    ppustatus.sprite_overflow = (spriteCount >= 8);
 }
 
 uint16_t PPU::sprite8x8(uint8_t i) {

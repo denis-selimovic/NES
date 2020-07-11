@@ -154,7 +154,7 @@ private:
 private:
     // pomoćne varijable i funkcije za pronalaženje sprite-ova
     Sprite sprites[8];
-    uint8_t sprite_count = 0;
+    uint8_t spriteCount = 0;
     // 8 shift registra koje čuvaju 8 najznačijih bita sprite-a i 8 shift registra koji čuvaju 8 najmanje značajnih bita sprite-a
     uint8_t sprite_low[8] = {0};
     uint8_t sprite_high[8] = {0};
