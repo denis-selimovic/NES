@@ -219,7 +219,7 @@ void PPU::clock() {
         if(cycles == 338 || cycles == 340) tile.id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
         if(scanline == -1 && cycles >= 280 && cycles < 305) transferVertical();
         if(cycles == 257 && scanline >= 0) {
-            std::memset(foundSprites, 0xFF, 8 * sizeof(Sprite));
+            std::memset(sprites, 0xFF, 8 * sizeof(Sprite));
             sprite_count = 0;
             std::fill_n(sprite_low, 8, 0);
             std::fill_n(sprite_high, 8, 0);
@@ -229,16 +229,16 @@ void PPU::clock() {
             for(uint i = 0; i < sprite_count; ++i) {
                 uint16_t sprite_address_low, sprite_address_high;
                 if(ppuctrl.sprite_height) {
-                    if(!(foundSprites[i].attributes & 0x80u)) sprite_address_low = sprite8x16(i);
+                    if(!(sprites[i].attributes & 0x80u)) sprite_address_low = sprite8x16(i);
                     else sprite_address_low = sprite8x16Flipped(i);
                 }
                 else {
-                    if(!(foundSprites[i].attributes & 0x80u)) sprite_address_low = sprite8x8(i);
+                    if(!(sprites[i].attributes & 0x80u)) sprite_address_low = sprite8x8(i);
                     else sprite_address_low = sprite8x8Flipped(i);
                 }
                 sprite_address_high = sprite_address_low + 8;
                 uint8_t sprite_low_bytes = readPPUMemory(sprite_address_low), sprite_high_bytes = readPPUMemory(sprite_address_high);
-                if(foundSprites[i].attributes & 0x40u) {
+                if(sprites[i].attributes & 0x40u) {
                     sprite_low_bytes = flipBytes(sprite_low_bytes);
                     sprite_high_bytes = flipBytes(sprite_high_bytes);
                 }
@@ -354,7 +354,7 @@ void PPU::updateShiftRegister() {
     }
     if(ppumask.sprite_enable && cycles >= 1 && cycles < 258) {
         for(int i = 0; i < sprite_count; ++i) {
-            if(foundSprites[i].index > 0) foundSprites[i].index--;
+            if(sprites[i].index > 0) sprites[i].index--;
             else {
                 sprite_low[i] <<= 1u;
                 sprite_high[i] <<= 1u;
@@ -405,10 +405,10 @@ PPU::SpritePalette PPU::getSpriteComposition() {
     spriteZero.rendered = false;
     SpritePalette spritePalette{};
     for(uint i = 0; i < sprite_count; ++i) {
-        if(foundSprites[i].index == 0) {
+        if(sprites[i].index == 0) {
             spritePalette.pixel_id = (((sprite_high[i] & 0x80u) > 0) << 1u) | ((sprite_low[i] & 0x80u) > 0);
-            spritePalette.palette_id = (foundSprites[i].attributes & 0x03u) + 0x04;
-            spritePalette.priority = ((foundSprites[i].attributes & 0x20u) == 0);
+            spritePalette.palette_id = (sprites[i].attributes & 0x03u) + 0x04;
+            spritePalette.priority = ((sprites[i].attributes & 0x20u) == 0);
             if(spritePalette.pixel_id != 0) {
                 if(i == 0) spriteZero.rendered = true;
                 break;
@@ -446,7 +446,7 @@ void PPU::findSprites() {
             if(sprite_count < 8) {
                 if(i == 0) spriteZero.enabled = true;
                 //foundSprites[sprite_count] = OAM[i];
-                memcpy(&foundSprites[sprite_count], &OAM[i], sizeof(Sprite));
+                memcpy(&sprites[sprite_count], &OAM[i], sizeof(Sprite));
                 sprite_count++;
             }
         }
@@ -455,27 +455,27 @@ void PPU::findSprites() {
 }
 
 uint16_t PPU::sprite8x8(uint8_t i) {
-    return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tileIndex << 4u) | (scanline - foundSprites[i].yPosition);
+    return (ppuctrl.sprite_tile_select << 12u) | (sprites[i].tileIndex << 4u) | (scanline - sprites[i].yPosition);
 }
 
 uint16_t PPU::sprite8x8Flipped(uint8_t i) {
-    return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tileIndex << 4u) |  (7 - (scanline - foundSprites[i].yPosition));
+    return (ppuctrl.sprite_tile_select << 12u) | (sprites[i].tileIndex << 4u) | (7 - (scanline - sprites[i].yPosition));
 }
 
 uint16_t PPU::sprite8x16(uint8_t i) {
-    return (scanline - foundSprites[i].yPosition < 8) ? sprite8x16Helper(i, 0) : sprite8x16Helper(i, 1);
+    return (scanline - sprites[i].yPosition < 8) ? sprite8x16Helper(i, 0) : sprite8x16Helper(i, 1);
 }
 
 uint16_t PPU::sprite8x16Flipped(uint8_t i) {
-    return (scanline - foundSprites[i].yPosition < 8) ? sprite8x16FlippedHelper(i, 1) : sprite8x16FlippedHelper(i, 0);
+    return (scanline - sprites[i].yPosition < 8) ? sprite8x16FlippedHelper(i, 1) : sprite8x16FlippedHelper(i, 0);
 }
 
 uint16_t PPU::sprite8x16Helper(uint8_t i, uint8_t temp) {
-    return ((foundSprites[i].tileIndex & 0x01) << 12u) | (((foundSprites[i].tileIndex & 0xFEu) + temp) << 4u) | ((scanline - foundSprites[i].yPosition) & 0x07u);
+    return ((sprites[i].tileIndex & 0x01) << 12u) | (((sprites[i].tileIndex & 0xFEu) + temp) << 4u) | ((scanline - sprites[i].yPosition) & 0x07u);
 }
 
 uint16_t PPU::sprite8x16FlippedHelper(uint8_t i, uint8_t temp) {
-    return ((foundSprites[i].tileIndex & 0x01) << 12u) | (((foundSprites[i].tileIndex & 0xFEu) + temp) << 4u) |  ((7 - (scanline - foundSprites[i].yPosition)) & 0x07u);
+    return ((sprites[i].tileIndex & 0x01) << 12u) | (((sprites[i].tileIndex & 0xFEu) + temp) << 4u) | ((7 - (scanline - sprites[i].yPosition)) & 0x07u);
 }
 
 uint8_t PPU::flipBytes(uint8_t bytes) {
