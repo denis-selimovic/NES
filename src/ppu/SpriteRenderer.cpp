@@ -104,7 +104,7 @@ std::tuple<uint8_t, uint8_t, uint8_t, bool> SpriteRenderer::findNextSprite() {
             std::get<0>(tuple) = (((shifters[i].getHighByte() & 0x80u) > 0) << 1u) | ((shifters[i].getLowByte() & 0x80u) > 0);
             std::get<1>(tuple) = (sprites[i].attributes & 0x03u) + 0x04;
             std::get<2>(tuple) = ((sprites[i].attributes & 0x20u) == 0);
-            if(std::get<0>(tuple)!= 0) {
+            if(std::get<0>(tuple) != 0) {
                 if(i == 0) std::get<3>(tuple) = true;
                 break;
             }

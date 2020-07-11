@@ -16,7 +16,7 @@ class SpriteRenderer {
 
     uint8_t spriteCount = 0;
     std::array<Sprite, 8> sprites{};
-    std::array<Shifter, 8> shifters;
+    std::array<Shifter, 8> shifters{};
 
     uint16_t sprite8x8(uint8_t i, int scanLine, uint8_t tileSelect);
     uint16_t sprite8x8Flipped(uint8_t i, int scanLine, uint8_t tileSelect);
