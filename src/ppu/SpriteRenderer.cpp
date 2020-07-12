@@ -113,3 +113,4 @@ std::tuple<uint8_t, uint8_t, uint8_t, bool> SpriteRenderer::findNextSprite() {
     return std::tuple<uint8_t, uint8_t, uint8_t, bool>(id, palette, priority, zeroRendered);
 }
 
+

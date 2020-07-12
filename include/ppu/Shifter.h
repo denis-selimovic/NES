@@ -17,7 +17,7 @@ public:
     void shift();
     void pack(uint8_t low, uint8_t high);
     void reset();
-    void setBytes(uint8_t low, uint8_t high);
+
     uint16_t getLowByte() const;
     uint16_t getHighByte() const;
 };
