@@ -9,6 +9,10 @@
 #include <cstdint>
 #include <array>
 #include "GamePak.h"
+#include "ppu/Tile.h"
+#include "ppu/Shifter.h"
+#include "ppu/Sprite.h"
+#include "ppu/SpriteRenderer.h"
 
 class PPU {
 
@@ -70,12 +74,7 @@ class PPU {
     //interna memorija koja čuva do 64 spirte-a svaki sprite se sastoji od 4 bajta
     //peti registar neće biti implementiran
     //njemu pristupamo preko adrese koja je u OAM_address
-    struct Sprite{
-        uint8_t y_position;
-        uint8_t tile_index;
-        uint8_t attributes;
-        uint8_t index;
-    } OAM[64];
+    Sprite OAM[64];
 
 
     //šesti registar je PPUSCROLL, a sedmi je adresa u VRAM-u
@@ -117,39 +116,20 @@ class PPU {
     GamePak *gamePak;
 
 private:
-    // pomoćne varijable za background rendering
-    uint8_t tile_id = 0x00;
-    uint8_t tile_attribute = 0x00;
-    uint8_t tile_lsb = 0x00;
-    uint8_t tile_msb = 0x00;
+    Tile tile;
 
 private:
     // pomoćne varijable koje modeliraju shift registre
-    uint16_t shifter_attribute_low = 0x0000;
-    uint16_t shifter_attribute_high = 0x0000;
-    uint16_t shifter_pattern_low = 0x0000;
-    uint16_t shifter_pattern_high = 0x0000;
+    Shifter pattern, attribute;
 
 private:
     // struktura za identifikaciju piksela i palete pozadine
     struct Palette {
-        uint8_t pixel_id = 0x00, palette_id = 0x00;
-    };
-    Palette getComposition();
-
-private:
-    // struktura za identifikaciju piksela i pozadine sprite-a
-    struct SpritePalette {
         uint8_t pixel_id = 0x00, palette_id = 0x00, priority = 0x00;
     };
-    SpritePalette getSpriteComposition();
-
-private:
-    // struktura koja čuva rezultirajuću paletu
-    struct FinalPalette {
-        uint8_t pixel_id = 0x00, palette_id = 0x00;
-    };
-    FinalPalette getFinalComposition(Palette palette, SpritePalette spritePalette);
+    Palette getBackgroundComposition();
+    Palette getSpriteComposition();
+    Palette getComposition(Palette palette, Palette spritePalette);
 
 private:
     void scrollingHorizontal();
@@ -161,21 +141,8 @@ private:
     void fetchNextTile(uint8_t selector);
 
 private:
-    // pomoćne varijable i funkcije za pronalaženje sprite-ova
-    Sprite foundSprites[8];
-    uint8_t sprite_count = 0;
-    // 8 shift registra koje čuvaju 8 najznačijih bita sprite-a i 8 shift registra koji čuvaju 8 najmanje značajnih bita sprite-a
-    uint8_t sprite_low[8] = {0};
-    uint8_t sprite_high[8] = {0};
+    SpriteRenderer spriteRenderer;
     void findSprites();
-    // funkcije za određivanje adrese sprite-a
-    uint16_t sprite8x8(uint8_t i);
-    uint16_t sprite8x8Flipped(uint8_t i);
-    uint16_t sprite8x16(uint8_t i);
-    uint16_t sprite8x16Flipped(uint8_t i);
-    uint16_t sprite8x16Helper(uint8_t i, uint8_t temp);
-    uint16_t sprite8x16FlippedHelper(uint8_t i, uint8_t temp);
-    uint8_t flipBytes(uint8_t bytes);
 
 private:
     // sprite zero pomoćne varijable
@@ -188,13 +155,13 @@ private:
         int r = 0,g = 0,b = 0;
     };
     std::vector<Pixel> ppuPalette;
-    Pixel getColor(FinalPalette palette);
+    Pixel getColor(Palette palette);
     unsigned int getColorCode(Pixel pixel);
 
 public:
     bool interrupt = false;
     bool rendered = false;
-    int scanline = -1;
+    int scanLine = -1;
     uint8_t *oam_memory = (uint8_t*)OAM;
     unsigned int *pixels = new unsigned int[256 * 240];
 

@@ -197,14 +197,13 @@ void PPU::connectGamePak(GamePak *gamePak){
 }
 
 void PPU::clock() {
-    if(scanline >= -1 && scanline < 240) {
-        if(scanline == 0 && cycles == 0) cycles = 1;
-        if(scanline == -1 && cycles == 1) {
+    if(scanLine >= -1 && scanLine < 240) {
+        if(scanLine == 0 && cycles == 0) cycles = 1;
+        if(scanLine == -1 && cycles == 1) {
             ppustatus.vblank = 0;
             ppustatus.sprite_overflow = 0;
             ppustatus.sprite_zero_hit = 0;
-            std::fill_n(sprite_low, 8, 0);
-            std::fill_n(sprite_high, 8, 0);
+            spriteRenderer.resetShifters();
         }
         if((cycles >= 2 && cycles < 258) || (cycles >= 321 && cycles < 338)) {
             updateShiftRegister();
@@ -216,59 +215,35 @@ void PPU::clock() {
             loadPixel();
             transferHorizontal();
         }
-        if(cycles == 338 || cycles == 340) tile_id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
-        if(scanline == -1 && cycles >= 280 && cycles < 305) transferVertical();
-        if(cycles == 257 && scanline >= 0) {
-            std::memset(foundSprites, 0xFF, 8 * sizeof(Sprite));
-            sprite_count = 0;
-            std::fill_n(sprite_low, 8, 0);
-            std::fill_n(sprite_high, 8, 0);
+        if(cycles == 338 || cycles == 340) tile.id = readPPUMemory(0x2000u | (vram_address.reg && 0x0FFFu));
+        if(scanLine == -1 && cycles >= 280 && cycles < 305) transferVertical();
+        if(cycles == 257 && scanLine >= 0) {
+            spriteRenderer.reset();
             findSprites();
         }
-        if(cycles == 340) {
-            for(uint i = 0; i < sprite_count; ++i) {
-                uint16_t sprite_address_low, sprite_address_high;
-                if(ppuctrl.sprite_height) {
-                    if(!(foundSprites[i].attributes & 0x80u)) sprite_address_low = sprite8x16(i);
-                    else sprite_address_low = sprite8x16Flipped(i);
-                }
-                else {
-                    if(!(foundSprites[i].attributes & 0x80u)) sprite_address_low = sprite8x8(i);
-                    else sprite_address_low = sprite8x8Flipped(i);
-                }
-                sprite_address_high = sprite_address_low + 8;
-                uint8_t sprite_low_bytes = readPPUMemory(sprite_address_low), sprite_high_bytes = readPPUMemory(sprite_address_high);
-                if(foundSprites[i].attributes & 0x40u) {
-                    sprite_low_bytes = flipBytes(sprite_low_bytes);
-                    sprite_high_bytes = flipBytes(sprite_high_bytes);
-                }
-                sprite_low[i] = sprite_low_bytes;
-                sprite_high[i] = sprite_high_bytes;
-            }
-
-        }
+        if(cycles == 340) spriteRenderer.getSpriteToRender(ppuctrl.sprite_height, ppuctrl.sprite_tile_select, scanLine, [this](uint16_t address){return readPPUMemory(address);});
     }
-    if(scanline >= 241 && scanline < 261) {
-        if(scanline == 241 && cycles == 1) {
+    if(scanLine >= 241 && scanLine < 261) {
+        if(scanLine == 241 && cycles == 1) {
             ppustatus.vblank = 1;
             if(ppuctrl.nmi_enable) interrupt = true;
         }
     }
 
-    Palette palette{};
-    SpritePalette spritePalette{};
-    if(ppumask.background_enable && (ppumask.background_left_column_enable || cycles >= 9)) palette = getComposition();
+    Palette backgroundPalette{};
+    Palette spritePalette{};
+    if(ppumask.background_enable && (ppumask.background_left_column_enable || cycles >= 9)) backgroundPalette = getBackgroundComposition();
     if(ppumask.sprite_enable && (ppumask.sprite_left_column_enable || cycles >= 9)) spritePalette = getSpriteComposition();
-    Pixel pixel = getColor(getFinalComposition(palette, spritePalette));
-    if(256 * scanline + cycles - 1 >= 0 && 256 * scanline + cycles - 1 < 256 * 240) pixels[256 * scanline + (cycles - 1)] = getColorCode(pixel);
+    Pixel pixel = getColor(getComposition(backgroundPalette, spritePalette));
+    if(256 * scanLine + cycles - 1 >= 0 && 256 * scanLine + cycles - 1 < 256 * 240) pixels[256 * scanLine + (cycles - 1)] = getColorCode(pixel);
 
     cycles++;
     if(cycles >= 341) {
         cycles = 0;
-        scanline++;
-        if(scanline >= 261) {
+        scanLine++;
+        if(scanLine >= 261) {
             rendered = true;
-            scanline = -1;
+            scanLine = -1;
         }
     }
 }
@@ -287,8 +262,9 @@ void PPU::reset() {
     toggle = false;
     fine_x = 0x00;
     cycles = 0;
-    tile_attribute = tile_msb = tile_lsb = tile_id = 0x00;
-    shifter_attribute_low = shifter_attribute_high = shifter_pattern_low = shifter_pattern_high = 0x00;
+    tile.reset();
+    pattern.reset();
+    attribute.reset();
 }
 
 void PPU::scrollingHorizontal() {
@@ -342,33 +318,16 @@ void PPU::transferVertical() {
 }
 
 void PPU::loadPixel() {
-    // PPU ima 16-bitni shift registar
-    // prvih 8 najznačajnijih bita predstavljaju piksel koji se crta
-    // sljedeći piksel koji će se crtati u novom ciklusu je u donjih 8 bita registra
-    // ova funkcija ažurira donjih 8 bita shift registra
-    shifter_pattern_low = ((shifter_pattern_low & 0xFF00u) | tile_lsb);
-    shifter_pattern_high = ((shifter_pattern_high & 0xFF00u) | tile_msb);
-    shifter_attribute_low = ((shifter_attribute_low & 0xFF00u) | ((tile_attribute & 0b01u) ? 0xFF : 0x00));
-    shifter_attribute_high = ((shifter_attribute_high & 0xFF00u) | ((tile_attribute & 0b10u) ? 0xFF : 0x00));
+    pattern.pack(tile.lsb, tile.msb);
+    attribute.pack(tile.getPackingByte(0b01u), tile.getPackingByte(0b10u));
 }
 
 void PPU::updateShiftRegister() {
-    // ažurira shift registre za svaki ciklus PPU
     if(ppumask.background_enable) {
-        shifter_pattern_low <<= 1u;
-        shifter_pattern_high <<= 1u;
-        shifter_attribute_low <<= 1u;
-        shifter_attribute_high <<= 1u;
+        pattern.shift();
+        attribute.shift();
     }
-    if(ppumask.sprite_enable && cycles >= 1 && cycles < 258) {
-        for(int i = 0; i < sprite_count; ++i) {
-            if(foundSprites[i].index > 0) foundSprites[i].index--;
-            else {
-                sprite_low[i] <<= 1u;
-                sprite_high[i] <<= 1u;
-            }
-        }
-    }
+    if(ppumask.sprite_enable && cycles >= 1 && cycles < 258) spriteRenderer.shift();
 }
 
 void PPU::fetchNextTile(uint8_t selector) {
@@ -376,23 +335,23 @@ void PPU::fetchNextTile(uint8_t selector) {
     switch (selector) {
         case 0:
             loadPixel();
-            tile_id = readPPUMemory(0x2000u | (vram_address.reg & 0x0FFFu));
+            tile.id = readPPUMemory(0x2000u | (vram_address.reg & 0x0FFFu));
             break;
         case 2:
             address = 0x23C0u | (vram_address.nametable_select_y << 11u) | (vram_address.nametable_select_x << 10u)
                     | ((vram_address.coarse_y >> 2u) << 3u) | (vram_address.coarse_x >> 2u);
-            tile_attribute = readPPUMemory(address);
-            if(vram_address.coarse_y & 0x02u) tile_attribute >>= 4u;
-            if(vram_address.coarse_x & 0x02u) tile_attribute >>= 2u;
-            tile_attribute &= 0x03u;
+            tile.attribute = readPPUMemory(address);
+            if(vram_address.coarse_y & 0x02u) tile.attribute >>= 4u;
+            if(vram_address.coarse_x & 0x02u) tile.attribute >>= 2u;
+            tile.attribute &= 0x03u;
             break;
         case 4:
-            lsb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile_id) << 4u) + vram_address.fine_y;
-            tile_lsb = readPPUMemory(lsb_address);
+            lsb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile.id) << 4u) + vram_address.fine_y;
+            tile.lsb = readPPUMemory(lsb_address);
             break;
         case 6:
-            msb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile_id) << 4u) + vram_address.fine_y + 8;
-            tile_msb = readPPUMemory(msb_address);
+            msb_address = (ppuctrl.background_tile_select << 12u) + (uint16_t(tile.id) << 4u) + vram_address.fine_y + 8;
+            tile.msb = readPPUMemory(msb_address);
             break;
         case 7:
             scrollingHorizontal();
@@ -402,38 +361,27 @@ void PPU::fetchNextTile(uint8_t selector) {
     }
 }
 
-PPU::Palette PPU::getComposition() {
+PPU::Palette PPU::getBackgroundComposition() {
     uint16_t selector = (0x8000u >> fine_x);
-    uint8_t pixel_id = (((shifter_pattern_high & selector) > 0) << 1u) | ((shifter_pattern_low & selector) > 0);
-    uint8_t palette_id = (((shifter_attribute_high & selector) > 0) << 1u) | ((shifter_attribute_low & selector) > 0);
-    return {pixel_id, palette_id};
+    uint8_t pixel_id = (((pattern.getHighByte() & selector) > 0) << 1u) | ((pattern.getLowByte() & selector) > 0);
+    uint8_t palette_id = (((attribute.getHighByte() & selector) > 0) << 1u) | ((attribute.getLowByte() & selector) > 0);
+    return {pixel_id, palette_id, 0x00};
 }
 
-PPU::SpritePalette PPU::getSpriteComposition() {
-    spriteZero.rendered = false;
-    SpritePalette spritePalette{};
-    for(uint i = 0; i < sprite_count; ++i) {
-        if(foundSprites[i].index == 0) {
-            spritePalette.pixel_id = (((sprite_high[i] & 0x80u) > 0) << 1u) | ((sprite_low[i] & 0x80u) > 0);
-            spritePalette.palette_id = (foundSprites[i].attributes & 0x03u) + 0x04;
-            spritePalette.priority = ((foundSprites[i].attributes & 0x20u) == 0);
-            if(spritePalette.pixel_id != 0) {
-                if(i == 0) spriteZero.rendered = true;
-                break;
-            }
-        }
-    }
-    return spritePalette;
+PPU::Palette PPU::getSpriteComposition() {
+    auto tuple = spriteRenderer.findNextSprite();
+    spriteZero.rendered = std::get<3>(tuple);
+    return {std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple)};
 }
 
-PPU::FinalPalette PPU::getFinalComposition(PPU::Palette palette, PPU::SpritePalette spritePalette) {
-    FinalPalette finalPalette{};
-    if(palette.pixel_id == 0 && spritePalette.pixel_id == 0) finalPalette = {0x00, 0x00};
-    else if(palette.pixel_id > 0 && spritePalette.pixel_id == 0) finalPalette = {palette.pixel_id, palette.palette_id};
-    else if(palette.pixel_id == 0 && spritePalette.pixel_id > 0) finalPalette = {spritePalette.pixel_id, spritePalette.palette_id};
-    else if (palette.pixel_id > 0 && spritePalette.pixel_id > 0) {
+PPU::Palette PPU::getComposition(PPU::Palette backgroundPalette, Palette spritePalette) {
+    Palette finalPalette{};
+    if(backgroundPalette.pixel_id == 0 && spritePalette.pixel_id == 0) finalPalette = {0x00, 0x00};
+    else if(backgroundPalette.pixel_id > 0 && spritePalette.pixel_id == 0) finalPalette = {backgroundPalette.pixel_id, backgroundPalette.palette_id};
+    else if(backgroundPalette.pixel_id == 0 && spritePalette.pixel_id > 0) finalPalette = {spritePalette.pixel_id, spritePalette.palette_id};
+    else if (backgroundPalette.pixel_id > 0 && spritePalette.pixel_id > 0) {
         if(spritePalette.priority) finalPalette = {spritePalette.pixel_id, spritePalette.palette_id};
-        else finalPalette = {palette.pixel_id, palette.palette_id};
+        else finalPalette = {backgroundPalette.pixel_id, backgroundPalette.palette_id};
         if(spriteZero.enabled && spriteZero.rendered && (ppumask.sprite_enable & ppumask.background_enable)) {
             if(~(ppumask.background_left_column_enable | ppumask.sprite_left_column_enable)) {
                 if(cycles >= 9 && cycles < 258) ppustatus.sprite_zero_hit = 1;
@@ -447,50 +395,8 @@ PPU::FinalPalette PPU::getFinalComposition(PPU::Palette palette, PPU::SpritePale
 }
 
 void PPU::findSprites() {
-    spriteZero.enabled = false;
-    for(int i = 0; i < 64 && sprite_count <= 8; ++i) {
-        int32_t diff = int16_t(scanline) - int16_t(OAM[i].y_position);
-        if (diff >= 0 && diff < (ppuctrl.sprite_height ? 16 : 8)) {
-            if(sprite_count < 8) {
-                if(i == 0) spriteZero.enabled = true;
-                //foundSprites[sprite_count] = OAM[i];
-                memcpy(&foundSprites[sprite_count], &OAM[i], sizeof(Sprite));
-                sprite_count++;
-            }
-        }
-    }
-    ppustatus.sprite_overflow = (sprite_count >= 8);
-}
-
-uint16_t PPU::sprite8x8(uint8_t i) {
-    return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tile_index << 4u) | (scanline - foundSprites[i].y_position);
-}
-
-uint16_t PPU::sprite8x8Flipped(uint8_t i) {
-    return (ppuctrl.sprite_tile_select << 12u) | (foundSprites[i].tile_index << 4u) |  (7 - (scanline - foundSprites[i].y_position));
-}
-
-uint16_t PPU::sprite8x16(uint8_t i) {
-    return (scanline - foundSprites[i].y_position < 8) ? sprite8x16Helper(i, 0) : sprite8x16Helper(i, 1);
-}
-
-uint16_t PPU::sprite8x16Flipped(uint8_t i) {
-    return (scanline - foundSprites[i].y_position < 8) ? sprite8x16FlippedHelper(i, 1) : sprite8x16FlippedHelper(i, 0);
-}
-
-uint16_t PPU::sprite8x16Helper(uint8_t i, uint8_t temp) {
-    return ((foundSprites[i].tile_index & 0x01) << 12u) | (((foundSprites[i].tile_index & 0xFEu) + temp) << 4u) | ((scanline - foundSprites[i].y_position) & 0x07u);
-}
-
-uint16_t PPU::sprite8x16FlippedHelper(uint8_t i, uint8_t temp) {
-    return ((foundSprites[i].tile_index & 0x01) << 12u) | (((foundSprites[i].tile_index & 0xFEu) + temp) << 4u) |  ((7 - (scanline - foundSprites[i].y_position)) & 0x07u);
-}
-
-uint8_t PPU::flipBytes(uint8_t bytes) {
-    bytes = (bytes & 0xF0) >> 4 | (bytes & 0x0F) << 4;
-    bytes = (bytes & 0xCC) >> 2 | (bytes & 0x33) << 2;
-    bytes = (bytes & 0xAA) >> 1 | (bytes & 0x55) << 1;
-    return bytes;
+    spriteZero.enabled = spriteRenderer.findSprites(scanLine, ppuctrl.sprite_height, [this](uint8_t i){return OAM[i].yPosition;}, [this](uint8_t i){return OAM[i];});
+    ppustatus.sprite_overflow = (spriteRenderer.getSpriteCount() > 8);
 }
 
 PPU::PPU() {
@@ -560,7 +466,7 @@ PPU::PPU() {
     ppuPalette.push_back({0, 0, 0});
 }
 
-PPU::Pixel PPU::getColor(PPU::FinalPalette palette) {
+PPU::Pixel PPU::getColor(PPU::Palette palette) {
     return ppuPalette[readPPUMemory(0x3F00u + (palette.palette_id << 2u) + palette.pixel_id) & 0x3Fu];
 }
 
