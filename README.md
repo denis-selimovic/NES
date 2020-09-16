@@ -1,2 +1,2 @@
-# NES
-Another NES emulator
+# NES emulator
+
