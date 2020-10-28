@@ -13,7 +13,7 @@ Following software/packages/libraries are required to run this emulator:
 
 ## How do you use it? 
 
-If you have access to Mapper 0 ROM, you can start this emulator. Use constructor of __Emulator__ class in __main.cpp__. It needs full path to the given ROM in your file system. After that, you can build source code with __cmake --build cmake-build-debug --target NES -- -j 6__ comand which should generate executable that can be started on your opearting system.
+If you have access to Mapper 0 ROM, you can start this emulator. Use constructor of __Renderer__ class in __main.cpp__. It needs full path to the given ROM in your file system. After that, you can build source code with __cmake --build cmake-build-debug --target NES -- -j 6__ comand which should generate executable that can be started on your opearting system.
 
 ## Controls
 
