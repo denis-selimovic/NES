@@ -9,7 +9,7 @@ This is a simple NES (Nintendo Entertainment System) emulator made for education
 Following software/packages/libraries are required to run this emulator:
 * CMake for your operating system
 * SDL2 library for your operating system
-* SDL2_font lbirary for your opearting system
+* SDL2_TTF library for your operating system
 
 ## How do you use it? 
 
